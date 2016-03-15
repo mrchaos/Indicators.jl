@@ -1,5 +1,15 @@
+VERSION >= v"0.4.0" && __precompile__(true)
+
 module Indicators
 
-# package code goes here
+export
+    runmean, runsum, wilder_sum, runvar, runsd, runcov,
+    sma, trima, wma, ema, mama, hma, swma,
+    macd, rsi, adx,
+    bbands, tr, atr, keltner
 
-end # module
+include("ma.jl")
+include("mom.jl")
+include("vol.jl")
+
+end 
