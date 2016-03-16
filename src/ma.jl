@@ -147,8 +147,9 @@ function ema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=fa
         alpha = 1.0/n
     end
 	ma = fill(NaN, size(x,1))
-    ma[n] = mean(x[1:n])
-    for i = n+1:size(x,1)
+    i = first(find(!isnan(x)))
+    ma[n+i-1] = mean(x[i:n+i-1])
+    for i = n+i:size(x,1)
         ma[i] = alpha * (x[i] - ma[i-1]) + ma[i-1]
     end
     return ma
