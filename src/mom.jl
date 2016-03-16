@@ -24,17 +24,18 @@ Relative strength index
 """ ->
 function rsi{T<:Real}(x::Array{T,1}, n::Int=14; wilder::Bool=true)
     N = size(x,1)
-	ups = fill(NaN, N)
-	dns = fill(NaN, N)
+    ups = zeros(x)
+    dns = zeros(x)
+    zro = zero(T)
     dx = [NaN; diff(x)]
     for i=2:N
-        if dx[i] > 0.0
+        if dx[i] > zro
             ups[i] = dx[i]
-        elseif dx[i] < 0.0
+        elseif dx[i] < zro
             dns[i] = -dx[i]
         end
     end
-    rs = [NaN; ema(ups[2:end],n,wilder=wilder) ./ ema(dns[2:end],n,wilder=wilder)]
+    rs = [NaN; ema(ups[2:end], n, wilder=wilder) ./ ema(dns[2:end], n, wilder=wilder)]
     return 100.0 - 100.0 ./ (1.0 + rs)
 end
 
@@ -48,8 +49,8 @@ function adx{T<:Real}(hlc::Array{T,2}, n::Int=14; wilder=true)
 		error("HLC array must have three columns")
 	end
 	N = size(hlc,1)
-	updm = zeros(N)
-	dndm = zeros(N)
+	updm = zeros(x)
+	dndm = zeros(x)
 	updm[1] = dndm[1] = NaN
 	for i = 2:N
 		upmove = hlc[i,1] - hlc[i-1,1]
