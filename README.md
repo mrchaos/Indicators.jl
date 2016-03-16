@@ -50,3 +50,5 @@ Indicators is a Julia package offering efficient implementations of many technic
 - Ultimate Oscillator
 - OBV (on-balance volume)
 - Too many more to name...
+
+[![Build Status](https://travis-ci.org/dysonance/Indicators.jl.svg?branch=master)](https://travis-ci.org/dysonance/Indicators.jl)
