@@ -250,7 +250,7 @@ hma{T<:Real}(x::Array{T,1}, n::Int=1)
 Hull moving average
 """ ->
 function hma{T<:Real}(x::Array{T,1}, n::Int=20)
-    return wma(2 * wma(x, n=n/2.0) - wma(x, n=n), trunc(sqrt(n)))
+    return wma(2 * wma(x, Int(round(n/2.0))) - wma(x, n), Int(trunc(sqrt(n))))
 end
 
 @doc """
@@ -268,18 +268,4 @@ function swma{T<:Real}(x::Array{T,1}, n::Int=10)
     end
     return ma
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
