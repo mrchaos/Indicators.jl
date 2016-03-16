@@ -1,7 +1,55 @@
 # TODO: add matype option for atr
 
-include("ma.jl")
+@doc doc"""
+runvar(x::Array{Float64,1}, n::Int=10, cumulative=true)
 
+Compute the running or rolling variance of an array.
+""" ->
+function runvar{T<:Real}(x::Array{T,1}, n::Int=10, cumulative=true)
+	out = fill(NaN, size(x,1))
+	if cumulative
+		for i = n:size(x,1)
+			out[i] = var(x[1:i])
+		end
+	else
+		for i = n:size(x,1)
+			out[i] = var(x[i-n+1:i])
+		end
+	end
+	return out
+end
+
+@doc doc"""
+run_sd{T<:Real}(x::Array{T,1}, n::Int=10, cumulative::Bool=true)
+
+Compute the running or rolling standard deviation of an array.
+""" ->
+function run_sd{T<:Real}(x::Array{T,1}, n::Int=10, cumulative::Bool=true)
+	return sqrt(runvar(x, n, cumulative))
+end
+
+@doc doc"""
+runcov(x::Array{Float64,1}, y::Array{Float64,1}, n::Int=10, cumulative::Bool=true)
+
+Compute the running or rolling covariance of two arrays.
+""" ->
+function runcov{T<:Real}(x::Array{T,1}, y::Array{T,1}, n::Int=10, cumulative::Bool=true)
+	N = size(x,1)
+	if size(y,1) != N
+		error("Dimension mistmatch: x and y must be of same length")
+	end
+	out = fill(NaN, N)
+	if cumulative
+		for i = n:N
+			out[i] = cov(x[1:i], y[1:i])
+		end
+	else
+		for i = n:N
+			out[i] = cov(x[i-n+1:i], y[i-n+1:i])
+		end
+	end
+	return out
+end
 @doc doc"""
 bbands{T<:Real}(x::Array{T,1}, n::Int=10, sigma::Float64=2.0)
 

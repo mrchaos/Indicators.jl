@@ -38,7 +38,7 @@ function runsum{T<:Real}(x::Array{T,1}, n::Int=10, cumulative::Bool=true)
 	return out
 end
 
-@doc """
+@doc doc"""
 wilder_sum(x::Array{Float64,1}, n::Int=10)
 
 Calculate a Welles Wilder Summation of an array.
@@ -53,58 +53,8 @@ function wilder_sum{T<:Real}(x::Array{T,1}, n::Int=10)
 	return out
 end
 
-@doc """
-runvar(x::Array{Float64,1}, n::Int=10, cumulative=true)
 
-Compute the running or rolling variance of an array.
-""" ->
-function runvar{T<:Real}(x::Array{T,1}, n::Int=10, cumulative=true)
-	out = fill(NaN, size(x,1))
-	if cumulative
-		for i = n:size(x,1)
-			out[i] = var(x[1:i])
-		end
-	else
-		for i = n:size(x,1)
-			out[i] = var(x[i-n+1:i])
-		end
-	end
-	return out
-end
-
-@doc """
-run_sd{T<:Real}(x::Array{T,1}, n::Int=10, cumulative::Bool=true)
-
-Compute the running or rolling standard deviation of an array.
-""" ->
-function run_sd{T<:Real}(x::Array{T,1}, n::Int=10, cumulative::Bool=true)
-	return sqrt(runvar(x, n, cumulative))
-end
-
-@doc """
-runcov(x::Array{Float64,1}, y::Array{Float64,1}, n::Int=10, cumulative::Bool=true)
-
-Compute the running or rolling covariance of two arrays.
-""" ->
-function runcov{T<:Real}(x::Array{T,1}, y::Array{T,1}, n::Int=10, cumulative::Bool=true)
-	N = size(x,1)
-	if size(y,1) != N
-		error("Dimension mistmatch: x and y must be of same length")
-	end
-	out = fill(NaN, N)
-	if cumulative
-		for i = n:N
-			out[i] = cov(x[1:i], y[1:i])
-		end
-	else
-		for i = n:N
-			out[i] = cov(x[i-n+1:i], y[i-n+1:i])
-		end
-	end
-	return out
-end
-
-@doc """
+@doc doc"""
 sma{T<:Real}(x::Array{T,1}, n::Int=10)
 
 Simple moving average
@@ -113,7 +63,7 @@ function sma{T<:Real}(x::Array{T,1}, n::Int=10)
 	return runmean(x, n, false)
 end
 
-@doc """
+@doc doc"""
 trima{T<:Real}(x::Array{T,1}, n::Int=10)
 
 Triangular moving average
@@ -124,7 +74,7 @@ function trima{T<:Real}(x::Array{T,1}, n::Int=10)
     return sma(sma(x, n), n)
 end
 
-@doc """
+@doc doc"""
 wma{T<:Real}(x::Array{T,1}, n::Int=10; wts::Array{T,1}=collect(1:n)/sum(1:n))
 
 Weighted moving average
@@ -137,10 +87,10 @@ function wma{T<:Real}(x::Array{T,1}, n::Int=10; wts::Array{T,1}=collect(1:n)/sum
     return ma
 end
 
-@doc """
+@doc doc"""
 ema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
 
-Exponential moving average"
+Exponential moving average
 """ ->
 function ema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
     if wilder
@@ -155,7 +105,7 @@ function ema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=fa
     return ma
 end
 
-@doc """
+@doc doc"""
 mama{T<:Float64}(x::Array{T,1}, fastlimit::Float64=0.5, slowlimit::Float64=0.05)
 
 MESA adaptive moving average (developed by John Ehlers)
@@ -245,7 +195,7 @@ function mama{T<:Float64}(x::Array{T,1}, fastlimit::Float64=0.5, slowlimit::Floa
 end
 
 
-@doc """
+@doc doc"""
 hma{T<:Real}(x::Array{T,1}, n::Int=1)
 
 Hull moving average
@@ -254,7 +204,7 @@ function hma{T<:Real}(x::Array{T,1}, n::Int=20)
     return wma(2 * wma(x, Int(round(n/2.0))) - wma(x, n), Int(trunc(sqrt(n))))
 end
 
-@doc """
+@doc doc"""
 swma{T<:Real}(x::Array{T,1}, n::Int)
 
 Sine-weighted moving average
