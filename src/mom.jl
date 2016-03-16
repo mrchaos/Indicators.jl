@@ -2,10 +2,12 @@
 include("ma.jl")  # include pre-requisite moving average functions
 include("vol.jl")  # pre-requisite volatility indicator functions (i.e. avg true range)
 
-@doc """
-MACD (moving average convergence-divergence)
+@doc doc"""
+macd{T<:Real}(x::Array{Real,1}, nfast::Int=12, nslow::Int=26, nsig::Int=9)
+
+Moving average convergence-divergence
 """ ->
-function macd(x::Array{Float64,1}, nfast::Int=12, nslow::Int=26, nsig::Int=9)
+function macd{T<:Real}(x::Array{T,1}, nfast::Int=12, nslow::Int=26, nsig::Int=9)
     out = zeros(size(x,1), 3)  # cols := fast ma, signal, histogram
 	out = fill(NaN, (size(x,1),3))
     out[:,1] = ema(x, nfast) - ema(x, nslow)
@@ -15,10 +17,12 @@ function macd(x::Array{Float64,1}, nfast::Int=12, nslow::Int=26, nsig::Int=9)
     return out
 end
 
-@doc """
-RSI (relative strength index)
+@doc doc"""
+rsi{T<:Real}(x::Array{T,1}, n::Int=14; wilder::Bool=true)
+
+Relative strength index
 """ ->
-function rsi(x::Array{Float64,1}, n::Int=14; wilder::Bool=true)
+function rsi{T<:Real}(x::Array{T,1}, n::Int=14; wilder::Bool=true)
     N = size(x,1)
 	ups = fill(NaN, N)
 	dns = fill(NaN, N)
@@ -34,10 +38,12 @@ function rsi(x::Array{Float64,1}, n::Int=14; wilder::Bool=true)
     return 100.0 - 100.0 ./ (1.0 + rs)
 end
 
-@doc """
-ADX (average directional index)
+@doc doc"""
+adx{T<:Real}(hlc::Array{T,2}, n::Int=14; wilder=true)
+
+Average directional index
 """ ->
-function adx(hlc::Array{Float64,2}, n::Int=14; wilder=true)
+function adx{T<:Real}(hlc::Array{T,2}, n::Int=14; wilder=true)
 	if size(hlc,2) != 3
 		error("HLC array must have three columns")
 	end

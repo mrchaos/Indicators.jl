@@ -2,10 +2,12 @@
 
 include("ma.jl")
 
-@doc """
+@doc doc"""
+bbands{T<:Real}(x::Array{T,1}, n::Int=10, sigma::Float64=2.0)
+
 Bollinger Bands (moving average with standard deviation bands)
 """ ->
-function bbands(x::Array{Float64,1}, n::Int=10, sigma::Float64=2.0)
+function bbands{T<:Real}(x::Array{T,1}, n::Int=10, sigma::Float64=2.0)
     out = zeros(size(x,1), 3)  # cols := lower bound, ma, upper bound
     out[:,2] = sma(x, n)
     sd = run_sd(x, n, false)
@@ -14,10 +16,12 @@ function bbands(x::Array{Float64,1}, n::Int=10, sigma::Float64=2.0)
     return out
 end
 
-@doc """
+@doc doc"""
+tr{T<:Real}(hlc::Array{T,2})
+
 True Range
 """ ->
-function tr(hlc::Array{Float64,2})
+function tr{T<:Real}(hlc::Array{T,2})
     if size(hlc,2) != 3
         error("HLC array must have 3 columns.")
     end
@@ -30,23 +34,24 @@ function tr(hlc::Array{Float64,2})
     return out[:,1]
 end
 
-@doc """
-Average true range
+@doc doc"""
+atr{T<:Real}(hlc::Array{T,2}, n::Int=14)
 
-(Uses exponential moving average)
+Average true range (uses exponential moving average)
 """ ->
-function atr(hlc::Array{Float64,2}, n::Int=14)
+function atr{T<:Real}(hlc::Array{T,2}, n::Int=14)
     return [NaN; ema(tr(hlc)[2:end], n)]
 end
 
-@doc """
+@doc doc"""
+keltner{T<:Real}(hlc::Array{T,2}, nema::Int=20, natr::Int=10, mult::Int=2)
+
 Keltner Bands
 """ ->
-function keltner(hlc::Array{Float64,2}, nema::Int=20, natr::Int=10, mult::Int=2)
+function keltner{T<:Real}(hlc::Array{T,2}, nema::Int=20, natr::Int=10, mult::Int=2)
     out = zeros(size(hlc,1), 3)
     out[:,2] = ema(hlc[:,3], nema)
     out[:,1] = out[:,2] - mult*atr(hlc, natr)
     out[:,3] = out[:,2] + mult*atr(hlc, natr)
     return out
 end
-
