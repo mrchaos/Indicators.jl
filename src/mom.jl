@@ -49,8 +49,8 @@ function adx{T<:Real}(hlc::Array{T,2}, n::Int=14; wilder=true)
 		error("HLC array must have three columns")
 	end
 	N = size(hlc,1)
-	updm = zeros(x)
-	dndm = zeros(x)
+	updm = zeros(N)
+	dndm = zeros(N)
 	updm[1] = dndm[1] = NaN
 	for i = 2:N
 		upmove = hlc[i,1] - hlc[i-1,1]
