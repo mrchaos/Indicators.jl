@@ -1,6 +1,6 @@
 # TODO: include matype options in macd, rsi, and adx functions
-include("ma.jl")  # include pre-requisite moving average functions
-include("vol.jl")  # pre-requisite volatility indicator functions (i.e. avg true range)
+# include("ma.jl")  # include pre-requisite moving average functions
+# include("vol.jl")  # pre-requisite volatility indicator functions (i.e. avg true range)
 
 @doc doc"""
 macd{T<:Real}(x::Array{Real,1}, nfast::Int=12, nslow::Int=26, nsig::Int=9)
