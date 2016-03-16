@@ -3,8 +3,8 @@ using Base.Test
 
 # Read sample data and calculations
 const tol = 1e-8
-data = X = readcsv("test/AAPL-2015.csv", header=true)[1]
-ma = readcsv("test/ma.csv", header=true)[1]
+data = X = readcsv("AAPL-2015.csv", header=true)[1]
+ma = readcsv("ma.csv", header=true)[1]
 o = data[:,1]
 h = data[:,2]
 l = data[:,3]
