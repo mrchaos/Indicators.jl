@@ -12,7 +12,7 @@ function runmean{T<:Real}(x::Array{T,1}, n::Int=10, cumulative::Bool=true)
             ma[i] = mean(x[1:i])
         end
     else
-        for i=n:size(x,1)
+        for i = n:size(x,1)
             ma[i] = mean(x[i-n+1:i])
         end
     end
@@ -27,11 +27,11 @@ Compute a running or rolling summation of an array.
 function runsum{T<:Real}(x::Array{T,1}, n::Int=10, cumulative::Bool=true)
 	out = fill(NaN, size(x,1))
 	if cumulative
-		for i=n:size(x,1)
+		for i = n:size(x,1)
 			out[i] = sum(x[1:i])
 		end
 	else
-		for i=n:size(x,1)
+		for i = n:size(x,1)
 			out[i] = sum(x[i-n+1:i])
 		end
 	end
