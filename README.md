@@ -27,11 +27,11 @@ Indicators is a Julia package offering efficient implementations of many technic
 - Keltner Bands
 
 ### Other
-- Rolling mean
-- Rolling standard deviation
-- Rolling variance
-- Rolling covariance
-- Rolling correlation
+- Rolling/running mean
+- Rolling/running standard deviation
+- Rolling/running variance
+- Rolling/running covariance
+- Rolling/running correlation
 
 
 ## Todo
