@@ -106,6 +106,31 @@ function ema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=fa
 end
 
 @doc doc"""
+dema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
+
+Double exponential moving average
+""" ->
+function dema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
+    return 2.0 * ema(x, n, alpha=alpha, wilder=wilder) - 
+        ema(ema(x, n, alpha=alpha, wilder=wilder),
+            n, alpha=alpha, wilder=wilder)
+end
+
+@doc doc"""
+tema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
+
+Triple exponential moving average
+""" ->
+function tema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
+    return 3.0 * ema(x, n, alpha=alpha, wilder=wilder) - 
+        3.0 * ema(ema(x, n, alpha=alpha, wilder=wilder),
+                  n, alpha=alpha, wilder=wilder) +
+        ema(ema(ema(x, n, alpha=alpha, wilder=wilder),
+                n, alpha=alpha, wilder=wilder),
+            n, alpha=alpha, wilder=wilder)
+end
+
+@doc doc"""
 mama{T<:Float64}(x::Array{T,1}, fastlimit::Float64=0.5, slowlimit::Float64=0.05)
 
 MESA adaptive moving average (developed by John Ehlers)
@@ -128,6 +153,8 @@ function mama{T<:Float64}(x::Array{T,1}, fastlimit::Float64=0.5, slowlimit::Floa
     jQ = 0.0
     dphase = 0.0
     alpha = 0.0
+    a = 0.0962
+    b = 0.5769
     for i = 13:n
         # Smooth and detrend price movement ====================================
         smooth[7] = (4*x[i] + 3*x[i-1] + 2*x[i-2] + x[i-3]) * 0.1

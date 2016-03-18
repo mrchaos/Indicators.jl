@@ -13,6 +13,8 @@ Indicators is a Julia package offering efficient implementations of many technic
 - MAMA (MESA adaptive moving average, developed by John Ehlers)
 - HMA (Hull moving average)
 - SWMA (sine-weighted moving average)
+- DEMA (double exponential moving average)
+- TEMA (tripe exponential moving average)
 
 ### Momentum Indicators
 - MACD (moving average convergence-divergence)
@@ -24,10 +26,19 @@ Indicators is a Julia package offering efficient implementations of many technic
 - Average True Range
 - Keltner Bands
 
+### Other
+- Rolling mean
+- Rolling standard deviation
+- Rolling variance
+- Rolling covariance
+- Rolling correlation
+
+
 ## Todo
 - Moving Linear Regression
 - VWMA (volume-weighted moving average)
-- DEMA (double exponential moving average)
+- ~~DEMA (double exponential moving average)~~
+- ~~TEMA (tripe exponential moving average)~~
 - Parabolic SAR
 - Williams %R
 - CCI (commodity channel index)

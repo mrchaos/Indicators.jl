@@ -4,7 +4,7 @@ module Indicators
 
 export
     runmean, runsum, wilder_sum, runvar, runsd, runcov,
-    sma, trima, wma, ema, mama, hma, swma,
+    sma, trima, wma, ema, mama, hma, swma, dema, tema,
     macd, rsi, adx,
     bbands, tr, atr, keltner
 
