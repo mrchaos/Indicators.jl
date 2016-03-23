@@ -162,9 +162,9 @@ function kst{Float64}(x::Vector{Float64},
     @assert all(navg.>0) && all(navg.<size(x,1))
     N = length(x)
     k = length(nroc)
-    rocma = zeros(N,k)
+    out = zeros(x)
     @inbounds for j = 1:k
-        rocma[:,j] = ma(roc(x, nroc[j]), navg[j])
+        out += ma(roc(x, nroc[j]), navg[j]) * wgts[j]
     end
-    return rocma * wgts
+    return out
 end
