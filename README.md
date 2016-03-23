@@ -23,6 +23,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - ADX (average directional index)
 - Parabolic SAR (stop and reverse)
 - ROC (rate of change)
+- KST (Know Sure Thing)
 
 ### Volatility Indicators
 - Bollinger Bands
@@ -38,7 +39,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - Rolling/running maximum
 - Rolling/running minimum
 - Rolling/running MAD (mean absolute deviation)
-- *n*'th lag and difference
+- n-period lag and difference
 
 
 ## Todo
@@ -49,7 +50,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - ~~Parabolic SAR~~
 - Williams %R
 - CCI (commodity channel index)
-- KST (know sure thing)
+- ~~KST (know sure thing)~~
 - Donchian Channel
 - ALMA (Arnaud Legoux moving average)
 - VWAP (volume-weighted average price)

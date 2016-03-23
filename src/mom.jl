@@ -12,7 +12,7 @@ function roc{Float64}(x::Vector{Float64}, n::Int64=1)
         out[i] = x[i]/x[i-n] - 1.0
     end
     out[1:n] = NaN
-    return out
+    return out * 100.0
 end
 
 @doc doc"""
@@ -148,4 +148,23 @@ function psar{Float64}(hl::Array{Float64}, af_min::Float64=0.02, af_max::Float64
         end
     end
     return sar
+end
+
+@doc doc"""
+
+KST (Know Sure Thing) -- smoothed and summed rates of change
+""" ->
+function kst{Float64}(x::Vector{Float64},
+                      nroc::Vector{Int64}=[10,15,20,30], navg::Vector{Int64}=[10,10,10,15],
+                      wgts::Vector{Int64}=collect(1:length(nroc)); ma::Function=sma)
+    @assert length(nroc) == length(navg)
+    @assert all(nroc.>0) && all(nroc.<size(x,1))
+    @assert all(navg.>0) && all(navg.<size(x,1))
+    N = length(x)
+    k = length(nroc)
+    rocma = zeros(N,k)
+    @inbounds for j = 1:k
+        rocma[:,j] = ma(roc(x, nroc[j]), navg[j])
+    end
+    return rocma * wgts
 end
