@@ -1,6 +1,4 @@
 # TODO: include matype options in macd, rsi, and adx functions
-# include("ma.jl")  # include pre-requisite moving average functions
-# include("vol.jl")  # pre-requisite volatility indicator functions (i.e. avg true range)
 
 @doc doc"""
 macd{T<:Real}(x::Array{Real,1}, nfast::Int=12, nslow::Int=26, nsig::Int=9)
@@ -65,5 +63,111 @@ function adx{T<:Real}(hlc::Array{T,2}, n::Int=14; wilder=true)
 	dim = [NaN; ema(dndm[2:N], n, wilder=wilder)] ./ atr(hlc, n) * 100.0
 	dmx = abs(dip-dim) ./ (dip+dim)
 	adx = [fill(NaN,n); ema(dmx[n+1:N], n, wilder=wilder)] * 100.0
-	return [dip dim dmx adx]
+	return [dip dim adx]
+end
+
+@doc doc"""
+runmax{T<:Real}(x::Vector{T}, n::Int=2, cumulative::Bool=true)
+
+Compute the running or rolling maximum of an array.
+""" ->
+function runmax{T<:Real}(x::Vector{T}, n::Int=10, cumulative::Bool=true)
+	if n < 1
+		error("Argument `n` must be greater than zero.")
+	end
+	out = zeros(x)
+	if cumulative
+		out[n] = maximum(x[1:n])
+		for i = n+1:size(x,1)
+			out[i] = max(out[i-1], x[i])
+		end
+	else
+		for i = n:size(x,1)
+			out[i] = maximum(x[i-n+1:i])
+		end
+	end
+	out[1:n-1] = NaN
+	return out
+end
+
+@doc doc"""
+runmin{T<:Real}(x::Vector{T}, n::Int=10, cumulative::Bool=true)
+
+Compute the running or rolling minimum of an array.
+""" ->
+function runmin{T<:Real}(x::Vector{T}, n::Int=10, cumulative::Bool=true)
+	if n < 1
+		error("Argument `n` must be greater than zero.")
+	end
+	out = zeros(x)
+	if cumulative
+		out[n] = minimum(x[1:n])
+		for i = n+1:size(x,1)
+			out[i] = min(out[i-1], x[i])
+		end
+	else
+		for i = n:size(x,1)
+			out[i] = minimum(x[i-n+1:i])
+		end
+	end
+	out[1:n-1] = NaN
+	return out
+end
+
+@doc doc"""
+psar{T<:Real}(hi::Vector{T}, lo::Vector{T}; af::Float64=0.02,
+              af_max::Float64=0.2, af_min::Float64=0.02)
+
+Parabolic stop and reverse (SAR)
+
+hl		- 2D array of high and low prices in first and second columns respectively
+af_min  - starting/initial value for acceleration factor
+af_max  - maximum acceleration factor (accel factor capped at this value)
+af_inc	- increment to the acceleration factor (speed of increase in accel factor)
+""" ->
+function psar{T<:Real}(hl::Array{T,2}, af_min::Float64=0.02, af_max::Float64=0.2, af_inc::Float64=af_min)
+    if size(hl,2) != 2
+        error("Argument `hl` must have 2 columns.")
+    end
+    ls0 = 1
+    ls = 0
+    af0 = af_min
+    af = 0.0
+    ep0 = hl[1,1]
+    ep = 0.0
+    maxi = 0.0
+    mini = 0.0
+    sar = zeros(T, size(hl,1))
+    sar[1] = hl[1,2] - std(hl[:,1]-hl[:,2])
+    for i = 2:size(hl,1)
+        ls = ls0
+        ep = ep0
+        af = af0
+        mini = min(hl[i-1,2], hl[i,2])
+        maxi = max(hl[i-1,1], hl[i,1])
+        # Long/short signals and local extrema
+        if (ls == 1)
+            ls0 = hl[i,2] > sar[i-1] ? 1 : -1
+            ep0 = max(maxi, ep)
+        else
+            ls0 = hl[i,1] < sar[i-1] ? -1 : 1
+            ep0 = min(mini, ep)
+        end
+        # Acceleration vector
+        if ls0 == ls  # no signal change
+            sar[i] = sar[i-1] + af*(ep-sar[i-1])
+            af0 = (af == af_max) ? af_max : (af + af_inc)
+            if ls0 == 1  # current long signal
+                af0 = (ep0 > ep) ? af0 : af
+                sar[i] = min(sar[i], mini)
+            else  # current short signal
+                af0 = (ep0 < ep) ? af0 : af
+                sar[i] = max(sar[i], maxi)
+            end
+        else  # new signal
+            af0 = af_min
+            sar[i] = ep0
+        end
+    end
+    return sar
 end

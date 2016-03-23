@@ -20,6 +20,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - MACD (moving average convergence-divergence)
 - RSI (relative strength index)
 - ADX (average directional index)
+- Parabolic SAR (stop and reverse)
 
 ### Volatility Indicators
 - Bollinger Bands
@@ -32,6 +33,8 @@ Indicators is a Julia package offering efficient implementations of many technic
 - Rolling/running variance
 - Rolling/running covariance
 - Rolling/running correlation
+- Rolling/running maximum
+- Rolling/running minimum
 
 
 ## Todo
@@ -39,7 +42,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - VWMA (volume-weighted moving average)
 - ~~DEMA (double exponential moving average)~~
 - ~~TEMA (tripe exponential moving average)~~
-- Parabolic SAR
+- ~~Parabolic SAR~~
 - Williams %R
 - CCI (commodity channel index)
 - KST (know sure thing)
