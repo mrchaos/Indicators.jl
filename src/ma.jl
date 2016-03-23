@@ -1,127 +1,73 @@
 # TODO: add abilities to use different MA types for trima, macd, bbands, etc
 
 @doc doc"""
-runmean(x::Array{Float64,1}, n::Int=10, cumulative::Bool=true)
-
-Compute a running or rolling arithmetic mean of an array.
-""" ->
-function runmean{T<:Real}(x::Array{T,1}, n::Int=10, cumulative::Bool=true)
-    ma = fill(NaN, size(x,1))
-    if cumulative
-        for i = n:size(x,1)
-            ma[i] = mean(x[1:i])
-        end
-    else
-        for i = n:size(x,1)
-            ma[i] = mean(x[i-n+1:i])
-        end
-    end
-    return ma
-end
-
-@doc doc"""
-runsum(x::Array{Numeric}, n::Int=10, cumulative::Bool=true)
-
-Compute a running or rolling summation of an array.
-""" ->
-function runsum{T<:Real}(x::Array{T,1}, n::Int=10, cumulative::Bool=true)
-	out = fill(NaN, size(x,1))
-	if cumulative
-		for i = n:size(x,1)
-			out[i] = sum(x[1:i])
-		end
-	else
-		for i = n:size(x,1)
-			out[i] = sum(x[i-n+1:i])
-		end
-	end
-	return out
-end
-
-@doc doc"""
-wilder_sum(x::Array{Float64,1}, n::Int=10)
-
-Calculate a Welles Wilder Summation of an array.
-""" ->
-function wilder_sum{T<:Real}(x::Array{T,1}, n::Int=10)
-	N = size(x,1)
-	out = fill(NaN, size(x,1))
-	out[1:n-1] = sum(x[1:n-1])
-	for i = n:N
-		out[i] = sum[i-1] - sum[i-1]/n + x[i]
-	end
-	return out
-end
-
-
-@doc doc"""
-sma{T<:Real}(x::Array{T,1}, n::Int=10)
+sma{Float64}(x::Vector{Float64}, n::Int64=10)
 
 Simple moving average
 """ ->
-function sma{T<:Real}(x::Array{T,1}, n::Int=10)
+function sma{Float64}(x::Vector{Float64}, n::Int64=10)
 	return runmean(x, n, false)
 end
 
 @doc doc"""
-trima{T<:Real}(x::Array{T,1}, n::Int=10)
+trima{Float64}(x::Vector{Float64}, n::Int64=10)
 
 Triangular moving average
 """ ->
-# TODO: index to dodge NaN values, allowing for other MA types
-# TODO: include matype argument for greater flexibility
-function trima{T<:Real}(x::Array{T,1}, n::Int=10)
-    return sma(sma(x, n), n)
+function trima{Float64}(x::Vector{Float64}, n::Int64=10; ma::Function=sma)
+    return ma(ma(x, n), n)
 end
 
 @doc doc"""
-wma{T<:Real}(x::Array{T,1}, n::Int=10; wts::Array{T,1}=collect(1:n)/sum(1:n))
+wma{Float64}(x::Vector{Float64}, n::Int64=10; wts::Vector{Float64}=collect(1:n)/sum(1:n))
 
 Weighted moving average
 """ ->
-function wma{T<:Real}(x::Array{T,1}, n::Int=10; wts::Array{T,1}=collect(1:n)/sum(1:n))
-	ma = fill(NaN, size(x,1))
-    for i = n:size(x,1)
-        ma[i] = (wts' * x[i-n+1:i])[1]
+function wma{Float64}(x::Vector{Float64}, n::Int64=10; wts::Vector{Float64}=collect(1:n)/sum(1:n))
+    @assert n<size(x,1) && n>0 "Argument n out of bounds"
+	out = fill(NaN, size(x,1))
+    @inbounds for i = n:size(x,1)
+        out[i] = (wts' * x[i-n+1:i])[1]
     end
-    return ma
+    return out
 end
 
 @doc doc"""
-ema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
+ema{Float64}(x::Vector{Float64}, n::Int64=10; alpha=2.0/(n+1), wilder::Bool=false)
 
 Exponential moving average
 """ ->
-function ema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
+function ema{Float64}(x::Vector{Float64}, n::Int64=10; alpha=2.0/(n+1), wilder::Bool=false)
+    @assert n<size(x,1) && n>0 "Argument n out of bounds."
     if wilder
         alpha = 1.0/n
     end
-	ma = fill(NaN, size(x,1))
+	out = fill(NaN, size(x,1))
     i = first(find(!isnan(x)))
-    ma[n+i-1] = mean(x[i:n+i-1])
-    for i = n+i:size(x,1)
-        ma[i] = alpha * (x[i] - ma[i-1]) + ma[i-1]
+    out[n+i-1] = mean(x[i:n+i-1])
+    @inbounds for i = n+i:size(x,1)
+        out[i] = alpha * (x[i] - out[i-1]) + out[i-1]
     end
-    return ma
+    return out
 end
 
 @doc doc"""
-dema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
+dema{Float64}(x::Vector{Float64}, n::Int64=10; alpha=2.0/(n+1), wilder::Bool=false)
 
 Double exponential moving average
 """ ->
-function dema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
+function dema{Float64}(x::Vector{Float64}, n::Int64=10; alpha=2.0/(n+1), wilder::Bool=false)
     return 2.0 * ema(x, n, alpha=alpha, wilder=wilder) - 
         ema(ema(x, n, alpha=alpha, wilder=wilder),
             n, alpha=alpha, wilder=wilder)
 end
 
 @doc doc"""
-tema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
+tema{Float64}(x::Vector{Float64}, n::Int64=10; alpha=2.0/(n+1), wilder::Bool=false)
 
 Triple exponential moving average
 """ ->
-function tema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=false)
+function tema{Float64}(x::Vector{Float64}, n::Int64=10; alpha=2.0/(n+1), wilder::Bool=false)
     return 3.0 * ema(x, n, alpha=alpha, wilder=wilder) - 
         3.0 * ema(ema(x, n, alpha=alpha, wilder=wilder),
                   n, alpha=alpha, wilder=wilder) +
@@ -131,13 +77,13 @@ function tema{T<:Real}(x::Array{T,1}, n::Int=10; alpha=2.0/(n+1), wilder::Bool=f
 end
 
 @doc doc"""
-mama{T<:Float64}(x::Array{T,1}, fastlimit::Float64=0.5, slowlimit::Float64=0.05)
+mama{Float64}(x::Vector{Float64}, fastlimit::Float64=0.5, slowlimit::Float64=0.05)
 
 MESA adaptive moving average (developed by John Ehlers)
 """ ->
-function mama{T<:Float64}(x::Array{T,1}, fastlimit::Float64=0.5, slowlimit::Float64=0.05)
+function mama{Float64}(x::Vector{Float64}, fastlimit::Float64=0.5, slowlimit::Float64=0.05)
     n = size(x,1)
-    ma = zeros(n,2)
+    out = zeros(n,2)
     smooth = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     detrend = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     Q1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -155,7 +101,7 @@ function mama{T<:Float64}(x::Array{T,1}, fastlimit::Float64=0.5, slowlimit::Floa
     alpha = 0.0
     a = 0.0962
     b = 0.5769
-    for i = 13:n
+    @inbounds for i = 13:n
         # Smooth and detrend price movement ====================================
         smooth[7] = (4*x[i] + 3*x[i-1] + 2*x[i-2] + x[i-3]) * 0.1
         detrend[7] = (0.0962*smooth[7]+0.5769*smooth[5]-0.5769*smooth[3]-0.0962*smooth[1]) * (0.075*per[1]+0.54)
@@ -202,8 +148,8 @@ function mama{T<:Float64}(x::Array{T,1}, fastlimit::Float64=0.5, slowlimit::Floa
         if alpha < slowlimit
             alpha = slowlimit
         end
-        ma[i,1] = alpha*x[i] + (1.0-alpha)*ma[i-1,1]
-        ma[i,2] = 0.5*alpha*ma[i,1] + (1.0-0.5*alpha)*ma[i-1,2]
+        out[i,1] = alpha*x[i] + (1.0-alpha)*out[i-1,1]
+        out[i,2] = 0.5*alpha*out[i,1] + (1.0-0.5*alpha)*out[i-1,2]
         # Reset/increment array variables
         smooth = [smooth[2:7]; smooth[7]]
         detrend = [detrend[2:7]; detrend[7]]
@@ -217,33 +163,32 @@ function mama{T<:Float64}(x::Array{T,1}, fastlimit::Float64=0.5, slowlimit::Floa
         sper[1] = sper[2]
         phase[1] = phase[2]
     end
-    ma[1:32,:] = NaN
-    return ma
+    out[1:32,:] = NaN
+    return out
 end
 
 
 @doc doc"""
-hma{T<:Real}(x::Array{T,1}, n::Int=1)
+hma{Float64}(x::Vector{Float64}, n::Int64=1)
 
 Hull moving average
 """ ->
-function hma{T<:Real}(x::Array{T,1}, n::Int=20)
-    return wma(2 * wma(x, Int(round(n/2.0))) - wma(x, n), Int(trunc(sqrt(n))))
+function hma{Float64}(x::Vector{Float64}, n::Int64=20)
+    return wma(2 * wma(x, Int64(round(n/2.0))) - wma(x, n), Int64(trunc(sqrt(n))))
 end
 
 @doc doc"""
-swma{T<:Real}(x::Array{T,1}, n::Int)
+swma{Float64}(x::Vector{Float64}, n::Int64)
 
 Sine-weighted moving average
 """ ->
-function swma{T<:Real}(x::Array{T,1}, n::Int=10)
-    N = size(x,1)
-    ma = [NaN for i=1:N]
+function swma{Float64}(x::Vector{Float64}, n::Int64=10)
+    @assert n<size(x,1) && n>0 "Argument n out of bounds."
     w = sin(collect(1:n) * 180.0/6.0)  # numerator weights
     d = sum(w)  # denominator = sum(numerator weights)
-    for i = n:N
-        ma[i] = sum(w .* x[i-n+1:i]) / d
+    @inbounds for i = n:size(x,1)
+        out[i] = sum(w .* x[i-n+1:i]) / d
     end
-    return ma
+    return out
 end
 
