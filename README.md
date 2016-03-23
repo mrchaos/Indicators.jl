@@ -10,6 +10,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - WMA (weighted moving average)
 - EMA (exponential moving average)
 - TRIMA (triangular moving average)
+- KAMA (Kaufman adaptive moving average)
 - MAMA (MESA adaptive moving average, developed by John Ehlers)
 - HMA (Hull moving average)
 - SWMA (sine-weighted moving average)
@@ -36,6 +37,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - Rolling/running maximum
 - Rolling/running minimum
 - Rolling/running MAD (mean absolute deviation)
+- $n$th lag and difference
 
 
 ## Todo
@@ -53,7 +55,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - ZLEMA (zero lag exponential moving average)
 - EVWMA (elastic, volume-weighted moving average)
 - VMA (variable-length moving average)
-- KAMA (Kaufman adaptive moving average)
+- ~~KAMA (Kaufman adaptive moving average)~~
 - Aroon Indicator / Aroon Oscillator
 - Chaikin Money Flow
 - ROC (rate of change)
