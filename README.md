@@ -35,6 +35,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - Rolling/running correlation
 - Rolling/running maximum
 - Rolling/running minimum
+- Rolling/running MAD (mean absolute deviation)
 
 
 ## Todo
