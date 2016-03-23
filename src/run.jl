@@ -1,4 +1,59 @@
 @doc doc"""
+lag{Float64}(x::Array{Float64}, n::Int64=1)
+
+Lag an array by `n` steps.
+
+- If `n` == 0, then `x` is returned.
+- If `n` > 0, then rows of `x` are shifted downwards `n` times.
+- If `n` < 0, then rows of `x` are shifted upwards `n` times.
+""" ->
+function lag{Float64}(x::Array{Float64}, n::Int64=1)
+    @assert abs(n)<size(x,1) "Argument n out of bounds."
+    if n == 0
+        return x
+    elseif n > 0
+        out = zeros(x)
+        out[1:n,:] = NaN
+        out[n+1:end,:] = x[1:end-n,:]
+        return out
+    elseif n < 0
+        out = zeros(x)
+        out[end+n+1:end,:] = NaN
+        out[1:end+n,:] = x[1-n:end,:]
+        return out
+    end
+end
+
+@doc doc"""
+diffn{Float64}(x::Vector{Float64}, n::Int64=1)
+
+Lagged differencing
+""" ->
+function diffn{Float64}(x::Vector{Float64}, n::Int64=1)
+    @assert n<size(x,1) && n>0 "Argument n out of bounds."
+    out = zeros(x)
+    out[1:n] = NaN
+    @inbounds for i=n+1:size(x,1)
+        out[i] = x[i] - x[i-n]
+    end
+    return out
+end
+
+@doc doc"""
+diffn{Float64}(x::Array{Float64,2}, n::Int64=1)
+
+Lagged differencing
+""" ->
+function diffn{Float64}(X::Array{Float64,2}, n::Int64=1)
+    @assert n<size(X,1) && n>0 "Argument n out of bounds."
+    out = zeros(X)
+    @inbounds for j = 1:size(X,2)
+        out[:,j] = diffn(X[:,j], n)
+    end
+    return out
+end
+
+@doc doc"""
 mode{T}(a::AbstractArray{T})
 
 Compute the mode of an arbitrary array

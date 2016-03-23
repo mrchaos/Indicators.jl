@@ -3,9 +3,10 @@ VERSION >= v"0.4.0" && __precompile__(true)
 module Indicators
 
 export
-    runmean, runsum, wilder_sum, runvar, runsd, runcov, runmax, runmin, runmad, mode,
-    sma, trima, wma, ema, mama, hma, swma, dema, tema,
-    macd, rsi, adx, psar,
+    runmean, runsum, runvar, runsd, runcov, runmax, runmin, runmad,
+    wilder_sum, mode, diffn, lag,
+    sma, trima, wma, ema, kama, mama, hma, swma, dema, tema,
+    roc, macd, rsi, adx, psar,
     bbands, tr, atr, keltner
 
 include("run.jl")

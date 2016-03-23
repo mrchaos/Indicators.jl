@@ -1,9 +1,29 @@
 # TODO: include matype options in macd, rsi, and adx functions
 
+@doc """
+roc{Float64}(x::Vector{Float64}, n::Int64=1)
+
+Rate of change indicator (percent change between i'th observation and (i-n)'th observation)
+""" ->
+function roc{Float64}(x::Vector{Float64}, n::Int64=1)
+    @assert n<size(x,1) && n>0 "Argument n out of bounds."
+    out = zeros(x)
+    @inbounds for i = n:size(x,1)
+        out[i] = x[i]/x[i-n] - 1.0
+    end
+    out[1:n] = NaN
+    return out
+end
+
 @doc doc"""
 macd{Float64}(x::Vector{Float64}, nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)
 
 Moving average convergence-divergence
+
+`Output:`
+- Column 1: MACD
+- Column 2: MACD Signal Line
+- Column 3: MACD Histogram
 """ ->
 function macd{Float64}(x::Vector{Float64}, nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)
     out = zeros(size(x,1), 3)  # cols := fast ma, signal, histogram
@@ -42,6 +62,10 @@ end
 adx{Float64}(hlc::Array{Float64}, n::Int64=14; wilder=true)
 
 Average directional index
+`Output:`
+- Column 1: DI+
+- Column 2: DI-
+- Column 3: ADX
 """ ->
 function adx{Float64}(hlc::Array{Float64}, n::Int64=14; wilder=true)
     @assert n<size(hlc,1) && n>0 "Argument n is out of bounds."

@@ -10,7 +10,7 @@ function sma{Float64}(x::Vector{Float64}, n::Int64=10)
 end
 
 @doc doc"""
-trima{Float64}(x::Vector{Float64}, n::Int64=10)
+trima{Float64}(x::Vector{Float64}, n::Int64=10; ma::Function=sma, args...)
 
 Triangular moving average
 """ ->
@@ -33,17 +33,18 @@ function wma{Float64}(x::Vector{Float64}, n::Int64=10; wts::Vector{Float64}=coll
 end
 
 @doc doc"""
-ema{Float64}(x::Vector{Float64}, n::Int64=10; alpha=2.0/(n+1), wilder::Bool=false)
+ema{Float64}(x::Vector{Float64}, n::Int64=10; alpha::Float64=2.0/(n+1), wilder::Bool=false)
 
 Exponential moving average
 """ ->
-function ema{Float64}(x::Vector{Float64}, n::Int64=10; alpha=2.0/(n+1), wilder::Bool=false)
+function ema{Float64}(x::Vector{Float64}, n::Int64=10; alpha::Float64=2.0/(n+1), wilder::Bool=false)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     if wilder
         alpha = 1.0/n
     end
-	out = fill(NaN, size(x,1))
+    out = zeros(x)
     i = first(find(!isnan(x)))
+    out[1:n+i-2] = NaN
     out[n+i-1] = mean(x[i:n+i-1])
     @inbounds for i = n+i:size(x,1)
         out[i] = alpha * (x[i] - out[i-1]) + out[i-1]
@@ -186,9 +187,35 @@ function swma{Float64}(x::Vector{Float64}, n::Int64=10)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     w = sin(collect(1:n) * 180.0/6.0)  # numerator weights
     d = sum(w)  # denominator = sum(numerator weights)
+    out = zeros(x)
+    out[1:n-1] = NaN
     @inbounds for i = n:size(x,1)
         out[i] = sum(w .* x[i-n+1:i]) / d
     end
     return out
 end
 
+@doc doc"""
+kama{Float64}(x::Vector{Float64}, n::Int64=10, nfast::Float64=0.6667, nslow::Float64=0.0645)
+
+Kaufman adaptive moving average
+""" ->
+function kama{Float64}(x::Vector{Float64}, n::Int64=10, nfast::Float64=0.6667, nslow::Float64=0.0645)
+    @assert n<size(x,1) && n>0 "Argument n out of bounds."
+    @assert nfast>0.0 && nfast<1.0 "Argument nfast out of bounds."
+    @assert nslow>0.0 && nslow<1.0 "Argument nslow out of bounds."
+    dir = diffn(x, n)  # price direction := net change in price over past n periods
+    vol = runsum(abs(diffn(x,1)), n, false)  # volatility/noise
+    er = abs(dir) ./ vol  # efficiency ratio
+    ssc = er * (nfast-nslow) + nslow  # scaled smoothing constant
+    sc = ssc .^ 2  # smoothing constant
+    # initiliaze result variable
+    out = zeros(x)
+    i = first(find(!isnan(x)))
+    out[1:n+i-2] = NaN
+    out[n+i-1] = mean(x[i:n+i-1])
+    @inbounds for i = n+1:size(x,1)
+        out[i] = out[i-1] + sc[i]*(x[i]-out[i-1])
+    end
+    return out
+end
