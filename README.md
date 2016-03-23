@@ -22,6 +22,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - RSI (relative strength index)
 - ADX (average directional index)
 - Parabolic SAR (stop and reverse)
+- ROC (rate of change)
 
 ### Volatility Indicators
 - Bollinger Bands
@@ -58,7 +59,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - ~~KAMA (Kaufman adaptive moving average)~~
 - Aroon Indicator / Aroon Oscillator
 - Chaikin Money Flow
-- ROC (rate of change)
+- ~~ROC (rate of change)~~
 - Momentum
 - Stochastics
   - Slow Stochastics
