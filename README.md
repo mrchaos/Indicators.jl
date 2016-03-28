@@ -45,20 +45,22 @@ Indicators is a Julia package offering efficient implementations of many technic
 
 ## Todo
 - Moving Linear Regression
-- VWMA (volume-weighted moving average)
+- ~~KAMA (Kaufman adaptive moving average)~~
 - ~~DEMA (double exponential moving average)~~
 - ~~TEMA (tripe exponential moving average)~~
-- ~~Parabolic SAR~~
-- ~~Williams %R~~
-- CCI (commodity channel index)
-- ~~KST (know sure thing)~~
-- Donchian Channel
+- Hamming moving average
+- MMA (modified moving average)
+- VWMA (volume-weighted moving average)
 - ALMA (Arnaud Legoux moving average)
 - VWAP (volume-weighted average price)
 - ZLEMA (zero lag exponential moving average)
 - EVWMA (elastic, volume-weighted moving average)
 - VMA (variable-length moving average)
-- ~~KAMA (Kaufman adaptive moving average)~~
+- ~~Parabolic SAR~~
+- ~~Williams %R~~
+- ~~KST (know sure thing)~~
+- CCI (commodity channel index)
+- Donchian Channel
 - Aroon Indicator / Aroon Oscillator
 - Chaikin Money Flow
 - ~~ROC (rate of change)~~
