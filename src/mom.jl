@@ -189,3 +189,15 @@ function wpr{Float64}(hlc::Array{Float64,2}, n::Int64=14)
     lolo = runmin(hlc[:,2], n, false)
     return -100 * (hihi - hlc[:,3]) ./ (hihi - lolo)
 end
+
+@doc doc"""
+cci{Float64}(hlc::Array{Float64,2}, n::Int64=20, c::Float64=0.015; ma::Function=sma)
+
+Commodity channel index
+""" ->
+function cci{Float64}(hlc::Array{Float64,2}, n::Int64=20, c::Float64=0.015; ma::Function=sma)
+    tp = (hlc[:,1] + hlc[:,2] + hlc[:,3]) / 3.0
+    dev = runmad(tp, n, false, fun=mean)
+    avg = ma(tp, n)
+    return (tp - avg) ./ (c * dev)
+end

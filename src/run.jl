@@ -143,7 +143,7 @@ function wilder_sum{Float64}(x::Vector{Float64}, n::Int64=10)
 end
 
 @doc doc"""
-runmad{Float64}(x::Vector{Float64}, n::Int64=10, fun::Function=median)
+runmad{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true; fun::Function=median)
 
 Compute the running or rolling mean absolute deviation of an array
 """ ->

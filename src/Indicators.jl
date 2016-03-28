@@ -6,7 +6,7 @@ export
     runmean, runsum, runvar, runsd, runcov, runmax, runmin, runmad,
     wilder_sum, mode, diffn, lag,
     sma, trima, wma, ema, kama, mama, hma, swma, dema, tema,
-    roc, macd, rsi, adx, psar, kst, wpr,
+    roc, macd, rsi, adx, psar, kst, wpr, cci,
     bbands, tr, atr, keltner
 
 include("run.jl")
