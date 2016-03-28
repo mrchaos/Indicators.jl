@@ -4,6 +4,8 @@ Indicators is a Julia package offering efficient implementations of many technic
 
 ![alt text](https://raw.githubusercontent.com/dysonance/Indicators.jl/master/examples/example1.png "Example 1")
 
+![alt text](https://raw.githubusercontent.com/dysonance/Indicators.jl/master/examples/example2.png "Example 2")
+
 ## Implemented
 ### Moving Averages
 - SMA (simple moving average)
