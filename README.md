@@ -24,6 +24,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - Parabolic SAR (stop and reverse)
 - ROC (rate of change)
 - KST (Know Sure Thing)
+- Williams %R
 
 ### Volatility Indicators
 - Bollinger Bands
@@ -48,7 +49,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - ~~DEMA (double exponential moving average)~~
 - ~~TEMA (tripe exponential moving average)~~
 - ~~Parabolic SAR~~
-- Williams %R
+- ~~Williams %R~~
 - CCI (commodity channel index)
 - ~~KST (know sure thing)~~
 - Donchian Channel

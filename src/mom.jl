@@ -21,8 +21,11 @@ macd{Float64}(x::Vector{Float64}, nfast::Int64=12, nslow::Int64=26, nsig::Int64=
 Moving average convergence-divergence
 
 `Output:`
+
 - Column 1: MACD
+
 - Column 2: MACD Signal Line
+
 - Column 3: MACD Histogram
 """ ->
 function macd{Float64}(x::Vector{Float64}, nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)
@@ -62,9 +65,13 @@ end
 adx{Float64}(hlc::Array{Float64}, n::Int64=14; wilder=true)
 
 Average directional index
+
 `Output:`
+
 - Column 1: DI+
+
 - Column 2: DI-
+
 - Column 3: ADX
 """ ->
 function adx{Float64}(hlc::Array{Float64}, n::Int64=14; wilder=true)
@@ -98,8 +105,11 @@ psar{Float64}(hl::Array{Float64,2}, af::Float64=0.02, af_max::Float64=0.2, af_mi
 Parabolic stop and reverse (SAR)
 
 hl		- 2D array of high and low prices in first and second columns respectively
+
 af_min  - starting/initial value for acceleration factor
+
 af_max  - maximum acceleration factor (accel factor capped at this value)
+
 af_inc	- increment to the acceleration factor (speed of increase in accel factor)
 """ ->
 function psar{Float64}(hl::Array{Float64}, af_min::Float64=0.02, af_max::Float64=0.2, af_inc::Float64=af_min)
@@ -167,4 +177,15 @@ function kst{Float64}(x::Vector{Float64},
         out += ma(roc(x, nroc[j]), navg[j]) * wgts[j]
     end
     return out
+end
+
+@doc doc"""
+wpr{Float64}(hlc::Array{Float64,2}, n::Int64=14)
+
+Williams %R
+""" ->
+function wpr{Float64}(hlc::Array{Float64,2}, n::Int64=14)
+    hihi = runmax(hlc[:,1], n, false)
+    lolo = runmin(hlc[:,2], n, false)
+    return -100 * (hihi - hlc[:,3]) ./ (hihi - lolo)
 end
