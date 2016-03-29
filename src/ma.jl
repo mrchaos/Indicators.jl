@@ -243,3 +243,4 @@ function alma{Float64}(x::Vector{Float64}, n::Int64=9, offset::Float64=0.85, sig
     end
     return out
 end
+

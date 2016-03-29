@@ -15,6 +15,13 @@ Indicators is a Julia package offering efficient implementations of many technic
 - SWMA (sine-weighted moving average)
 - DEMA (double exponential moving average)
 - TEMA (tripe exponential moving average)
+- MLR (moving linear regression)
+    - Prediction
+    - Slope
+    - Intercept
+    - Standard error
+    - Upper & lower bound
+    - R-squared
 
 ### Momentum Indicators
 - MACD (moving average convergence-divergence)
@@ -44,7 +51,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 
 
 ## Todo
-- Moving Linear Regression
+- ~~Moving Linear Regression~~
 - ~~KAMA (Kaufman adaptive moving average)~~
 - ~~DEMA (double exponential moving average)~~
 - ~~TEMA (tripe exponential moving average)~~

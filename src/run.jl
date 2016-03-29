@@ -199,22 +199,44 @@ function runsd{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
 end
 
 @doc doc"""
-runcov{Float64}(xy::Array{Float64,2}, n::Int64=10, cumulative::Bool=true)
+runcov{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
 
 Compute the running or rolling covariance of two arrays
 """ ->
-function runcov{Float64}(xy::Array{Float64,2}, n::Int64=10, cumulative::Bool=true)
-    @assert size(xy,2) == 2 "Argument xy must have 2 columns."
-    @assert n<size(xy,1) && n>0 "Argument n is out of bounds."
-    out = zeros(size(xy,1))
+function runcov{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
+    @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
+    @assert n<size(x,1) && n>0 "Argument n is out of bounds."
+    out = zeros(x)
     out[1:n-1] = NaN
     if cumulative
-        @inbounds for i = n:N
+        @inbounds for i = n:length(x)
             out[i] = cov(x[1:i], y[1:i])
         end
     else
-        @inbounds for i = n:N
+        @inbounds for i = n:length(x)
             out[i] = cov(x[i-n+1:i], y[i-n+1:i])
+        end
+    end
+    return out
+end
+
+@doc doc"""
+runcor{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
+
+Compute the running or rolling correlation of two arrays
+""" ->
+function runcor{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
+    @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
+    @assert n<size(x,1) && n>0 "Argument n is out of bounds."
+    out = zeros(x)
+    out[1:n-1] = NaN
+    if cumulative
+        @inbounds for i = n:length(x)
+            out[i] = cor(x[1:i], y[1:i])
+        end
+    else
+        @inbounds for i = n:length(x)
+            out[i] = cor(x[i-n+1:i], y[i-n+1:i])
         end
     end
     return out
