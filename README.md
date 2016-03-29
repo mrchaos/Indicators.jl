@@ -11,6 +11,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - KAMA (Kaufman adaptive moving average)
 - MAMA (MESA adaptive moving average, developed by John Ehlers)
 - HMA (Hull moving average)
+- ALMA (Arnaud-Legoux moving average)
 - SWMA (sine-weighted moving average)
 - DEMA (double exponential moving average)
 - TEMA (tripe exponential moving average)
@@ -47,10 +48,10 @@ Indicators is a Julia package offering efficient implementations of many technic
 - ~~KAMA (Kaufman adaptive moving average)~~
 - ~~DEMA (double exponential moving average)~~
 - ~~TEMA (tripe exponential moving average)~~
+- ~~ALMA (Arnaud Legoux moving average)~~
 - Hamming moving average
 - MMA (modified moving average)
 - VWMA (volume-weighted moving average)
-- ALMA (Arnaud Legoux moving average)
 - VWAP (volume-weighted average price)
 - ZLEMA (zero lag exponential moving average)
 - EVWMA (elastic, volume-weighted moving average)

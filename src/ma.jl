@@ -219,3 +219,27 @@ function kama{Float64}(x::Vector{Float64}, n::Int64=10, nfast::Float64=0.6667, n
     end
     return out
 end
+
+@doc doc"""
+alma{Float64}(x::Vector{Float64}, n::Int64=9, offset::Float64=0.85, sigma::Float64=6.0)
+
+Arnaud-Legoux moving average
+""" ->
+function alma{Float64}(x::Vector{Float64}, n::Int64=9, offset::Float64=0.85, sigma::Float64=6.0)
+    @assert n<size(x,1) && n>0 "Argument n out of bounds."
+    @assert sigma>0.0 "Argument sigma must be greater than 0."
+    @assert offset>=0.0 && offset<=1 "Argument offset must be in (0,1)."
+    out = zeros(x)
+    out[1:n-1] = NaN
+    m = floor(offset*(float(n)-1.0))
+    s = float(n) / sigma
+    w = exp(-(((0.0:-1.0:-float(n)+1.0)-m).^2.0) / (2.0*s*s))
+    wsum = sum(w)
+    if wsum != 0.0
+        w = w ./ wsum
+    end
+    @inbounds for i = n:length(x)
+        out[i] = sum(x[i-n+1] .* w)
+    end
+    return out
+end
