@@ -1,5 +1,15 @@
 # TODO: include matype options in macd, rsi, and adx functions
 
+@doc doc"""
+momentum{Float64}(x::Vector{Float64}, n::Int64=1)
+
+Momentum indicator (price now vs price `n` periods back)
+""" ->
+function momentum{Float64}(x::Vector{Float64}, n::Int64=1)
+    @assert n>0 "Argument n must be positive."
+    return diffn(x, n)
+end
+
 @doc """
 roc{Float64}(x::Vector{Float64}, n::Int64=1)
 
@@ -23,9 +33,7 @@ Moving average convergence-divergence
 `Output:`
 
 - Column 1: MACD
-
 - Column 2: MACD Signal Line
-
 - Column 3: MACD Histogram
 """ ->
 function macd{Float64}(x::Vector{Float64}, nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)
@@ -69,9 +77,7 @@ Average directional index
 `Output:`
 
 - Column 1: DI+
-
 - Column 2: DI-
-
 - Column 3: ADX
 """ ->
 function adx{Float64}(hlc::Array{Float64}, n::Int64=14; wilder=true)
@@ -104,13 +110,10 @@ psar{Float64}(hl::Array{Float64,2}, af::Float64=0.02, af_max::Float64=0.2, af_mi
 
 Parabolic stop and reverse (SAR)
 
-hl		- 2D array of high and low prices in first and second columns respectively
-
-af_min  - starting/initial value for acceleration factor
-
-af_max  - maximum acceleration factor (accel factor capped at this value)
-
-af_inc	- increment to the acceleration factor (speed of increase in accel factor)
+- hl: 2D array of high and low prices in first and second columns respectively
+- af_mi: starting/initial value for acceleration factor
+- af_max: maximum acceleration factor (accel factor capped at this value)
+- af_inc: increment to the acceleration factor (speed of increase in accel factor)
 """ ->
 function psar{Float64}(hl::Array{Float64}, af_min::Float64=0.02, af_max::Float64=0.2, af_inc::Float64=af_min)
     @assert af_min<1.0 && af_min>0.0 "Argument af_min must be in [0,1]."
@@ -201,3 +204,4 @@ function cci{Float64}(hlc::Array{Float64,2}, n::Int64=20, c::Float64=0.015; ma::
     avg = ma(tp, n)
     return (tp - avg) ./ (c * dev)
 end
+
