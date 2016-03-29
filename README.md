@@ -24,11 +24,12 @@ Indicators is a Julia package offering efficient implementations of many technic
     - R-squared
 
 ### Momentum Indicators
+- Momentum (n-day price change)
+- ROC (rate of change)
 - MACD (moving average convergence-divergence)
 - RSI (relative strength index)
 - ADX (average directional index)
 - Parabolic SAR (stop and reverse)
-- ROC (rate of change)
 - KST (Know Sure Thing)
 - Williams %R
 - CCI (commodity channel index)
@@ -67,11 +68,11 @@ Indicators is a Julia package offering efficient implementations of many technic
 - ~~Williams %R~~
 - ~~KST (know sure thing)~~
 - ~~CCI (commodity channel index)~~
+- ~~ROC (rate of change)~~
+- ~~Momentum~~
 - Donchian Channel
 - Aroon Indicator / Aroon Oscillator
 - Chaikin Money Flow
-- ~~ROC (rate of change)~~
-- Momentum
 - Stochastics
   - Slow Stochastics
   - Fast Stochastics

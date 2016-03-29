@@ -7,7 +7,7 @@ export
     wilder_sum, mode, diffn, lag,
     sma, trima, wma, ema, kama, mama, hma, swma, dema, tema, alma,
     mlr_beta, mlr_slope, mlr_intercept, mlr, mlr_se, mlr_ub, mlr_lb, mlr_bands, mlr_rsq,
-    roc, macd, rsi, adx, psar, kst, wpr, cci,
+    momentum, roc, macd, rsi, adx, psar, kst, wpr, cci,
     bbands, tr, atr, keltner
 
 include("run.jl")
