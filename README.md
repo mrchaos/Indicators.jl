@@ -30,6 +30,8 @@ Indicators is a Julia package offering efficient implementations of many technic
 - RSI (relative strength index)
 - ADX (average directional index)
 - Parabolic SAR (stop and reverse)
+- Fast & slow stochastics
+- SMI (stochastic momentum indicator)
 - KST (Know Sure Thing)
 - Williams %R
 - CCI (commodity channel index)
@@ -73,10 +75,10 @@ Indicators is a Julia package offering efficient implementations of many technic
 - Donchian Channel
 - Aroon Indicator / Aroon Oscillator
 - Chaikin Money Flow
-- Stochastics
-  - Slow Stochastics
-  - Fast Stochastics
-  - Stochastic Momentum Index
+- ~~Stochastics~~
+  - ~~Slow Stochastics~~
+  - ~~Fast Stochastics~~
+  - ~~Stochastic Momentum Index~~
 - Ultimate Oscillator
 - OBV (on-balance volume)
 - Too many more to name...

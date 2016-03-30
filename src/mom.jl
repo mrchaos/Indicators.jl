@@ -36,22 +36,21 @@ Moving average convergence-divergence
 - Column 2: MACD Signal Line
 - Column 3: MACD Histogram
 """ ->
-function macd{Float64}(x::Vector{Float64}, nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)
-    out = zeros(size(x,1), 3)  # cols := fast ma, signal, histogram
-	out = fill(NaN, (size(x,1),3))
-    out[:,1] = ema(x, nfast) - ema(x, nslow)
-    n = max(nfast, nslow)
-    out[n:end,2] = ema(out[n:end,1], nsig)
+function macd{Float64}(x::Vector{Float64}, nfast::Int64=12, nslow::Int64=26, nsig::Int64=9;
+                       fastMA::Function=ema, slowMA::Function=ema, signalMA::Function=sma)
+    out = zeros(Float64, (length(x),3))
+    out[:,1] = fastMA(x, nfast) - slowMA(x, nslow)
+    out[:,2] = signalMA(out[:,1], nsig)
     out[:,3] = out[:,1] - out[:,2]
     return out
 end
 
 @doc doc"""
-rsi{Float64}(x::Vector{Float64}, n::Int64=14; wilder::Bool=true)
+rsi{Float64}(x::Vector{Float64}, n::Int64=14; ma::Function=ema, args...)
 
 Relative strength index
 """ ->
-function rsi{Float64}(x::Vector{Float64}, n::Int64=14; wilder::Bool=true)
+function rsi{Float64}(x::Vector{Float64}, n::Int64=14; ma::Function=ema, args...)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     N = size(x,1)
     ups = zeros(N)
@@ -65,7 +64,7 @@ function rsi{Float64}(x::Vector{Float64}, n::Int64=14; wilder::Bool=true)
             dns[i] = -dx[i]
         end
     end
-    rs = [NaN; ema(ups[2:end], n, wilder=wilder) ./ ema(dns[2:end], n, wilder=wilder)]
+    rs = [NaN; ma(ups[2:end], n; args...) ./ ma(dns[2:end], n; args...)]
     return 100.0 - 100.0 ./ (1.0 + rs)
 end
 
@@ -80,7 +79,7 @@ Average directional index
 - Column 2: DI-
 - Column 3: ADX
 """ ->
-function adx{Float64}(hlc::Array{Float64}, n::Int64=14; wilder=true)
+function adx{Float64}(hlc::Array{Float64}, n::Int64=14; ma::Function=ema, args...)
     @assert n<size(hlc,1) && n>0 "Argument n is out of bounds."
     if size(hlc,2) != 3
         error("HLC array must have three columns")
@@ -98,10 +97,10 @@ function adx{Float64}(hlc::Array{Float64}, n::Int64=14; wilder=true)
             dndm[i] = dnmove
         end
     end
-    dip = [NaN; ema(updm[2:N], n, wilder=wilder)] ./ atr(hlc, n) * 100.0
-    dim = [NaN; ema(dndm[2:N], n, wilder=wilder)] ./ atr(hlc, n) * 100.0
+    dip = [NaN; ma(updm[2:N], n; args...)] ./ atr(hlc, n) * 100.0
+    dim = [NaN; ma(dndm[2:N], n; args...)] ./ atr(hlc, n) * 100.0
     dmx = abs(dip-dim) ./ (dip+dim)
-    adx = [fill(NaN,n); ema(dmx[n+1:N], n, wilder=wilder)] * 100.0
+    adx = [fill(NaN,n); ma(dmx[n+1:N], n; args...)] * 100.0
     return [dip dim adx]
 end
 
@@ -164,6 +163,9 @@ function psar{Float64}(hl::Array{Float64}, af_min::Float64=0.02, af_max::Float64
 end
 
 @doc doc"""
+kst{Float64}(x::Vector{Float64},
+                      nroc::Vector{Int64}=[10,15,20,30], navg::Vector{Int64}=[10,10,10,15],
+                      wgts::Vector{Int64}=collect(1:length(nroc)); ma::Function=sma)
 
 KST (Know Sure Thing) -- smoothed and summed rates of change
 """ ->
@@ -198,10 +200,52 @@ cci{Float64}(hlc::Array{Float64,2}, n::Int64=20, c::Float64=0.015; ma::Function=
 
 Commodity channel index
 """ ->
-function cci{Float64}(hlc::Array{Float64,2}, n::Int64=20, c::Float64=0.015; ma::Function=sma)
+function cci{Float64}(hlc::Array{Float64,2}, n::Int64=20, c::Float64=0.015; ma::Function=sma, args...)
     tp = (hlc[:,1] + hlc[:,2] + hlc[:,3]) / 3.0
     dev = runmad(tp, n, false, fun=mean)
-    avg = ma(tp, n)
+    avg = ma(tp, n; args...)
     return (tp - avg) ./ (c * dev)
 end
 
+@doc doc"""
+stoch{Float64}(hlc::Array{Float64,2}, nK::Int64=14, nD::Int64=3;
+               kind::ByteString="fast", ma::Function=sma, args...)
+
+Stochastic oscillator (fast or slow)
+""" ->
+function stoch{Float64}(hlc::Array{Float64,2}, nK::Int64=14, nD::Int64=3;
+                        kind::ByteString="fast", ma::Function=sma, args...)
+    @assert kind in ["fast","slow"] "Argument `kind` must be either \"fast\" or \"slow\"."
+    @assert nK<size(hlc,1) && nK>0 "Argument `nK` out of bounds."
+    @assert nD<size(hlc,1) && nD>0 "Argument `nD` out of bounds."
+    hihi = runmax(hlc[:,1], nK, false)
+    lolo = runmin(hlc[:,2], nK, false)
+    out = zeros(Float64, (size(hlc,1),2))
+    out[:,1] = (hlc[:,3]-lolo) ./ (hihi-lolo) * 100.0
+    out[:,2] = ma(out[:,1], nD; args...)
+    if kind == "slow"
+        out[:,1] = out[:,2]
+        out[:,2] = ma(out[:,1], nD; args...)
+    end
+    return out
+end
+
+@doc doc"""
+smi{Float64}(hlc::Array{Float64,2}, n::Int64=13, nFast::Int64=2, nSlow::Int64=25, nSig::Int64=9;
+             maFast::Function=ema, maSlow::Function=ema, maSig::Function=sma)
+
+SMI (stochastic momentum oscillator)
+""" ->
+function smi{Float64}(hlc::Array{Float64,2}, n::Int64=13, nFast::Int64=2, nSlow::Int64=25, nSig::Int64=9;
+                      maFast::Function=ema, maSlow::Function=ema, maSig::Function=sma)
+    hihi = runmax(hlc[:,1], n, false)
+    lolo = runmin(hlc[:,2], n, false)
+    hldif = hihi-lolo
+    delta = hlc[:,3] - (hihi+lolo) / 2.0
+    numer = maSlow(maFast(delta, nFast), nSlow)
+    denom = maSlow(maFast(hldif, nFast), nSlow) / 2.0
+    out = zeros(Float64, (size(hlc,1),2))
+    out[:,1] = 100.0*(numer./denom)
+    out[:,2] = maSig(out[:,1])
+    return out
+end
