@@ -114,11 +114,12 @@ Column 2: Regression estimate
 Column 3: Upper bound
 """ ->
 function mlr_bands{Float64}(y::Vector{Float64}, n::Int64=10, se::Float64=2.0)
-    out = zeros(Float64, (length(y,3)))
+    out = zeros(Float64, (length(y),3))
     out[1:n-1,:] = NaN
     out[:,2] = mlr(y, n)
     out[:,1] = mlr_lb(y, n, se)
     out[:,1] = mlr_ub(y, n, se)
+    return out
 end
 
 @doc doc"""

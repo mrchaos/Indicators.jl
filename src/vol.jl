@@ -3,10 +3,10 @@ bbands{Float64}(x::Vector{Float64}, n::Int64=10, sigma::Float64=2.0)
 
 Bollinger Bands (moving average with standard deviation bands)
 """ ->
-function bbands{Float64}(x::Vector{Float64}, n::Int64=10, sigma::Float64=2.0)
+function bbands{Float64}(x::Vector{Float64}, n::Int64=10, sigma::Float64=2.0; ma::Function=sma, args...)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(size(x,1), 3)  # cols := lower bound, ma, upper bound
-    out[:,2] = sma(x, n)
+    out[:,2] = ma(x, n; args...)
     sd = runsd(x, n, false)
     out[:,1] = out[:,2] - sigma*sd
     out[:,3] = out[:,2] + sigma*sd

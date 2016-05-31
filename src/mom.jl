@@ -169,9 +169,8 @@ kst{Float64}(x::Vector{Float64},
 
 KST (Know Sure Thing) -- smoothed and summed rates of change
 """ ->
-function kst{Float64}(x::Vector{Float64},
-                      nroc::Vector{Int64}=[10,15,20,30], navg::Vector{Int64}=[10,10,10,15],
-                      wgts::Vector{Int64}=collect(1:length(nroc)); ma::Function=sma)
+function kst{Float64}(x::Vector{Float64}, nroc::Vector{Int64}=[10,15,20,30], navg::Vector{Int64}=[10,10,10,15];
+                      wgts::Vector{Int64}=collect(1:length(nroc)), ma::Function=sma)
     @assert length(nroc) == length(navg)
     @assert all(nroc.>0) && all(nroc.<size(x,1))
     @assert all(navg.>0) && all(navg.<size(x,1))
@@ -214,8 +213,8 @@ stoch{Float64}(hlc::Array{Float64,2}, nK::Int64=14, nD::Int64=3;
 Stochastic oscillator (fast or slow)
 """ ->
 function stoch{Float64}(hlc::Array{Float64,2}, nK::Int64=14, nD::Int64=3;
-                        kind::ByteString="fast", ma::Function=sma, args...)
-    @assert kind in ["fast","slow"] "Argument `kind` must be either \"fast\" or \"slow\"."
+                        kind::Symbol=:fast, ma::Function=sma, args...)
+    @assert kind == :fast || kind == :slow "Argument `kind` must be either :fast or :slow"
     @assert nK<size(hlc,1) && nK>0 "Argument `nK` out of bounds."
     @assert nD<size(hlc,1) && nD>0 "Argument `nD` out of bounds."
     hihi = runmax(hlc[:,1], nK, false)
