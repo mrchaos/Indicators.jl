@@ -24,29 +24,29 @@
 #     end
 # end
 
-@doc doc"""
-Lag an array by `n` steps.
-
-- If `n` == 0, then `x` is returned.
-- If `n` > 0, then rows of `x` are shifted downwards `n` times.
-- If `n` < 0, then rows of `x` are shifted upwards `n` times.
-""" ->
-function lag{Float64}(x::Array{Float64}, n::Int64=1)
-    @assert abs(n)<size(x,1) "Argument n out of bounds."
-    if n == 0
-        return x
-    elseif n > 0
-        out = zeros(x)
-        out[1:n,:] = NaN
-        out[n+1:end,:] = x[1:end-n,:]
-        return out
-    elseif n < 0
-        out = zeros(x)
-        out[end+n+1:end,:] = NaN
-        out[1:end+n,:] = x[1-n:end,:]
-        return out
-    end
-end
+# @doc doc"""
+# Lag an array by `n` steps.
+# 
+# - If `n` == 0, then `x` is returned.
+# - If `n` > 0, then rows of `x` are shifted downwards `n` times.
+# - If `n` < 0, then rows of `x` are shifted upwards `n` times.
+# """ ->
+# function lag{Float64}(x::Array{Float64}, n::Int64=1)
+#     @assert abs(n)<size(x,1) "Argument n out of bounds."
+#     if n == 0
+#         return x
+#     elseif n > 0
+#         out = zeros(x)
+#         out[1:n,:] = NaN
+#         out[n+1:end,:] = x[1:end-n,:]
+#         return out
+#     elseif n < 0
+#         out = zeros(x)
+#         out[end+n+1:end,:] = NaN
+#         out[1:end+n,:] = x[1-n:end,:]
+#         return out
+#     end
+# end
 
 @doc doc"""
 Lagged differencing

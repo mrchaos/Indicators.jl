@@ -16,5 +16,7 @@ include("reg.jl")
 include("mom.jl")
 include("vol.jl")
 
+using Temporal
+include("temporal.jl")
 
 end
