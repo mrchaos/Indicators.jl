@@ -25,8 +25,30 @@
 # end
 
 @doc doc"""
-diffn{Float64}(x::Vector{Float64}, n::Int64=1)
+Lag an array by `n` steps.
 
+- If `n` == 0, then `x` is returned.
+- If `n` > 0, then rows of `x` are shifted downwards `n` times.
+- If `n` < 0, then rows of `x` are shifted upwards `n` times.
+""" ->
+function lag{Float64}(x::Array{Float64}, n::Int64=1)
+    @assert abs(n)<size(x,1) "Argument n out of bounds."
+    if n == 0
+        return x
+    elseif n > 0
+        out = zeros(x)
+        out[1:n,:] = NaN
+        out[n+1:end,:] = x[1:end-n,:]
+        return out
+    elseif n < 0
+        out = zeros(x)
+        out[end+n+1:end,:] = NaN
+        out[1:end+n,:] = x[1-n:end,:]
+        return out
+    end
+end
+
+@doc doc"""
 Lagged differencing
 """ ->
 function diffn{Float64}(x::Vector{Float64}, n::Int64=1)
@@ -40,8 +62,6 @@ function diffn{Float64}(x::Vector{Float64}, n::Int64=1)
 end
 
 @doc doc"""
-diffn{Float64}(x::Array{Float64,2}, n::Int64=1)
-
 Lagged differencing
 """ ->
 function diffn{Float64}(X::Array{Float64,2}, n::Int64=1)
@@ -54,8 +74,6 @@ function diffn{Float64}(X::Array{Float64,2}, n::Int64=1)
 end
 
 @doc doc"""
-mode{T}(a::AbstractArray{T})
-
 Compute the mode of an arbitrary array
 
 (Adapted from StatsBase: https://raw.githubusercontent.com/JuliaStats/StatsBase.jl/master/src/scalarstats.jl)
@@ -85,8 +103,6 @@ function mode{Float64}(a::AbstractArray{Float64})
 end
 
 @doc doc"""
-runmean{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
-
 Compute a running or rolling arithmetic mean of an array.
 """ ->
 function runmean{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
@@ -106,9 +122,8 @@ function runmean{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true
     return out
 end
 
-@doc doc"""
-runsum{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
 
+@doc doc"""
 Compute a running or rolling summation of an array.
 """ ->
 function runsum{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
@@ -127,8 +142,6 @@ function runsum{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
 end
 
 @doc doc"""
-wilder_sum{Float64}(x::Vector{Float64}, n::Int64=10)
-
 Welles Wilder summation of an array
 """ ->
 function wilder_sum{Float64}(x::Vector{Float64}, n::Int64=10)
@@ -143,8 +156,6 @@ function wilder_sum{Float64}(x::Vector{Float64}, n::Int64=10)
 end
 
 @doc doc"""
-runmad{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true; fun::Function=median)
-
 Compute the running or rolling mean absolute deviation of an array
 """ ->
 function runmad{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true; fun::Function=median)
@@ -169,8 +180,6 @@ function runmad{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true;
 end
 
 @doc doc"""
-runvar{Float64}(x::Vector{Float64}, n::Int64=10, cumulative=true)
-
 Compute the running or rolling variance of an array
 """ ->
 function runvar{Float64}(x::Vector{Float64}, n::Int64=10, cumulative=true)
@@ -190,8 +199,6 @@ function runvar{Float64}(x::Vector{Float64}, n::Int64=10, cumulative=true)
 end
 
 @doc doc"""
-runsd{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
-
 Compute the running or rolling standard deviation of an array
 """ ->
 function runsd{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
@@ -199,8 +206,6 @@ function runsd{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
 end
 
 @doc doc"""
-runcov{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
-
 Compute the running or rolling covariance of two arrays
 """ ->
 function runcov{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
@@ -221,8 +226,6 @@ function runcov{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cu
 end
 
 @doc doc"""
-runcor{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
-
 Compute the running or rolling correlation of two arrays
 """ ->
 function runcor{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
@@ -243,8 +246,6 @@ function runcor{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cu
 end
 
 @doc doc"""
-runmax{Float64}(x::Vector{Float64}, n::Int64=2, cumulative::Bool=true)
-
 Compute the running or rolling maximum of an array.
 """ ->
 function runmax{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
@@ -265,8 +266,6 @@ function runmax{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
 end
 
 @doc doc"""
-runmin{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
-
 Compute the running or rolling minimum of an array.
 """ ->
 function runmin{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
