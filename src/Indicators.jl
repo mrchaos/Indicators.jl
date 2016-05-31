@@ -16,4 +16,11 @@ include("reg.jl")
 include("mom.jl")
 include("vol.jl")
 
+# pkglist(dir::AbstractString=Pkg.dir()) = setdiff(readdir(dir), [".cache","METADATA","META_BRANCH","REQUIRE"])
+# isinstalled(pkg::AbstractString; dir::AbstractString=Pkg.dir()) = pkg in pkglist(dir)
+# if isinstalled("Temporal")
+#     using Temporal
+#     include("temporal.jl")
+# end
+
 end
