@@ -64,3 +64,9 @@ bbands{V,T}(x::TS{V,T}, n::Int64=10, sigma::Float64=2.0; args...) = ts(bbands(x.
 tr{V,T}(x::TS{V,T}, n::Int64=2) = ts(tr(x.values, n), x.index, :TR)
 atr{V,T}(x::TS{V,T}, n::Int64=14) = ts(atr(x.values, n), x.index, :ATR)
 keltner{V,T}(hlc::TS{V,T}, nema::Int64=20, natr::Int64=10, mult::Int64=2) = ts(keltner(hlc.values, nema, natr, mult), hlc.index, [:LB, :MA, :UB])
+
+##### trendy.jl #####
+peaks{V,T}(x::TS{V,T}; args...) = ts(peaks(x.values; args...), x.index, :Peaks)
+valleys{V,T}(x::TS{V,T}; args...) = ts(valleys(x.values; args...), x.index, :Valleys)
+support{V,T}(x::TS{V,T}; args...) = ts(support(x.values; args...), x.index, :Support)
+resistance{V,T}(x::TS{V,T}; args...) = ts(resistance(x.values; args...), x.index, :Resistance)
