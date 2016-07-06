@@ -9,7 +9,7 @@ export
     mlr_beta, mlr_slope, mlr_intercept, mlr, mlr_se, mlr_ub, mlr_lb, mlr_bands, mlr_rsq,
     momentum, roc, macd, rsi, adx, psar, kst, wpr, cci, stoch, smi,
     bbands, tr, atr, keltner,
-    peaks, valleys, support, resistance
+    maxlocal, minlocal, support, resistance
 
 include("run.jl")
 include("ma.jl")

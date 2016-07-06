@@ -1,21 +1,23 @@
 # Functions supporting trendline identification (support/resistance, zigzag, elliot waves, etc.)
 
-function peaks{Float64}(x::Vector{Float64}; threshold::Float64=0.0)
-    @assert threshold >= 0.0
-    idx = falses(x)
-    @inbounds for i=2:size(x,1)-1
-        if x[i] - x[i-1] > threshold && x[i] - x[i+1] > threshold
+function maxlocal{Float64}(x::Vector{Float64}; threshold::Float64=0.0)
+    @assert threshold >= 0.0 "Threshold must be positive."
+    n = size(x,1)
+    idx = falses(n)
+    @inbounds for i=2:n-1
+        if (x[i]-x[i-1] >= threshold) && (x[i]-x[i+1] >= threshold)
             idx[i] = true
         end
     end
     return idx
 end
 
-function valleys{Float64}(x::Vector{Float64}; threshold::Float64=0.0)
-    @assert threshold >= 0.0
-    idx = falses(x)
-    @inbounds for i=2:size(x,1)-1
-        if x[i] - x[i-1] < threshold && x[i] - x[i+1] < threshold
+function minlocal{Float64}(x::Vector{Float64}; threshold::Float64=0.0)
+    @assert threshold <= 0.0 "Threshold must be negative."
+    n = size(x,1)
+    idx = falses(n)
+    @inbounds for i=2:n-1
+        if (x[i]-x[i-1] <= threshold) && (x[i]-x[i+1] <= threshold)
             idx[i] = true
         end
     end
@@ -33,7 +35,7 @@ end
 function resistance{Float64}(x::Vector{Float64}; order::Int=1, threshold::Float64=0.0)
     @assert order > 0
     out = zeros(x)
-    pks = peaks(x, threshold=threshold)
+    pks = maxlocal(x, threshold=threshold)
     out[!pks] = NaN
     idx = find(pks)
     @inbounds for i=2:length(idx)
@@ -49,7 +51,7 @@ end
 function support{Float64}(x::Vector{Float64}; order::Int=1, threshold::Float64=0.0)
     @assert order > 0
     out = zeros(x)
-    pks = valleys(x, threshold=threshold)
+    pks = minlocal(x, threshold=threshold)
     out[!pks] = NaN
     idx = find(pks)
     @inbounds for i=2:length(idx)
