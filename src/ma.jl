@@ -1,5 +1,3 @@
-# TODO: add abilities to use different MA types for trima, macd, bbands, etc
-
 @doc doc"""
 sma{Float64}(x::Vector{Float64}, n::Int64=10)
 
@@ -33,7 +31,7 @@ function wma{Float64}(x::Vector{Float64}, n::Int64=10; wts::Vector{Float64}=coll
 end
 
 @doc doc"""
-ema{Float64}(x::Vector{Float64}, n::Int64=10; alpha::Float64=2.0/(n+1), wilder::Bool=false)
+ema{Float64}(x::Vector{Float64}, n::Int64=10; alpha::Float64=2.0/(n+1.0), wilder::Bool=false)
 
 Exponential moving average
 """ ->
@@ -50,6 +48,15 @@ function ema{Float64}(x::Vector{Float64}, n::Int64=10; alpha::Float64=2.0/(n+1),
         out[i] = alpha * (x[i] - out[i-1]) + out[i-1]
     end
     return out
+end
+
+@doc doc"""
+mma{Float64}(x::Vector{Float64}, n::Int64=10)
+
+Modified moving average
+""" ->
+function mma{Float64}(x::Vector{Float64}, n::Int64=10)
+    return ema(x, n, alpha=1.0/n)
 end
 
 @doc doc"""
@@ -170,7 +177,7 @@ end
 
 
 @doc doc"""
-hma{Float64}(x::Vector{Float64}, n::Int64=1)
+hma{Float64}(x::Vector{Float64}, n::Int64=20)
 
 Hull moving average
 """ ->
