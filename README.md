@@ -89,5 +89,8 @@ Indicators is a Julia package offering efficient implementations of many technic
 #### Apple (AAPL) daily data from 2015:
 ![alt text](https://raw.githubusercontent.com/dysonance/Indicators.jl/master/examples/example2.png "Example 2")
 
+#### Corn futures daily data
+![alt text](https://raw.githubusercontent.com/dysonance/Indicators.jl/master/examples/example3.png "Example 3")
+
 
 [![Build Status](https://travis-ci.org/dysonance/Indicators.jl.svg?branch=master)](https://travis-ci.org/dysonance/Indicators.jl)
