@@ -2,7 +2,7 @@ using Temporal
 using Indicators
 using PyPlot
 
-X = tsread("/julia/packages/v0.4/temporal/data/corn.csv")
+X = quandl("CHRIS/CME_C1")
 x = X["2015-03/", :Settle]
 
 plot(x.index, x.values, label="Corn", lw=3, color="blue")
@@ -19,8 +19,8 @@ maxi = [x maxima(x[maxi])][:,2]
 mini = [x minima(x[mini])][:,2]
 maxi.values[isnan(maxi.values)] = 0.0
 mini.values[isnan(mini.values)] = 0.0
-maxi = ts(map(bool maxi.values), maxi.index, maxi.fields)
-mini = ts(map(bool mini.values), mini.index, mini.fields)
+maxi = ts(map(Bool, maxi.values), maxi.index, maxi.fields)
+mini = ts(map(Bool, mini.values), mini.index, mini.fields)
 plot(x[maxi].index, x[maxi].values, color="red", marker="o")
 plot(x[mini].index, x[mini].values, color="green", marker="o")
 
@@ -29,8 +29,8 @@ maxi = [x maxima(x[maxi])][:,2]
 mini = [x minima(x[mini])][:,2]
 maxi.values[isnan(maxi.values)] = 0.0
 mini.values[isnan(mini.values)] = 0.0
-maxi = ts(map(bool, maxi.values), maxi.index, maxi.fields)
-mini = ts(map(bool, mini.values), mini.index, mini.fields)
+maxi = ts(map(Bool, maxi.values), maxi.index, maxi.fields)
+mini = ts(map(Bool, mini.values), mini.index, mini.fields)
 plot(x[maxi].index, x[maxi].values, color="red", marker="o")
 plot(x[mini].index, x[mini].values, color="green", marker="o")
 

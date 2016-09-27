@@ -1,57 +1,7 @@
-# @doc doc"""
-# lag{Float64}(x::Array{Float64}, n::Int64=1)
-# 
-# Lag an array by `n` steps.
-# 
-# - If `n` == 0, then `x` is returned.
-# - If `n` > 0, then rows of `x` are shifted downwards `n` times.
-# - If `n` < 0, then rows of `x` are shifted upwards `n` times.
-# """ ->
-# function lag{Float64}(x::Array{Float64}, n::Int64=1)
-#     @assert abs(n)<size(x,1) "Argument n out of bounds."
-#     if n == 0
-#         return x
-#     elseif n > 0
-#         out = zeros(x)
-#         out[1:n,:] = NaN
-#         out[n+1:end,:] = x[1:end-n,:]
-#         return out
-#     elseif n < 0
-#         out = zeros(x)
-#         out[end+n+1:end,:] = NaN
-#         out[1:end+n,:] = x[1-n:end,:]
-#         return out
-#     end
-# end
-
-# @doc doc"""
-# Lag an array by `n` steps.
-# 
-# - If `n` == 0, then `x` is returned.
-# - If `n` > 0, then rows of `x` are shifted downwards `n` times.
-# - If `n` < 0, then rows of `x` are shifted upwards `n` times.
-# """ ->
-# function lag{Float64}(x::Array{Float64}, n::Int64=1)
-#     @assert abs(n)<size(x,1) "Argument n out of bounds."
-#     if n == 0
-#         return x
-#     elseif n > 0
-#         out = zeros(x)
-#         out[1:n,:] = NaN
-#         out[n+1:end,:] = x[1:end-n,:]
-#         return out
-#     elseif n < 0
-#         out = zeros(x)
-#         out[end+n+1:end,:] = NaN
-#         out[1:end+n,:] = x[1-n:end,:]
-#         return out
-#     end
-# end
-
 @doc doc"""
 Lagged differencing
 """ ->
-function diffn{Float64}(x::Vector{Float64}, n::Int64=1)
+function diffn{Float64}(x::Vector{Float64}; n::Int64=1)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     out = zeros(x)
     out[1:n] = NaN
@@ -64,11 +14,11 @@ end
 @doc doc"""
 Lagged differencing
 """ ->
-function diffn{Float64}(X::Array{Float64,2}, n::Int64=1)
+function diffn{Float64}(X::Array{Float64,2}; n::Int64=1)
     @assert n<size(X,1) && n>0 "Argument n out of bounds."
     out = zeros(X)
     @inbounds for j = 1:size(X,2)
-        out[:,j] = diffn(X[:,j], n)
+        out[:,j] = diffn(X[:,j], n=n)
     end
     return out
 end
@@ -105,7 +55,7 @@ end
 @doc doc"""
 Compute a running or rolling arithmetic mean of an array.
 """ ->
-function runmean{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
+function runmean{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(x)
     out[1:n-1] = NaN
@@ -126,7 +76,7 @@ end
 @doc doc"""
 Compute a running or rolling summation of an array.
 """ ->
-function runsum{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
+function runsum{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     if cumulative
         out = cumsum(x)
@@ -144,7 +94,7 @@ end
 @doc doc"""
 Welles Wilder summation of an array
 """ ->
-function wilder_sum{Float64}(x::Vector{Float64}, n::Int64=10)
+function wilder_sum{Float64}(x::Vector{Float64}; n::Int64=10)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     nf = float(n)  # type stability -- all arithmetic done on floats
     out = zeros(x)
@@ -158,7 +108,7 @@ end
 @doc doc"""
 Compute the running or rolling mean absolute deviation of an array
 """ ->
-function runmad{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true; fun::Function=median)
+function runmad{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true, fun::Function=median)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(x)
     out[1:n-1] = NaN
@@ -182,7 +132,7 @@ end
 @doc doc"""
 Compute the running or rolling variance of an array
 """ ->
-function runvar{Float64}(x::Vector{Float64}, n::Int64=10, cumulative=true)
+function runvar{Float64}(x::Vector{Float64}; n::Int64=10, cumulative=true)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(x)
     out[1:n-1] = NaN
@@ -201,14 +151,14 @@ end
 @doc doc"""
 Compute the running or rolling standard deviation of an array
 """ ->
-function runsd{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
-    return sqrt(runvar(x, n, cumulative))
+function runsd{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true)
+    return sqrt(runvar(x, n=n, cumulative=cumulative))
 end
 
 @doc doc"""
 Compute the running or rolling covariance of two arrays
 """ ->
-function runcov{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
+function runcov{Float64}(x::Vector{Float64}, y::Vector{Float64}; n::Int64=10, cumulative::Bool=true)
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(x)
@@ -228,7 +178,7 @@ end
 @doc doc"""
 Compute the running or rolling correlation of two arrays
 """ ->
-function runcor{Float64}(x::Vector{Float64}, y::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
+function runcor{Float64}(x::Vector{Float64}, y::Vector{Float64}; n::Int64=10, cumulative::Bool=true)
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(x)
@@ -248,7 +198,7 @@ end
 @doc doc"""
 Compute the running or rolling maximum of an array.
 """ ->
-function runmax{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
+function runmax{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(x)
     if cumulative
@@ -268,7 +218,7 @@ end
 @doc doc"""
 Compute the running or rolling minimum of an array.
 """ ->
-function runmin{Float64}(x::Vector{Float64}, n::Int64=10, cumulative::Bool=true)
+function runmin{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(x)
     if cumulative

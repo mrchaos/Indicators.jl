@@ -1,21 +1,21 @@
 # TODO: include matype options in macd, rsi, and adx functions
 
 @doc doc"""
-momentum{Float64}(x::Vector{Float64}, n::Int64=1)
+momentum{Float64}(x::Vector{Float64}; n::Int64=1)
 
 Momentum indicator (price now vs price `n` periods back)
 """ ->
-function momentum{Float64}(x::Vector{Float64}, n::Int64=1)
+function momentum{Float64}(x::Vector{Float64}; n::Int64=1)
     @assert n>0 "Argument n must be positive."
-    return diffn(x, n)
+    return diffn(x, n=n)
 end
 
 @doc """
-roc{Float64}(x::Vector{Float64}, n::Int64=1)
+roc{Float64}(x::Vector{Float64}; n::Int64=1)
 
 Rate of change indicator (percent change between i'th observation and (i-n)'th observation)
 """ ->
-function roc{Float64}(x::Vector{Float64}, n::Int64=1)
+function roc{Float64}(x::Vector{Float64}; n::Int64=1)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     out = zeros(x)
     @inbounds for i = n:size(x,1)
@@ -26,7 +26,7 @@ function roc{Float64}(x::Vector{Float64}, n::Int64=1)
 end
 
 @doc doc"""
-macd{Float64}(x::Vector{Float64}, nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)
+macd{Float64}(x::Vector{Float64}; nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)
 
 Moving average convergence-divergence
 
@@ -36,21 +36,21 @@ Moving average convergence-divergence
 - Column 2: MACD Signal Line
 - Column 3: MACD Histogram
 """ ->
-function macd{Float64}(x::Vector{Float64}, nfast::Int64=12, nslow::Int64=26, nsig::Int64=9;
+function macd{Float64}(x::Vector{Float64}; nfast::Int64=12, nslow::Int64=26, nsig::Int64=9,
                        fastMA::Function=ema, slowMA::Function=ema, signalMA::Function=sma)
     out = zeros(Float64, (length(x),3))
-    out[:,1] = fastMA(x, nfast) - slowMA(x, nslow)
-    out[:,2] = signalMA(out[:,1], nsig)
+    out[:,1] = fastMA(x, n=nfast) - slowMA(x, n=nslow)
+    out[:,2] = signalMA(out[:,1], n=nsig)
     out[:,3] = out[:,1] - out[:,2]
     return out
 end
 
 @doc doc"""
-rsi{Float64}(x::Vector{Float64}, n::Int64=14; ma::Function=ema, args...)
+rsi{Float64}(x::Vector{Float64}; n::Int64=14, ma::Function=ema, args...)
 
 Relative strength index
 """ ->
-function rsi{Float64}(x::Vector{Float64}, n::Int64=14; ma::Function=ema, args...)
+function rsi{Float64}(x::Vector{Float64}; n::Int64=14, ma::Function=ema, args...)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     N = size(x,1)
     ups = zeros(N)
@@ -64,12 +64,12 @@ function rsi{Float64}(x::Vector{Float64}, n::Int64=14; ma::Function=ema, args...
             dns[i] = -dx[i]
         end
     end
-    rs = [NaN; ma(ups[2:end], n; args...) ./ ma(dns[2:end], n; args...)]
+    rs = [NaN; ma(ups[2:end], n=n; args...) ./ ma(dns[2:end], n=n; args...)]
     return 100.0 - 100.0 ./ (1.0 + rs)
 end
 
 @doc doc"""
-adx{Float64}(hlc::Array{Float64}, n::Int64=14; wilder=true)
+adx{Float64}(hlc::Array{Float64}; n::Int64=14, wilder=true)
 
 Average directional index
 
@@ -79,7 +79,7 @@ Average directional index
 - Column 2: DI-
 - Column 3: ADX
 """ ->
-function adx{Float64}(hlc::Array{Float64}, n::Int64=14; ma::Function=ema, args...)
+function adx{Float64}(hlc::Array{Float64}; n::Int64=14, ma::Function=ema, args...)
     @assert n<size(hlc,1) && n>0 "Argument n is out of bounds."
     if size(hlc,2) != 3
         error("HLC array must have three columns")
@@ -97,15 +97,15 @@ function adx{Float64}(hlc::Array{Float64}, n::Int64=14; ma::Function=ema, args..
             dndm[i] = dnmove
         end
     end
-    dip = [NaN; ma(updm[2:N], n; args...)] ./ atr(hlc, n) * 100.0
-    dim = [NaN; ma(dndm[2:N], n; args...)] ./ atr(hlc, n) * 100.0
+    dip = [NaN; ma(updm[2:N], n=n; args...)] ./ atr(hlc, n=n) * 100.0
+    dim = [NaN; ma(dndm[2:N], n=n; args...)] ./ atr(hlc, n=n) * 100.0
     dmx = abs(dip-dim) ./ (dip+dim)
-    adx = [fill(NaN,n); ma(dmx[n+1:N], n; args...)] * 100.0
+    adx = [fill(NaN,n); ma(dmx[n+1:N], n=n; args...)] * 100.0
     return [dip dim adx]
 end
 
 @doc doc"""
-psar{Float64}(hl::Array{Float64,2}, af::Float64=0.02, af_max::Float64=0.2, af_min::Float64=0.02)
+psar{Float64}(hl::Array{Float64,2}; af::Float64=0.02, af_max::Float64=0.2, af_min::Float64=0.02)
 
 Parabolic stop and reverse (SAR)
 
@@ -114,7 +114,7 @@ Parabolic stop and reverse (SAR)
 - af_max: maximum acceleration factor (accel factor capped at this value)
 - af_inc: increment to the acceleration factor (speed of increase in accel factor)
 """ ->
-function psar{Float64}(hl::Array{Float64}, af_min::Float64=0.02, af_max::Float64=0.2, af_inc::Float64=af_min)
+function psar{Float64}(hl::Array{Float64}; af_min::Float64=0.02, af_max::Float64=0.2, af_inc::Float64=af_min)
     @assert af_min<1.0 && af_min>0.0 "Argument af_min must be in [0,1]."
     @assert af_max<1.0 && af_max>0.0 "Argument af_max must be in [0,1]."
     @assert af_inc<1.0 && af_inc>0.0 "Argument af_inc must be in [0,1]."
@@ -163,13 +163,13 @@ function psar{Float64}(hl::Array{Float64}, af_min::Float64=0.02, af_max::Float64
 end
 
 @doc doc"""
-kst{Float64}(x::Vector{Float64},
-                      nroc::Vector{Int64}=[10,15,20,30], navg::Vector{Int64}=[10,10,10,15],
-                      wgts::Vector{Int64}=collect(1:length(nroc)); ma::Function=sma)
+kst{Float64}(x::Vector{Float64};
+             nroc::Vector{Int64}=[10,15,20,30], navg::Vector{Int64}=[10,10,10,15],
+             wgts::Vector{Int64}=collect(1:length(nroc)), ma::Function=sma)
 
 KST (Know Sure Thing) -- smoothed and summed rates of change
 """ ->
-function kst{Float64}(x::Vector{Float64}, nroc::Vector{Int64}=[10,15,20,30], navg::Vector{Int64}=[10,10,10,15];
+function kst{Float64}(x::Vector{Float64}; nroc::Vector{Int64}=[10,15,20,30], navg::Vector{Int64}=[10,10,10,15],
                       wgts::Vector{Int64}=collect(1:length(nroc)), ma::Function=sma)
     @assert length(nroc) == length(navg)
     @assert all(nroc.>0) && all(nroc.<size(x,1))
@@ -178,7 +178,7 @@ function kst{Float64}(x::Vector{Float64}, nroc::Vector{Int64}=[10,15,20,30], nav
     k = length(nroc)
     out = zeros(x)
     @inbounds for j = 1:k
-        out += ma(roc(x, nroc[j]), navg[j]) * wgts[j]
+        out += ma(roc(x, n=nroc[j]), n=navg[j]) * wgts[j]
     end
     return out
 end
@@ -188,40 +188,40 @@ wpr{Float64}(hlc::Array{Float64,2}, n::Int64=14)
 
 Williams %R
 """ ->
-function wpr{Float64}(hlc::Array{Float64,2}, n::Int64=14)
-    hihi = runmax(hlc[:,1], n, false)
-    lolo = runmin(hlc[:,2], n, false)
+function wpr{Float64}(hlc::Array{Float64,2}; n::Int64=14)
+    hihi = runmax(hlc[:,1], n=n, cumulative=false)
+    lolo = runmin(hlc[:,2], n=n, cumulative=false)
     return -100 * (hihi - hlc[:,3]) ./ (hihi - lolo)
 end
 
 @doc doc"""
-cci{Float64}(hlc::Array{Float64,2}, n::Int64=20, c::Float64=0.015; ma::Function=sma)
+cci{Float64}(hlc::Array{Float64,2}; n::Int64=20, c::Float64=0.015, ma::Function=sma)
 
 Commodity channel index
 """ ->
-function cci{Float64}(hlc::Array{Float64,2}, n::Int64=20, c::Float64=0.015; ma::Function=sma, args...)
+function cci{Float64}(hlc::Array{Float64,2}; n::Int64=20, c::Float64=0.015, ma::Function=sma, args...)
     tp = (hlc[:,1] + hlc[:,2] + hlc[:,3]) / 3.0
-    dev = runmad(tp, n, false, fun=mean)
-    avg = ma(tp, n; args...)
+    dev = runmad(tp, n=n, cumulative=false, fun=mean)
+    avg = ma(tp, n=n; args...)
     return (tp - avg) ./ (c * dev)
 end
 
 @doc doc"""
-stoch{Float64}(hlc::Array{Float64,2}, nK::Int64=14, nD::Int64=3;
+stoch{Float64}(hlc::Array{Float64,2}; nK::Int64=14, nD::Int64=3,
                kind::ByteString="fast", ma::Function=sma, args...)
 
 Stochastic oscillator (fast or slow)
 """ ->
-function stoch{Float64}(hlc::Array{Float64,2}, nK::Int64=14, nD::Int64=3;
+function stoch{Float64}(hlc::Array{Float64,2}; nK::Int64=14, nD::Int64=3,
                         kind::Symbol=:fast, ma::Function=sma, args...)
     @assert kind == :fast || kind == :slow "Argument `kind` must be either :fast or :slow"
     @assert nK<size(hlc,1) && nK>0 "Argument `nK` out of bounds."
     @assert nD<size(hlc,1) && nD>0 "Argument `nD` out of bounds."
-    hihi = runmax(hlc[:,1], nK, false)
-    lolo = runmin(hlc[:,2], nK, false)
+    hihi = runmax(hlc[:,1], n=nK, cumulative=false)
+    lolo = runmin(hlc[:,2], n=nK, cumulative=false)
     out = zeros(Float64, (size(hlc,1),2))
     out[:,1] = (hlc[:,3]-lolo) ./ (hihi-lolo) * 100.0
-    out[:,2] = ma(out[:,1], nD; args...)
+    out[:,2] = ma(out[:,1], n=nD; args...)
     if kind == "slow"
         out[:,1] = out[:,2]
         out[:,2] = ma(out[:,1], nD; args...)
@@ -230,21 +230,21 @@ function stoch{Float64}(hlc::Array{Float64,2}, nK::Int64=14, nD::Int64=3;
 end
 
 @doc doc"""
-smi{Float64}(hlc::Array{Float64,2}, n::Int64=13, nFast::Int64=2, nSlow::Int64=25, nSig::Int64=9;
+smi{Float64}(hlc::Array{Float64,2}; n::Int64=13, nFast::Int64=2, nSlow::Int64=25, nSig::Int64=9,
              maFast::Function=ema, maSlow::Function=ema, maSig::Function=sma)
 
 SMI (stochastic momentum oscillator)
 """ ->
-function smi{Float64}(hlc::Array{Float64,2}, n::Int64=13, nFast::Int64=2, nSlow::Int64=25, nSig::Int64=9;
+function smi{Float64}(hlc::Array{Float64,2}; n::Int64=13, nFast::Int64=2, nSlow::Int64=25, nSig::Int64=9,
                       maFast::Function=ema, maSlow::Function=ema, maSig::Function=sma)
-    hihi = runmax(hlc[:,1], n, false)
-    lolo = runmin(hlc[:,2], n, false)
+    hihi = runmax(hlc[:,1], n=n, cumulative=false)
+    lolo = runmin(hlc[:,2], n=n, cumulative=false)
     hldif = hihi-lolo
     delta = hlc[:,3] - (hihi+lolo) / 2.0
-    numer = maSlow(maFast(delta, nFast), nSlow)
-    denom = maSlow(maFast(hldif, nFast), nSlow) / 2.0
+    numer = maSlow(maFast(delta, n=nFast), n=nSlow)
+    denom = maSlow(maFast(hldif, n=nFast), n=nSlow) / 2.0
     out = zeros(Float64, (size(hlc,1),2))
     out[:,1] = 100.0*(numer./denom)
-    out[:,2] = maSig(out[:,1])
+    out[:,2] = maSig(out[:,1], n=nSig)
     return out
 end
