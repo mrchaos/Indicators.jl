@@ -1,4 +1,20 @@
-# TODO: include matype options in macd, rsi, and adx functions
+@doc doc"""
+donch{Float64}(hl::Array{Float64,2}; n::Int64=10, inclusive::Bool=true)
+
+Donchian channel (if inclusive is set to true, will include current bar in calculations.)
+
+`Output:`
+
+- Column 1: Lowest low of last `n` periods
+- Column 2: Average of highest high and lowest low of last `n` periods
+- Column 3: Highest high of last `n` periods
+""" ->
+function donch{Float64}(hl::Array{Float64,2}; n::Int64=10, inclusive::Bool=true)::Array{Float64,2}
+    local lower::Vector{Float64} = runmin(hl[:,2], n=n, cumulative=false, inclusive=inclusive)
+    local upper::Vector{Float64} = runmax(hl[:,1], n=n, cumulative=false, inclusive=inclusive)
+    local middle::Vector{Float64} = (lower .+ upper) ./ 2.0
+    return [lower middle upper]
+end
 
 @doc doc"""
 momentum{Float64}(x::Vector{Float64}; n::Int64=1)
@@ -248,3 +264,5 @@ function smi{Float64}(hlc::Array{Float64,2}; n::Int64=13, nFast::Int64=2, nSlow:
     out[:,2] = maSig(out[:,1], n=nSig)
     return out
 end
+
+

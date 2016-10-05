@@ -7,7 +7,7 @@ export
     wilder_sum, mode, diffn, #lag,
     sma, trima, wma, ema, mma, kama, mama, hma, swma, dema, tema, alma,
     mlr_beta, mlr_slope, mlr_intercept, mlr, mlr_se, mlr_ub, mlr_lb, mlr_bands, mlr_rsq,
-    momentum, roc, macd, rsi, adx, psar, kst, wpr, cci, stoch, smi,
+    donch, momentum, roc, macd, rsi, adx, psar, kst, wpr, cci, stoch, smi,
     bbands, tr, atr, keltner,
     maxima, minima#, support, resistance
 

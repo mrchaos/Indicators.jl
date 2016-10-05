@@ -196,41 +196,75 @@ function runcor{Float64}(x::Vector{Float64}, y::Vector{Float64}; n::Int64=10, cu
 end
 
 @doc doc"""
+runmax{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)
+
 Compute the running or rolling maximum of an array.
 """ ->
-function runmax{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true)
+function runmax{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(x)
-    if cumulative
-        out[n] = maximum(x[1:n])
-        @inbounds for i = n+1:size(x,1)
-            out[i] = max(out[i-1], x[i])
+    if inclusive
+        if cumulative
+            out[n] = maximum(x[1:n])
+            @inbounds for i = n+1:size(x,1)
+                out[i] = max(out[i-1], x[i])
+            end
+        else
+            @inbounds for i = n:size(x,1)
+                out[i] = maximum(x[i-n+1:i])
+            end
         end
+        out[1:n-1] = NaN
+        return out
     else
-        @inbounds for i = n:size(x,1)
-            out[i] = maximum(x[i-n+1:i])
+        if cumulative
+            out[n+1] = maximum(x[1:n])
+            @inbounds for i = n+1:size(x,1)-1
+                out[i+1] = max(out[i-1], x[i-1])
+            end
+        else
+            @inbounds for i = n:size(x,1)-1
+                out[i+1] = maximum(x[i-n+1:i])
+            end
         end
+        out[1:n] = NaN
+        return out
     end
-    out[1:n-1] = NaN
-    return out
 end
 
 @doc doc"""
+runmin{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)
+
 Compute the running or rolling minimum of an array.
 """ ->
-function runmin{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true)
+function runmin{Float64}(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(x)
-    if cumulative
-        out[n] = minimum(x[1:n])
-        @inbounds for i = n+1:size(x,1)
-            out[i] = min(out[i-1], x[i])
+    if inclusive
+        if cumulative
+            out[n] = minimum(x[1:n])
+            @inbounds for i = n+1:size(x,1)
+                out[i] = min(out[i-1], x[i])
+            end
+        else
+            @inbounds for i = n:size(x,1)
+                out[i] = minimum(x[i-n+1:i])
+            end
         end
+        out[1:n-1] = NaN
+        return out
     else
-        @inbounds for i = n:size(x,1)
-            out[i] = minimum(x[i-n+1:i])
+        if cumulative
+            out[n+1] = minimum(x[1:n])
+            @inbounds for i = n+1:size(x,1)-1
+                out[i+1] = min(out[i-1], x[i-1])
+            end
+        else
+            @inbounds for i = n:size(x,1)-1
+                out[i+1] = minimum(x[i-n+1:i])
+            end
         end
+        out[1:n] = NaN
+        return out
     end
-    out[1:n-1] = NaN
-    return out
 end

@@ -37,6 +37,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - KST (Know Sure Thing)
 - Williams %R
 - CCI (commodity channel index)
+- Donchian channel
 
 ### Volatility Indicators
 - Bollinger Bands
@@ -73,7 +74,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - ~~CCI (commodity channel index)~~
 - ~~ROC (rate of change)~~
 - ~~Momentum~~
-- Donchian Channel
+- ~~Donchian Channel~~
 - Aroon Indicator / Aroon Oscillator
 - Chaikin Money Flow
 - ~~Stochastics~~
