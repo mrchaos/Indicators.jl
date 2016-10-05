@@ -1,26 +1,32 @@
+import Base.diff
+
 @doc doc"""
+diff{Float64}(x::Vector{Float64}; n::Int64=1)
+
 Lagged differencing
 """ ->
-function diffn{Float64}(x::Vector{Float64}; n::Int64=1)
+function diff{Float64}(x::Vector{Float64}; n::Int64=1)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
-    out = zeros(x)
-    out[1:n] = NaN
+    dx = zeros(x)
+    dx[1:n] = NaN
     @inbounds for i=n+1:size(x,1)
-        out[i] = x[i] - x[i-n]
+        dx[i] = x[i] - x[i-n]
     end
-    return out
+    return dx
 end
 
 @doc doc"""
+diff{Float64}(X::Array{Float64,2}; n::Int64=1)
+
 Lagged differencing
 """ ->
-function diffn{Float64}(X::Array{Float64,2}; n::Int64=1)
+function diff{Float64}(X::Array{Float64,2}; n::Int64=1)
     @assert n<size(X,1) && n>0 "Argument n out of bounds."
-    out = zeros(X)
+    dx = zeros(X)
     @inbounds for j = 1:size(X,2)
-        out[:,j] = diffn(X[:,j], n=n)
+        dx[:,j] = diff(X[:,j], n=n)
     end
-    return out
+    return dx
 end
 
 @doc doc"""
