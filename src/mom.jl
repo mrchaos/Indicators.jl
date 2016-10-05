@@ -10,6 +10,7 @@ Donchian channel (if inclusive is set to true, will include current bar in calcu
 - Column 3: Highest high of last `n` periods
 """ ->
 function donch{Float64}(hl::Array{Float64,2}; n::Int64=10, inclusive::Bool=true)::Array{Float64,2}
+    @assert size(hl,2) == 2 "Argument `hl` must have exactly 2 columns."
     local lower::Vector{Float64} = runmin(hl[:,2], n=n, cumulative=false, inclusive=inclusive)
     local upper::Vector{Float64} = runmax(hl[:,1], n=n, cumulative=false, inclusive=inclusive)
     local middle::Vector{Float64} = (lower .+ upper) ./ 2.0

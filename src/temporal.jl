@@ -1,72 +1,100 @@
 # Methods for porting Indicators.jl functions to TS objects from Temporal.jl package
+function close_fun(X::TS, f::Function, flds::Vector{Symbol}; args...)::TS
+    if size(X,2) == 1
+        return ts(f(X; args...), X.index, flds)
+    elseif size(X,2) > 1 && has_close(X)
+        return ts(f(close(X).values; args...), X.index, flds)
+    else
+        error("Must be univariate or contain Close/Settle/Last.")
+    end
+end
+function hlc_fun(X::TS, f::Function, flds::Vector{Symbol}; args...)::TS
+    if size(X,2) == 3
+        return ts(f(X.values; args...), X.index, flds)
+    elseif size(X,2) > 3 && has_high(X) && has_low(X) && has_close(X)
+        return ts(f(hlc(X).values; args...), X.index, flds)
+    else
+        error("Argument must have 3 columns or have High, Low, and Close/Settle/Last fields.")
+    end
+end
+function hl_fun(X::TS, f::Function, flds::Vector{Symbol}; args...)::TS
+    if size(X,2) == 2
+        return ts(f(X.values; args...), X.index, flds)
+    elseif size(X,2) > 2 && has_high(X) && has_low(X)
+        return ts(f(hl(X).values; args...), X.index, flds)
+    else
+        error("Argument must have 2 columns or have High and Low fields.")
+    end
+end
 
 ###### run.jl ######
-mode{V}(x::TS{V}) = mode(x.values)
-runmean{V,T}(x::TS{V,T}; args...) = ts(runmean(x.values; args...), x.index, :RunMean)
-runsum{V,T}(x::TS{V,T}; args...) = ts(runsum(x.values; args...), x.index, :RunSum)
-runmad{V,T}(x::TS{V,T}; args...) = ts(runmad(x.values; args...), x.index, :RunMAD)
-runvar{V,T}(x::TS{V,T}; args...) = ts(runvar(x.values; args...), x.index, :RunVar)
-runmax{V,T}(x::TS{V,T}; args...) = ts(runmax(x.values; args...), x.index, :RunMax)
-runmin{V,T}(x::TS{V,T}; args...) = ts(runmin(x.values; args...), x.index, :RunMin)
-runsd{V,T}(x::TS{V,T}; args...) = ts(runsd(x.values; args...), x.index, :RunSD)
-wilder_sum{V,T}(x::TS{V,T}; args...) = ts(runsum(x.values; args...), x.index, :WilderSum)
-function runcov{V,T}(x::TS{V,T}, y::TS{V,T}; args...)
-    @assert size(x,2) == 1 || size(y,2) == 1 "Arguments x and y must both be univariate (have only one column)."
+function runcov{V,T}(x::TS{V,T}, y::TS{V,T}; args...)::TS
+    @assert size(x,2) == 1 && size(y,2) == 1 "Arguments x and y must both be univariate (have only one column)."
     z = [x y]
     return ts(runcov(z[:,1], z[:,2], n, cumulative), x.index, :RunCov)
 end
-function runcor{V,T}(x::TS{V,T}, y::TS{V,T}; args...)
-    @assert size(x,2) == 1 || size(y,2) == 1 "Arguments x and y must both be univariate (have only one column)."
+function runcor{V,T}(x::TS{V,T}, y::TS{V,T}; args...)::TS
+    @assert size(x,2) == 1 && size(y,2) == 1 "Arguments x and y must both be univariate (have only one column)."
     z = [x y]
     ts(runcor(z[:,1], z[:,2], n, cumulative), x.index, :RunCor)
 end
+mode{V,T}(X::TS{V,T}) = mode(X.values)
+runmean{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, runmean, [:RunMean]; args...)
+runsum{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, runsum, [:RunSum]; args...)
+runmad{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, runmad, [:RunMAD]; args...)
+runvar{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, runvar, [:RunVar]; args...)
+runmax{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, runmax, [:RunMax]; args...)
+runmin{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, runmin, [:RunMin]; args...)
+runsd{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, runsd, [:RunSD]; args...)
+wilder_sum{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, wilder_sum, [:WilderSum]; args...)
 
 ##### ma.jl ######
-sma{V,T}(x::TS{V,T}; args...) = ts(sma(x.values; args...), x.index, :SMA)
-hma{V,T}(x::TS{V,T}; args...) = ts(hma(x.values; args...), x.index, :HMA)
-mma{V,T}(x::TS{V,T}; args...) = ts(mma(x.values; args...), x.index, :MMA)
-swma{V,T}(x::TS{V,T}; args...) = ts(swma(x.values; args...), x.index, :SWMA)
-kama{V,T}(x::TS{V,T}; args...) = ts(kama(x.values; args...), x.index, :KAMA)
-alma{V,T}(x::TS{V,T}; args...) = ts(kama(x.values; args...), x.index, :ALMA)
-trima{V,T}(x::TS{V,T}; args...) = ts(trima(x.values; args...), x.index, :TRIMA)
-wma{V,T}(x::TS{V,T}; args...) = ts(wma(x.values; args...), x.index, :WMA)
-ema{V,T}(x::TS{V,T}; args...) = ts(ema(x.values; args...), x.index, :EMA)
-dema{V,T}(x::TS{V,T}; args...) = ts(dema(x.values; args...), x.index, :DEMA)
-tema{V,T}(x::TS{V,T}; args...) = ts(tema(x.values; args...), x.index, :TEMA)
-mama{V,T}(x::TS{V,T}; args...) = ts(mama(x.values; args...), x.index, [:MAMA, :FAMA])
+sma{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, sma, [:SMA]; args...)
+hma{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, hma, [:HMA]; args...)
+mma{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, mma, [:MMA]; args...)
+swma{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, swma, [:SWMA]; args...)
+kama{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, kama, [:KAMA]; args...)
+alma{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, alma, [:ALMA]; args...)
+trima{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, trima, [:TRIMA]; args...)
+wma{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, wma, [:WMA]; args...)
+ema{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, ema, [:EMA]; args...)
+dema{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, dema, [:DEMA]; args...)
+tema{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, tema, [:TEMA]; args...)
+mama{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, mama, [:MAMA]; args...)
 
 ##### reg.jl ######
-mlr_beta{V,T}(y::TS{V,T}; args...) = ts(mlr_beta(y.values; args...), y.index, [:Intercept, :Slope])
-mlr_slope{V,T}(y::TS{V,T}; args...) = ts(mlr_slope(y.values; args...), y.index, :Slope)
-mlr_intercept{V,T}(y::TS{V,T}; args...) = ts(mlr_intercept(y.values; args...), y.index, :Intercept)
-mlr{V,T}(y::TS{V,T}; args...) = ts(mlr(y.values; args...), y.index, :MLR)
-mlr_se{V,T}(y::TS{V,T}; args...) = ts(mlr_se(y.values; args...), y.index, :StdErr)
-mlr_ub{V,T}(y::TS{V,T}; args...) = ts(mlr_ub(y.values; args...), y.index, :UB)
-mlr_lb{V,T}(y::TS{V,T}; args...) = ts(mlr_lb(y.values; args...), y.index, :LB)
-mlr_bands{V,T}(y::TS{V,T}; args...) = ts(mlr_bands(y.values; args...), y.index, [:LB, :MLR, :UB])
-mlr_rsq{V,T}(y::TS{V,T}; args...) = ts(mlr_rsq(y.values; args...), y.index, :RSquared)
+mlr_beta{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, mlr_beta, [:Intercept,:Slope]; args...)
+mlr_slope{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, mlr_slope, [:Slope]; args...)
+mlr_intercept{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, mlr_intercept, [:Intercept]; args...)
+mlr{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, mlr, [:MLR]; args...)
+mlr_se{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, mlr_se, [:StdErr]; args...)
+mlr_ub{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, mlr_ub, [:MLRUB]; args...)
+mlr_lb{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, mlr_lb, [:MLRLB]; args...)
+mlr_bands{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, mlr_bands, [:MLRLB,:MLR,:MLRUB]; args...)
+mlr_rsq{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, mlr_rsq, [:RSquared]; args...)
 
 ##### mom.jl ######
-momentum{V,T}(x::TS{V,T}; args...) = ts(momentum(x.values; args...), x.index, :Momentum)
-roc{V,T}(x::TS{V,T}; args...) = ts(roc(x.values; args...), x.index, :ROC)
-macd{V,T}(x::TS{V,T}; args...) = ts(macd(x.values; args...), x.index, [:MACD, :Signal, :Histogram])
-rsi{V,T}(x::TS{V,T}; args...) = ts(rsi(x.values; args...), x.index, :RSI)
-adx{V,T}(hlc::TS{V,T}; args...) = ts(adx(hlc.values; args...), hlc.index, [:DiPlus, :DiMinus, :ADX])
-psar{V,T}(x::TS{V,T}; args...) = ts(psar(x.values; args...), x.index, :PSAR)
-kst{V,T}(x::TS{V,T}; args...) = ts(kst(x.values; args...), x.index, :KST)
-wpr{V,T}(hlc::TS{V,T}; args...) = ts(wpr(hlc.values; args...), hlc.index, :WPR)
-cci{V,T}(hlc::TS{V,T}; args...) = ts(cci(hlc.values; args...), hlc.index, :CCI)
-stoch{V,T}(hlc::TS{V,T}; args...) = ts(stoch(hlc.values; args...), hlc.index, [:Stochastic, :Signal])
-smi{V,T}(hlc::TS{V,T}; args...) = ts(smi(hlc.values; args...), hlc.index, [:SMI, :Signal])
+momentum{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, momentum, [:Momentum]; args...)
+roc{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, roc, [:ROC]; args...)
+macd{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, macd, [:MACD,:Signal,:Histogram]; args...)
+rsi{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, rsi, [:RSI]; args...)
+psar{V,T}(X::TS{V,T}; args...)::TS = hl_fun(X, psar, [:PSAR]; args...)
+kst{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, kst, [:KST]; args...)
+wpr{V,T}(X::TS{V,T}; args...)::TS = hlc_fun(X, wpr, [:WPR]; args...)
+adx{V,T}(X::TS{V,T}; args...)::TS = hlc_fun(X, adx, [:DiPlus,:DiMinus,:ADX]; args...)
+cci{V,T}(X::TS{V,T}; args...)::TS = hlc_fun(X, cci, [:CCI]; args...)
+stoch{V,T}(X::TS{V,T}; args...)::TS = hlc_fun(X, stoch, [:Stochastic,:Signal]; args...)
+smi{V,T}(X::TS{V,T}; args...)::TS = hlc_fun(X, smi, [:SMI,:Signal]; args...)
+donch{V,T}(X::TS{V,T}; args...)::TS = hl_fun(X, donch, [:Low,:Mid,:High]; args...)
 
 ##### vol.jl ######
-bbands{V,T}(x::TS{V,T}; args...) = ts(bbands(x.values; args...), x.index, [:LB, :MA, :UB])
-tr{V,T}(hlc::TS{V,T}; args...) = ts(tr(hlc.values; args...), hlc.index, :TR)
-atr{V,T}(hlc::TS{V,T}; args...) = ts(atr(hlc.values; args...), hlc.index, :ATR)
-keltner{V,T}(hlc::TS{V,T}; args...) = ts(keltner(hlc.values; args...), hlc.index, [:LB, :MA, :UB])
+bbands{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, bbands, [:LB,:MA,:UB]; args...)
+tr{V,T}(X::TS{V,T}; args...)::TS = hlc_fun(X, tr, [:TR]; args...)
+atr{V,T}(X::TS{V,T}; args...)::TS = hlc_fun(X, atr, [:ATR]; args...)
+keltner{V,T}(X::TS{V,T}; args...)::TS = hlc_fun(X, keltner, [:KeltnerLower,:KeltnerMiddle,:KeltnerUpper]; args...)
 
 ##### trendy.jl #####
-maxima{V,T}(x::TS{V,T}; args...) = ts(maxima(x.values; args...), x.index, :Maxima)
-minima{V,T}(x::TS{V,T}; args...) = ts(minima(x.values; args...), x.index, :Minima)
-support{V,T}(x::TS{V,T}; args...) = ts(support(x.values; args...), x.index, :Support)
-resistance{V,T}(x::TS{V,T}; args...) = ts(resistance(x.values; args...), x.index, :Resistance)
+maxima{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, maxima, [:Maxima]; args...)
+minima{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, minima, [:Minima]; args...)
+support{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, support, [:Support]; args...)
+resistance{V,T}(X::TS{V,T}; args...)::TS = close_fun(X, resistance, [:Resistance]; args...)
