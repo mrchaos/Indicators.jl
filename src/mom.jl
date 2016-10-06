@@ -148,12 +148,12 @@ function adx{Float64}(hlc::Array{Float64}; n::Int64=14, ma::Function=ema, args..
 end
 
 @doc doc"""
-psar{Float64}(hl::Array{Float64,2}; af::Float64=0.02, af_max::Float64=0.2, af_min::Float64=0.02)
+psar{Float64}(hl::Array{Float64}; af_min::Float64=0.02, af_max::Float64=0.2, af_inc::Float64=af_min)
 
 Parabolic stop and reverse (SAR)
 
 - hl: 2D array of high and low prices in first and second columns respectively
-- af_mi: starting/initial value for acceleration factor
+- af_min: starting/initial value for acceleration factor
 - af_max: maximum acceleration factor (accel factor capped at this value)
 - af_inc: increment to the acceleration factor (speed of increase in accel factor)
 """ ->
@@ -291,5 +291,3 @@ function smi{Float64}(hlc::Array{Float64,2}; n::Int64=13, nFast::Int64=2, nSlow:
     out[:,2] = maSig(out[:,1], n=nSig)
     return out
 end
-
-
