@@ -86,6 +86,7 @@ cci{V,T}(X::TS{V,T}; args...) = hlc_fun(X, cci, [:CCI]; args...)
 stoch{V,T}(X::TS{V,T}; args...) = hlc_fun(X, stoch, [:Stochastic,:Signal]; args...)
 smi{V,T}(X::TS{V,T}; args...) = hlc_fun(X, smi, [:SMI,:Signal]; args...)
 donch{V,T}(X::TS{V,T}; args...) = hl_fun(X, donch, [:Low,:Mid,:High]; args...)
+aroon{V,T}(X::TS{V,T}; args...) = hl_fun(X, aroon, [:AroonUp,:AroonDn,:AroonOsc]; args...)
 
 ##### vol.jl ######
 bbands{V,T}(X::TS{V,T}; args...) = close_fun(X, bbands, [:LB,:MA,:UB]; args...)

@@ -1,3 +1,29 @@
+# Momentum-oriented technical indicator functions
+
+@doc doc"""
+aroon{Float64}(hl::Array{Float64,2}; n::Int64=25)
+
+`Output:`
+
+- Column 1: Aroon Up
+- Column 2: Aroon Down
+- Column 3: Aroon Oscillator
+""" ->
+function aroon{Float64}(hl::Array{Float64,2}; n::Int64=25)
+    @assert size(hl,2) == 2 "Argument `hl` must have exactly 2 columns."
+    @assert n < size(hl,1) "Argument `n` must be less than the number of rows in argument `hl`."
+    out = zeros(Float64, (size(hl,1),3))
+    @inbounds for i in n:size(hl,1)
+        out[i,1] = 100.0 * (n - findmax(hl[i-n+1:i,1])[2]) / 25.0
+    end
+    @inbounds for i in n:size(hl,1)
+        out[i,2] = 100.0 * (n - findmin(hl[i-n+1:i,2])[2]) / 25.0
+    end
+    out[:,3] = out[:,1]-out[:,2]  # aroon oscillator
+    out[1:n-1,:] = NaN
+    return out
+end
+
 @doc doc"""
 donch{Float64}(hl::Array{Float64,2}; n::Int64=10, inclusive::Bool=true)
 
