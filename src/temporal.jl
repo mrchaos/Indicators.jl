@@ -101,5 +101,5 @@ support{V,T}(X::TS{V,T}; args...) = close_fun(X, support, [:Support]; args...)
 resistance{V,T}(X::TS{V,T}; args...) = close_fun(X, resistance, [:Resistance]; args...)
 
 #### utils.jl ####
-crossover(x::TS{V,T}, y::TS{V,T}) = ts(crossover(x.values, y.values), x.index, [:CrossOver])
-crossunder(x::TS{V,T}, y::TS{V,T}) = ts(crossunder(x.values, y.values), x.index, [:CrossUnder])
+crossover(x::TS, y::TS) = ts(crossover(x.values, y.values), x.index, [:CrossOver])
+crossunder(x::TS, y::TS) = ts(crossunder(x.values, y.values), x.index, [:CrossUnder])
