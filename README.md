@@ -38,6 +38,7 @@ Indicators is a Julia package offering efficient implementations of many technic
 - Williams %R
 - CCI (commodity channel index)
 - Donchian channel
+- Aroon indicator + oscillator
 
 ### Volatility Indicators
 - Bollinger Bands
@@ -61,13 +62,6 @@ Indicators is a Julia package offering efficient implementations of many technic
 - ~~DEMA (double exponential moving average)~~
 - ~~TEMA (tripe exponential moving average)~~
 - ~~ALMA (Arnaud Legoux moving average)~~
-- Hamming moving average
-- MMA (modified moving average)
-- VWMA (volume-weighted moving average)
-- VWAP (volume-weighted average price)
-- ZLEMA (zero lag exponential moving average)
-- EVWMA (elastic, volume-weighted moving average)
-- VMA (variable-length moving average)
 - ~~Parabolic SAR~~
 - ~~Williams %R~~
 - ~~KST (know sure thing)~~
@@ -75,12 +69,19 @@ Indicators is a Julia package offering efficient implementations of many technic
 - ~~ROC (rate of change)~~
 - ~~Momentum~~
 - ~~Donchian Channel~~
-- Aroon Indicator / Aroon Oscillator
-- Chaikin Money Flow
+- ~~Aroon Indicator / Aroon Oscillator~~
 - ~~Stochastics~~
   - ~~Slow Stochastics~~
   - ~~Fast Stochastics~~
   - ~~Stochastic Momentum Index~~
+- Hamming moving average
+- MMA (modified moving average)
+- VWMA (volume-weighted moving average)
+- VWAP (volume-weighted average price)
+- ZLEMA (zero lag exponential moving average)
+- EVWMA (elastic, volume-weighted moving average)
+- VMA (variable-length moving average)
+- Chaikin Money Flow
 - Ultimate Oscillator
 - OBV (on-balance volume)
 - Too many more to name...
