@@ -60,7 +60,7 @@ wma{V,T}(X::TS{V,T}; args...) = close_fun(X, wma, [:WMA]; args...)
 ema{V,T}(X::TS{V,T}; args...) = close_fun(X, ema, [:EMA]; args...)
 dema{V,T}(X::TS{V,T}; args...) = close_fun(X, dema, [:DEMA]; args...)
 tema{V,T}(X::TS{V,T}; args...) = close_fun(X, tema, [:TEMA]; args...)
-mama{V,T}(X::TS{V,T}; args...) = close_fun(X, mama, [:MAMA]; args...)
+mama{V,T}(X::TS{V,T}; args...) = close_fun(X, mama, [:MAMA,:FAMA]; args...)
 
 ##### reg.jl ######
 mlr_beta{V,T}(X::TS{V,T}; args...) = close_fun(X, mlr_beta, [:Intercept,:Slope]; args...)
