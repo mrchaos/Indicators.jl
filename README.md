@@ -2,7 +2,7 @@
 
 # Indicators
 
-Indicators is a Julia package offering efficient implementations of many technical analysis indicators and algorithms. This work is inspired by the [TTR](https://github.com/joshuaulrich/TTR) package in [R](https://www.r-project.org/) and the [Python](https://www.python.org/) implementation of [TA-Lib](https://github.com/mrjbq7/ta-lib), and the ultimate goal is to implement all of the functionality of these offerings (and more) in Julia.
+Indicators is a [Julia](julialang.org) package offering efficient implementations of many technical analysis indicators and algorithms. This work is inspired by the [TTR](https://github.com/joshuaulrich/TTR) package in [R](https://www.r-project.org/) and the [Python](https://www.python.org/) implementation of [TA-Lib](https://github.com/mrjbq7/ta-lib), and the ultimate goal is to implement all of the functionality of these offerings (and more) in Julia.
 
 ## Implemented
 ### Moving Averages
