@@ -104,7 +104,7 @@ Welles Wilder summation of an array
 
 `wilder_sum(x::Vector{Float64}; n::Int64=10)::Vector{Float64}`
 """ ->
-function wilder_sum(x::Vector{Float64}; n::Int64=10)::Vector{Float64}::Vector{Float64}
+function wilder_sum(x::Vector{Float64}; n::Int64=10)::Vector{Float64}
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     nf = float(n)  # type stability -- all arithmetic done on floats
     out = zeros(x)
