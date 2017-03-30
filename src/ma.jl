@@ -258,7 +258,7 @@ function alma{Float64}(x::Vector{Float64}; n::Int64=9, offset::Float64=0.85, sig
     return out
 end
 
-function lag(x::Vector{Float64}, n::Int=1)::Vector{Float64}
+function lagged(x::Vector{Float64}, n::Int=1)::Vector{Float64}
     if n > 0
         return [fill(NaN,n); x[1:end-n]]
     elseif n < 0
@@ -274,5 +274,5 @@ Zero-lag exponential moving average (ZLEMA)
 `zlema(x::Vector{Float64}; n::Int=10, ema_args...)::Vector{Float64}`
 """ ->
 function zlema(x::Vector{Float64}; n::Int=10, ema_args...)::Vector{Float64}
-    return ema(x+(x-lag(x,round(Int, (n-1)/2.0))), n=n; ema_args...)
+    return ema(x+(x-lagged(x,round(Int, (n-1)/2.0))), n=n; ema_args...)
 end
