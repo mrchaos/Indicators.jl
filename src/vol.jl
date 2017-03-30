@@ -1,9 +1,14 @@
 @doc doc"""
-bbands{Float64}(x::Vector{Float64}; n::Int64=10, sigma::Float64=2.0)
+Bollinger bands (moving average with standard deviation bands)
 
-Bollinger Bands (moving average with standard deviation bands)
+`bbands(x::Vector{Float64}; n::Int64=10, sigma::Float64=2.0)::Matrix{Float64}`
+
+*Output*
+- Column 1: lower band
+- Column 2: middle band
+- Column 3: upper band
 """ ->
-function bbands{Float64}(x::Vector{Float64}; n::Int64=10, sigma::Float64=2.0, ma::Function=sma, args...)
+function bbands(x::Vector{Float64}; n::Int64=10, sigma::Float64=2.0, ma::Function=sma, args...)::Matrix{Float64}
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(size(x,1), 3)  # cols := lower bound, ma, upper bound
     out[:,2] = ma(x, n=n, args...)
@@ -14,11 +19,11 @@ function bbands{Float64}(x::Vector{Float64}; n::Int64=10, sigma::Float64=2.0, ma
 end
 
 @doc doc"""
-tr{Float64}(hlc::Array{Float64,2})
+True range
 
-True Range
+`tr(hlc::Matrix{Float64})::Vector{Float64}`
 """ ->
-function tr{Float64}(hlc::Array{Float64,2})
+function tr(hlc::Matrix{Float64})::Vector{Float64}
     if size(hlc,2) != 3
         error("HLC array must have 3 columns.")
     end
@@ -32,21 +37,26 @@ function tr{Float64}(hlc::Array{Float64,2})
 end
 
 @doc doc"""
-atr{Float64}(hlc::Array{Float64,2}; n::Int64=14)
-
 Average true range (uses exponential moving average)
+
+`atr(hlc::Matrix{Float64}; n::Int64=14)::Vector{Float64}`
 """ ->
-function atr{Float64}(hlc::Array{Float64,2}; n::Int64=14, ma::Function=ema)
+function atr(hlc::Matrix{Float64}; n::Int64=14, ma::Function=ema)::Vector{Float64}
     @assert n<size(hlc,1) && n>0 "Argument n out of bounds."
     return [NaN; ma(tr(hlc)[2:end], n=n)]
 end
 
 @doc doc"""
-keltner{Float64}(hlc::Array{Float64,2}; nema::Int64=20, natr::Int64=10, mult::Int64=2)
+Keltner bands
 
-Keltner Bands
+`keltner(hlc::Matrix{Float64}; nema::Int64=20, natr::Int64=10, mult::Int64=2)::Matrix{Float64}`
+
+*Output*
+Column 1: lower band
+Column 2: middle band
+Column 3: upper band
 """ ->
-function keltner{Float64}(hlc::Array{Float64,2}; nema::Int64=20, natr::Int64=10, mult::Int64=2)
+function keltner(hlc::Array{Float64,2}; nema::Int64=20, natr::Int64=10, mult::Int64=2)::Matrix{Float64}
     out = zeros(size(hlc,1), 3)
     out[:,2] = ema(hlc[:,3], n=nema)
     out[:,1] = out[:,2] - mult*atr(hlc, n=natr)
