@@ -5,7 +5,7 @@ module Indicators
 export
     runmean, runsum, runvar, runsd, runcov, runcor, runmax, runmin, runmad,
     wilder_sum, mode, diffn, #lag,
-    sma, trima, wma, ema, mma, kama, mama, hma, swma, dema, tema, alma,
+    sma, trima, wma, ema, mma, kama, mama, hma, swma, dema, tema, alma, zlema,
     mlr_beta, mlr_slope, mlr_intercept, mlr, mlr_se, mlr_ub, mlr_lb, mlr_bands, mlr_rsq,
     aroon, donch, momentum, roc, macd, rsi, adx, psar, kst, wpr, cci, stoch, smi,
     bbands, tr, atr, keltner,

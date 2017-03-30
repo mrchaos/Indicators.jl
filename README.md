@@ -16,7 +16,9 @@ Indicators is a [Julia](julialang.org) package offering efficient implementation
 - ALMA (Arnaud-Legoux moving average)
 - SWMA (sine-weighted moving average)
 - DEMA (double exponential moving average)
-- TEMA (tripe exponential moving average)
+- TEMA (triple exponential moving average)
+- ZLEMA (zero-lag exponential moving average)
+- MMA (modified moving average)
 - MLR (moving linear regression)
     - Prediction
     - Slope
@@ -74,17 +76,17 @@ Indicators is a [Julia](julialang.org) package offering efficient implementation
   - ~~Slow Stochastics~~
   - ~~Fast Stochastics~~
   - ~~Stochastic Momentum Index~~
+- ~~MMA (modified moving average)~~
+- ~~ZLEMA (zero lag exponential moving average)~~
 - Hamming moving average
-- MMA (modified moving average)
 - VWMA (volume-weighted moving average)
 - VWAP (volume-weighted average price)
-- ZLEMA (zero lag exponential moving average)
 - EVWMA (elastic, volume-weighted moving average)
 - VMA (variable-length moving average)
 - Chaikin Money Flow
 - Ultimate Oscillator
 - OBV (on-balance volume)
-- Too many more to name...
+- Too many more to name...always happy to hear suggestions though!
 
 # Examples
 #### Randomly generated data:
