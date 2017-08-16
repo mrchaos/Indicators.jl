@@ -5,7 +5,6 @@ Renko chart patterns
 
 - Traditional (Constant Box Size): `renko(x::Vector{Float64}; box_size::Float64=10.0)::Vector{Int}`
 - ATR Dynamic Box Size: `renko(hlc::Matrix{Float64}; box_size::Float64=10.0, use_atr::Bool=false, n::Int=14)::Vector{Int}`
-- Other Dynamic Box Size: `renko(x::Vector{Float64}; box_size::Vector{Float64})::Vector{Int}`
 
 # Output
 
@@ -21,32 +20,27 @@ function renko(x::Vector{Float64}; box_size::Float64=10.0)::Vector{Int}
     end
     bar_id = ones(Int, size(x,1))
     ref_pt = x[1]
-    for i in 2:size(x,1)
+    @inbounds for i in 2:size(x,1)
         if abs(x[i]-ref_pt) >= box_size
             ref_pt = x[i]
             bar_id[i:end] += 1
         end
     end
 end
-
-# Renko charts where box size is given dynamically (i.e. vector of ATR values could be passed)
-function renko(x::Vector{Float64}; box_size::Vector{Float64}=zeros(Float64,size(x,1)).+10.0)::Vector{Int}
-    @assert size(x,1) == size(box_size,1)
-    bar_id = ones(Int, size(x,1))
-    ref_pt = x[1]
-    for i in 2:size(x,1)
-        if abs(x[i]-ref_pt) >= box_size
-            ref_pt = x[i]
-            bar_id[i:end] += 1
-        end
-    end
-end
-
 
 # Renko chart bar identification with option to use ATR or traditional method (constant box size)
 function renko(hlc::Matrix{Float64}; box_size::Float64=10.0, use_atr::Bool=false, n::Int=14)::Vector{Int}
     if use_atr
-        return renko(hlc[:,3], box_size=atr(hlc, n=n))
+        bar_id = ones(Int, size(x,1))
+        box_sizes = atr(hlc, n=n)
+        ref_pt = x[1]
+        @inbounds for i in 2:size(x,1)
+            if abs(x[i]-ref_pt) >= box_sizes[i]
+                ref_pt = x[i]
+                bar_id[i:end] += 1
+            end
+        end
+        return bar_id
     else
         return renko(hlc[:,3], box_size=box_size)
     end

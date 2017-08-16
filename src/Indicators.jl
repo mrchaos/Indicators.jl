@@ -10,6 +10,7 @@ export
     aroon, donch, momentum, roc, macd, rsi, adx, psar, kst, wpr, cci, stoch, smi,
     bbands, tr, atr, keltner,
     crossover, crossunder,
+    renko,
     maxima, minima#, support, resistance
 
 include("run.jl")
@@ -19,6 +20,7 @@ include("mom.jl")
 include("vol.jl")
 include("trendy.jl")
 include("utils.jl")
+include("patterns.jl")
 
 using Temporal
 include("temporal.jl")
