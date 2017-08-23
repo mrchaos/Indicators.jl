@@ -48,7 +48,7 @@ function ema(x::Vector{Float64}; n::Int64=10, alpha::Float64=2.0/(n+1), wilder::
         alpha = 1.0/n
     end
     out = zeros(x)
-    i = first(find(!isnan(x)))
+    i = first(find(.!isnan.(x)))
     out[1:n+i-2] = NaN
     out[n+i-1] = mean(x[i:n+i-1])
     @inbounds for i = n+i:size(x,1)
@@ -298,7 +298,7 @@ function kama{Float64}(x::Vector{Float64}; n::Int64=10, nfast::Float64=0.6667, n
     sc = ssc .^ 2  # smoothing constant
     # initiliaze result variable
     out = zeros(x)
-    i = first(find(!isnan(x)))
+    i = first(find(.!isnan.(x)))
     out[1:n+i-2] = NaN
     out[n+i-1] = mean(x[i:n+i-1])
     @inbounds for i = n+1:size(x,1)
