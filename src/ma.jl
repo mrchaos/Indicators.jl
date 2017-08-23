@@ -94,68 +94,110 @@ end
 @doc doc"""
 MESA adaptive moving average (MAMA)
 
-`mama(x::Vector{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05)::Vector{Float64}`
+`mama(x::Vector{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05)::Matrix{Float64}`
 """ ->
-function mama(x::Vector{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05)
+function mama(x::Vector{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05)::Matrix{Float64}
     n = size(x,1)
-    out = zeros(n,2)
-    smooth = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    detrend = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    Q1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    I1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    I2 = [0.0, 0.0]
-    Q2 = [0.0, 0.0]
-    Re = [0.0, 0.0]
-    Im = [0.0, 0.0]
-    per = [0.0, 0.0]
-    sper = [0.0, 0.0]
-    phase = [0.0, 0.0]
+    out = zeros(Float64, n, 2)
+    #smooth = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    smooth_1 = 0.0
+    smooth_2 = 0.0
+    smooth_3 = 0.0
+    smooth_4 = 0.0
+    smooth_5 = 0.0
+    smooth_6 = 0.0
+    smooth_7 = 0.0
+    #detrend = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    detrend_1 = 0.0
+    detrend_2 = 0.0
+    detrend_3 = 0.0
+    detrend_4 = 0.0
+    detrend_5 = 0.0
+    detrend_6 = 0.0
+    detrend_7 = 0.0
+    #Q1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    Q1_1 = 0.0
+    Q1_2 = 0.0
+    Q1_3 = 0.0
+    Q1_4 = 0.0
+    Q1_5 = 0.0
+    Q1_6 = 0.0
+    Q1_7 = 0.0
+    #I1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    I1_1 = 0.0
+    I1_2 = 0.0
+    I1_3 = 0.0
+    I1_4 = 0.0
+    I1_5 = 0.0
+    I1_6 = 0.0
+    I1_7 = 0.0
+    #I2 = [0.0, 0.0]
+    I2_1 = 0.0
+    I2_2 = 0.0
+    #Q2 = [0.0, 0.0]
+    Q2_1 = 0.0
+    Q2_2 = 0.0
+    #Re = [0.0, 0.0]
+    Re_1 = 0.0
+    Re_2 = 0.0
+    #Im = [0.0, 0.0]
+    Im_1 = 0.0
+    Im_2 = 0.0
+    #per = [0.0, 0.0]
+    per_1 = 0.0
+    per_2 = 0.0
+    #sper = [0.0, 0.0]
+    sper_1 = 0.0
+    sper_2 = 0.0
+    #phase = [0.0, 0.0]
+    phase_1 = 0.0
+    phase_2 = 0.0
     jI = 0.0
     jQ = 0.0
     dphase = 0.0
     alpha = 0.0
-    a = 0.0962
-    b = 0.5769
+    const a = 0.0962
+    const b = 0.5769
     @inbounds for i = 13:n
         # Smooth and detrend price movement ====================================
-        smooth[7] = (4*x[i] + 3*x[i-1] + 2*x[i-2] + x[i-3]) * 0.1
-        detrend[7] = (0.0962*smooth[7]+0.5769*smooth[5]-0.5769*smooth[3]-0.0962*smooth[1]) * (0.075*per[1]+0.54)
+        smooth_7 = (4*x[i] + 3*x[i-1] + 2*x[i-2] + x[i-3]) * 0.1
+        detrend_7 = (0.0962*smooth_7+0.5769*smooth_5-0.5769*smooth_3-0.0962*smooth_1) * (0.075*per_1+0.54)
         # Compute InPhase and Quandrature components ===========================
-        Q1[7] = (0.0962*detrend[7]+0.5769*detrend[5]-0.5769*detrend[3]-0.0962*detrend[1]) * (0.075*per[1]+0.54)
-        I1[7] = detrend[4]
+        Q1_7 = (0.0962*detrend_7+0.5769*detrend_5-0.5769*detrend_3-0.0962*detrend_1) * (0.075*per_1+0.54)
+        I1_7 = detrend_4
         # Advance phase of I1 and Q1 by 90 degrees =============================
-        jQ = (0.0962*Q1[7]+0.5769*Q1[5]-0.5769*Q1[3]-0.0962*Q1[1]) * (0.075*per[1]+0.54)
-        jI = (0.0962*I1[7]+0.5769*I1[5]-0.5769*I1[3]-0.0962*I1[1]) * (0.075*per[1]+0.54)
+        jQ = (0.0962*Q1_7+0.5769*Q1_5-0.5769*Q1_3-0.0962*Q1_1) * (0.075*per_1+0.54)
+        jI = (0.0962*I1_7+0.5769*I1_5-0.5769*I1_3-0.0962*I1_1) * (0.075*per_1+0.54)
         # Phasor addition for 3 bar averaging ==================================
-        Q2[2] = Q1[7] + jI
-        I2[2] = I1[7] - jQ
+        Q2_2 = Q1_7 + jI
+        I2_2 = I1_7 - jQ
         # Smooth I & Q components before applying the discriminator ============
-        Q2[2] = 0.2 * Q2[2] + 0.8 * Q2[1]
-        I2[2] = 0.2 * I2[2] + 0.8 * I2[1]
+        Q2_2 = 0.2 * Q2_2 + 0.8 * Q2_1
+        I2_2 = 0.2 * I2_2 + 0.8 * I2_1
         # Homodyne discriminator ===============================================
-        Re[2] = I2[2] * I2[1] + Q2[2]*Q2[1]
-        Im[2] = I2[2] * Q2[1] - Q2[2]*I2[1]
-        Re[2] = 0.2 * Re[2] + 0.8*Re[1]
-        Im[2] = 0.2 * Im[2] + 0.8*Im[1]
-        if (Im[2] != 0.0) & (Re[2] != 0.0)
-            per[2] = 360.0/atan(Im[2]/Re[2])
+        Re_2 = I2_2 * I2_1 + Q2_2*Q2_1
+        Im_2 = I2_2 * Q2_1 - Q2_2*I2_1
+        Re_2 = 0.2 * Re_2 + 0.8*Re_1
+        Im_2 = 0.2 * Im_2 + 0.8*Im_1
+        if (Im_2 != 0.0) & (Re_2 != 0.0)
+            per_2 = 360.0/atan(Im_2/Re_2)
         end
-        if per[2] > 1.5 * per[1]
-            per[2] = 1.5*per[1]
-        elseif per[2] < 0.67 * per[1]
-            per[2] = 0.67 * per[1]
+        if per_2 > 1.5 * per_1
+            per_2 = 1.5*per_1
+        elseif per_2 < 0.67 * per_1
+            per_2 = 0.67 * per_1
         end
-        if per[2] < 6.0
-            per[2] = 6.0
-        elseif per[2] > 50.0
-            per[2] = 50.0
+        if per_2 < 6.0
+            per_2 = 6.0
+        elseif per_2 > 50.0
+            per_2 = 50.0
         end
-        per[2] = 0.2*per[2] + 0.8*per[1]
-        sper[2] = 0.33*per[2] + 0.67*sper[1]
-        if I1[7] != 0.0
-            phase[2] = atan(Q1[7]/I1[7])
+        per_2 = 0.2*per_2 + 0.8*per_1
+        sper_2 = 0.33*per_2 + 0.67*sper_1
+        if I1_7 != 0.0
+            phase_2 = atan(Q1_7/I1_7)
         end
-        dphase = phase[1] - phase[2]
+        dphase = phase_1 - phase_2
         if dphase < 1.0
             dphase = 1.0
         end
@@ -166,17 +208,48 @@ function mama(x::Vector{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.0
         out[i,1] = alpha*x[i] + (1.0-alpha)*out[i-1,1]
         out[i,2] = 0.5*alpha*out[i,1] + (1.0-0.5*alpha)*out[i-1,2]
         # Reset/increment array variables
-        smooth = [smooth[2:7]; smooth[7]]
-        detrend = [detrend[2:7]; detrend[7]]
-        Q1 = [Q1[2:7]; Q1[7]]
-        I1 = [I1[2:7]; I1[7]]
-        I2[1] = I2[2]
-        Q2[1] = Q2[2]
-        Re[1] = Re[2]
-        Im[1] = Im[2]
-        per[1] = per[2]
-        sper[1] = sper[2]
-        phase[1] = phase[2]
+        # smooth
+        smooth_1 = smooth_2
+        smooth_2 = smooth_3
+        smooth_3 = smooth_4
+        smooth_4 = smooth_5
+        smooth_5 = smooth_6
+        smooth_6 = smooth_7
+        # detrend
+        detrend_1 = detrend_2
+        detrend_2 = detrend_3
+        detrend_3 = detrend_4
+        detrend_4 = detrend_5
+        detrend_5 = detrend_6
+        detrend_6 = detrend_7
+        # Q1
+        Q1_1 = Q1_2
+        Q1_2 = Q1_3
+        Q1_3 = Q1_4
+        Q1_4 = Q1_5
+        Q1_5 = Q1_6
+        Q1_6 = Q1_7
+        # I1
+        I1_1 = I1_2
+        I1_2 = I1_3
+        I1_3 = I1_4
+        I1_4 = I1_5
+        I1_5 = I1_6
+        I1_6 = I1_7
+        # I2
+        I2_1 = I2_2
+        # Q2
+        Q2_1 = Q2_2
+        # Re
+        Re_1 = Re_2
+        # Im
+        Im_1 = Im_2
+        # per
+        per_1 = per_2
+        # sper
+        sper_1 = sper_2
+        # phase
+        phase_1 = phase_2
     end
     out[1:32,:] = NaN
     return out
