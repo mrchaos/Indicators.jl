@@ -49,3 +49,13 @@ hlc = ohlc[:,2:3]
 @test size(zlema(x), 1) == n
 @test size(zlema(x), 2) == 1
 
+#TODO: run.jl
+#TODO: mom.jl
+#TODO: reg.jl
+#TODO: patterns.jl
+#TODO: temporal.jl
+#TODO: trendy.jl
+#TODO: utils.jl
+#TODO: vol.jl
+
+
