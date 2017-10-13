@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/dysonance/Indicators.jl.svg?branch=master)](https://travis-ci.org/dysonance/Indicators.jl)
+[![Build Status](https://travis-ci.org/dysonance/Indicators.jl.svg?branch=master)](https://travis-ci.org/dysonance/Indicators.jl) [![Coverage Status](https://coveralls.io/repos/dysonance/Indicators.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/dysonance/Indicators.jl?branch=master)
 
 # Indicators
 
