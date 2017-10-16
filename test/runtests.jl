@@ -2,7 +2,7 @@ using Indicators
 using Temporal
 using Base.Test
 
-const n = 1e3
+const n = 1_000
 const x0 = 50.0
 
 x = cumsum(randn(n)) + x0
