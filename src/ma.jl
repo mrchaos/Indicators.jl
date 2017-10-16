@@ -272,7 +272,7 @@ Sine-weighted moving average
 """ ->
 function swma{Float64}(x::Vector{Float64}; n::Int64=10)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
-    w = sin(collect(1:n) * 180.0/6.0)  # numerator weights
+    w = sin.(collect(1:n) * 180.0/6.0)  # numerator weights
     d = sum(w)  # denominator = sum(numerator weights)
     out = zeros(x)
     out[1:n-1] = NaN
@@ -292,8 +292,8 @@ function kama{Float64}(x::Vector{Float64}; n::Int64=10, nfast::Float64=0.6667, n
     @assert nfast>0.0 && nfast<1.0 "Argument nfast out of bounds."
     @assert nslow>0.0 && nslow<1.0 "Argument nslow out of bounds."
     dir = diffn(x, n=n)  # price direction := net change in price over past n periods
-    vol = runsum(abs(diffn(x,n=1)), n=n, cumulative=false)  # volatility/noise
-    er = abs(dir) ./ vol  # efficiency ratio
+    vol = runsum(abs.(diffn(x,n=1)), n=n, cumulative=false)  # volatility/noise
+    er = abs.(dir) ./ vol  # efficiency ratio
     ssc = er * (nfast-nslow) + nslow  # scaled smoothing constant
     sc = ssc .^ 2  # smoothing constant
     # initiliaze result variable
@@ -320,7 +320,7 @@ function alma{Float64}(x::Vector{Float64}; n::Int64=9, offset::Float64=0.85, sig
     out[1:n-1] = NaN
     m = floor(offset*(float(n)-1.0))
     s = float(n) / sigma
-    w = exp(-(((0.0:-1.0:-float(n)+1.0)-m).^2.0) / (2.0*s*s))
+    w = exp.(-(((0.0:-1.0:-float(n)+1.0)-m).^2.0) / (2.0*s*s))
     wsum = sum(w)
     if wsum != 0.0
         w = w ./ wsum
