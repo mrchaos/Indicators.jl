@@ -11,7 +11,7 @@ Aroon up/down/oscillator
 - Column 2: Aroon Down
 - Column 3: Aroon Oscillator
 """ ->
-function aroon(hl::Array{Float64,2}; n::Int64=25)::Vector{Float64}
+function aroon(hl::Array{Float64,2}; n::Int64=25)::Matrix{Float64}
     @assert size(hl,2) == 2 "Argument `hl` must have exactly 2 columns."
     @assert n < size(hl,1) "Argument `n` must be less than the number of rows in argument `hl`."
     out = zeros(Float64, (size(hl,1),3))
@@ -37,7 +37,7 @@ Donchian channel (if inclusive is set to true, will include current bar in calcu
 - Column 2: Average of highest high and lowest low of last `n` periods
 - Column 3: Highest high of last `n` periods
 """ ->
-function donch(hl::Array{Float64,2}; n::Int64=10, inclusive::Bool=true)::Vector{Float64}
+function donch(hl::Array{Float64,2}; n::Int64=10, inclusive::Bool=true)::Matrix{Float64}
     @assert size(hl,2) == 2 "Argument `hl` must have exactly 2 columns."
     local lower::Vector{Float64} = runmin(hl[:,2], n=n, cumulative=false, inclusive=inclusive)
     local upper::Vector{Float64} = runmax(hl[:,1], n=n, cumulative=false, inclusive=inclusive)
