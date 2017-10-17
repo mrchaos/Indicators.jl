@@ -7,11 +7,11 @@ const X0 = 50.0
 
 x = cumsum(randn(N)) + X0
 ohlc = cumsum(randn(N,4)) + X0
-hlc = ohlc[:,2:3]
+hlc = ohlc[:,2:4]
+hl = ohlc[:,2:3]
 
 count_nans(x) = sum(isnan.(x))
 
-#TODO: mom.jl
 #TODO: reg.jl
 #TODO: patterns.jl
 #TODO: temporal.jl
@@ -176,4 +176,73 @@ tmp = zlema(x)
 @test size(tmp, 2) == 1
 @test count_nans(tmp) != N
 
+# momentum function
+tmp = aroon(hl)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
+tmp = donch(hl)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = mom(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = roc(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = macd(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+@test count_nans(tmp) != N
+
+tmp = adx(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+@test count_nans(tmp) != N
+
+tmp = adx(hlc, wilder=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+@test count_nans(tmp) != N
+
+tmp = psar(hl)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = kst(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = wpr(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = cci(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = stoch(hlc, kind=:fast)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 2
+@test count_nans(tmp) != N
+
+tmp = stoch(hlc, kind=:slow)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 2
+@test count_nans(tmp) != N
+
+tmp = smi(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 2
+@test count_nans(tmp) != N
