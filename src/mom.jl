@@ -144,7 +144,7 @@ function adx(hlc::Array{Float64}; n::Int64=14, ma::Function=ema, args...)::Matri
     end
     dip = [NaN; ma(updm[2:N], n=n; args...)] ./ atr(hlc, n=n) * 100.0
     dim = [NaN; ma(dndm[2:N], n=n; args...)] ./ atr(hlc, n=n) * 100.0
-    dmx = abs(dip-dim) ./ (dip+dim)
+    dmx = abs.(dip-dim) ./ (dip+dim)
     adx = [fill(NaN,n); ma(dmx[n+1:N], n=n; args...)] * 100.0
     return [dip dim adx]
 end
