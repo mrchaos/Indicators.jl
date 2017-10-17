@@ -32,7 +32,7 @@ end
 
 `Compute the mode of an arbitrary array::Vector{Float64}`
 """ ->
-function mode(a::AbstractArray{Float64})::Vector{Float64}
+function mode(a::AbstractArray{Float64})
     isempty(a) && error("mode: input array cannot be empty.")
     cnts = Dict{Float64,Int64}()
     # first element
