@@ -119,7 +119,7 @@ function mlr_bands{Float64}(y::Vector{Float64}; n::Int64=10, se::Float64=2.0)::M
     out[1:n-1,:] = NaN
     out[:,2] = mlr(y, n=n)
     out[:,1] = mlr_lb(y, n=n, se=se)
-    out[:,1] = mlr_ub(y, n=n, se=se)
+    out[:,3] = mlr_ub(y, n=n, se=se)
     return out
 end
 
