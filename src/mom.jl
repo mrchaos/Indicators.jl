@@ -272,7 +272,7 @@ function stoch(hlc::Array{Float64,2}; nK::Int64=14, nD::Int64=3,
     out[:,2] = ma(out[:,1], n=nD; args...)
     if kind == :slow
         out[:,1] = out[:,2]
-        out[:,2] = ma(out[:,1], nD; args...)
+        out[:,2] = ma(out[:,1], n=nD; args...)
     end
     return out
 end
