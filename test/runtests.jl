@@ -179,12 +179,12 @@ tmp = zlema(x)
 # momentum function
 tmp = aroon(hl)
 @test size(tmp, 1) == N
-@test size(tmp, 2) == 1
+@test size(tmp, 2) == 3
 @test count_nans(tmp) != N
 
 tmp = donch(hl)
 @test size(tmp, 1) == N
-@test size(tmp, 2) == 1
+@test size(tmp, 2) == 3
 @test count_nans(tmp) != N
 
 tmp = mom(x)
