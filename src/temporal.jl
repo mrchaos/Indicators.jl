@@ -30,12 +30,12 @@ end
 ###### run.jl ######
 function runcov{V,T}(x::TS{V,T}, y::TS{V,T}; args...)
     @assert size(x,2) == 1 && size(y,2) == 1 "Arguments x and y must both be univariate (have only one column)."
-    z = [x y]
+    z = [x y].values
     return ts(runcov(z[:,1], z[:,2]; args...), x.index, :RunCov)
 end
 function runcor{V,T}(x::TS{V,T}, y::TS{V,T}; args...)
     @assert size(x,2) == 1 && size(y,2) == 1 "Arguments x and y must both be univariate (have only one column)."
-    z = [x y]
+    z = [x y].values
     ts(runcor(z[:,1], z[:,2]; args...), x.index, :RunCor)
 end
 mode{V,T}(X::TS{V,T}) = mode(X.values)
@@ -60,6 +60,7 @@ wma{V,T}(X::TS{V,T}; args...) = close_fun(X, wma, [:WMA]; args...)
 ema{V,T}(X::TS{V,T}; args...) = close_fun(X, ema, [:EMA]; args...)
 dema{V,T}(X::TS{V,T}; args...) = close_fun(X, dema, [:DEMA]; args...)
 tema{V,T}(X::TS{V,T}; args...) = close_fun(X, tema, [:TEMA]; args...)
+zlema{V,T}(X::TS{V,T}; args...) = close_fun(X, zlema, [:ZLEMA]; args...)
 mama{V,T}(X::TS{V,T}; args...) = close_fun(X, mama, [:MAMA,:FAMA]; args...)
 
 ##### reg.jl ######

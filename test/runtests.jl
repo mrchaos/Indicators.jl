@@ -182,11 +182,6 @@ tmp = runmax(x, cumulative=false, inclusive=false)
 @test size(tmp, 2) == 1
 @test count_nans(tmp) != N
 
-tmp = mode(round.(x))
-@test size(tmp, 1) == 1
-@test size(tmp, 2) == 1
-@test !isnan(tmp)
-
 # moving average functions
 tmp = sma(x)
 @test size(tmp, 1) == N
