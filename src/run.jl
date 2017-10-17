@@ -18,7 +18,7 @@ Lagged differencing
 
 `diffn(X::Array{Float64,2}; n::Int64=1)::Vector{Float64}`
 """ ->
-function diffn(X::Array{Float64,2}; n::Int64=1)::Vector{Float64}
+function diffn(X::Array{Float64,2}; n::Int64=1)::Matrix{Float64}
     @assert n<size(X,1) && n>0 "Argument n out of bounds."
     dx = zeros(X)
     @inbounds for j = 1:size(X,2)
