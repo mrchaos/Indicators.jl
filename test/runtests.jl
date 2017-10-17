@@ -302,3 +302,15 @@ tmp = keltner(hlc)
 @test size(tmp, 1) == N
 @test size(tmp, 2) == 3
 @test count_nans(tmp) != N
+
+# chart patterns functions
+tmp = renko(hlc, use_atr=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = renko(hlc, use_atr=false)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+

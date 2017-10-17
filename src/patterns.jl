@@ -13,10 +13,10 @@ Renko chart patterns
 """ ->
 # Renko chart bar identification with traditional methodology (constant box size)
 function renko(x::Vector{Float64}; box_size::Float64=10.0)::Vector{Int}
+    @assert box_size != 0
+    "Argument `box_size` must be nonzero."
     if box_size < 0.0
         box_size = abs(box_size)
-    elseif box_size == 0.0
-        error("Argument `box_size` must be nonzero.")
     end
     bar_id = ones(Int, size(x,1))
     ref_pt = x[1]
@@ -26,13 +26,15 @@ function renko(x::Vector{Float64}; box_size::Float64=10.0)::Vector{Int}
             bar_id[i:end] += 1
         end
     end
+    return bar_id
 end
 
 # Renko chart bar identification with option to use ATR or traditional method (constant box size)
 function renko(hlc::Matrix{Float64}; box_size::Float64=10.0, use_atr::Bool=false, n::Int=14)::Vector{Int}
     if use_atr
-        bar_id = ones(Int, size(x,1))
+        bar_id = ones(Int, size(hlc,1))
         box_sizes = atr(hlc, n=n)
+        x = hlc[:,3]
         ref_pt = x[1]
         @inbounds for i in 2:size(x,1)
             if abs(x[i]-ref_pt) >= box_sizes[i]
