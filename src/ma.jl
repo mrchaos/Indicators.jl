@@ -37,6 +37,19 @@ function wma(x::Vector{Float64}; n::Int64=10, wts::Vector{Float64}=collect(1:n)/
     return out
 end
 
+function first_valid(x::Vector{Float64})::Int
+    if !isnan(x[1])
+        return 1
+    else
+        @inbounds for i in 2:length(x)
+            if !isnan(x[i])
+                return i
+            end
+        end
+    end
+    return 0
+end
+
 @doc doc"""
 Exponential moving average (EMA)
 
@@ -48,7 +61,7 @@ function ema(x::Vector{Float64}; n::Int64=10, alpha::Float64=2.0/(n+1), wilder::
         alpha = 1.0/n
     end
     out = zeros(x)
-    i = first(find(.!isnan.(x)))
+    i = first_valid(x)
     out[1:n+i-2] = NaN
     out[n+i-1] = mean(x[i:n+i-1])
     @inbounds for i = n+i:size(x,1)

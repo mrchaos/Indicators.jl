@@ -2,54 +2,84 @@ using Indicators
 using Temporal
 using Base.Test
 
-const n = 1_000
-const x0 = 50.0
+const N = 1_000
+const X0 = 50.0
 
-x = cumsum(randn(n)) + x0
-ohlc = cumsum(randn(n,4)) + x0
+x = cumsum(randn(N)) + X0
+ohlc = cumsum(randn(N,4)) + X0
 hlc = ohlc[:,2:3]
 
+count_nans(x) = sum(isnan.(x))
+
 # moving average functions
-@test size(mama(x), 1) == n
-@test size(mama(x), 2) == 2
+tmp = mama(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 2
+@test count_nans(tmp) != N
 
-@test size(sma(x), 1) == n
-@test size(sma(x), 2) == 1
+tmp = sma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
-@test size(ema(x), 1) == n
-@test size(ema(x), 2) == 1
+tmp = ema(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
-@test size(wma(x), 1) == n
-@test size(wma(x), 2) == 1
+tmp = wma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
-@test size(hma(x), 1) == n
-@test size(hma(x), 2) == 1
+tmp = hma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
-@test size(trima(x), 1) == n
-@test size(trima(x), 2) == 1
+tmp = trima(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
-@test size(mma(x), 1) == n
-@test size(mma(x), 2) == 1
+tmp = mma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
-@test size(tema(x), 1) == n
-@test size(tema(x), 2) == 1
+tmp = tema(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
-@test size(dema(x), 1) == n
-@test size(dema(x), 2) == 1
+tmp = dema(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
-@test size(swma(x), 1) == n
-@test size(swma(x), 2) == 1
+tmp = swma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
-@test size(kama(x), 1) == n
-@test size(kama(x), 2) == 1
+tmp = kama(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
-@test size(alma(x), 1) == n
-@test size(alma(x), 2) == 1
+tmp = alma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
 
-@test size(zlema(x), 1) == n
-@test size(zlema(x), 2) == 1
+tmp = zlema(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
 
 #TODO: run.jl
+
 #TODO: mom.jl
 #TODO: reg.jl
 #TODO: patterns.jl
