@@ -100,12 +100,12 @@ tmp = runmin(x, cumulative=false)
 @test size(tmp, 2) == 1
 @test count_nans(tmp) != N
 
-tmp = max(x, cumulative=true)
+tmp = runmax(x, cumulative=true)
 @test size(tmp, 1) == N
 @test size(tmp, 2) == 1
 @test count_nans(tmp) != N
 
-tmp = max(x, cumulative=false)
+tmp = runmax(x, cumulative=false)
 @test size(tmp, 1) == N
 @test size(tmp, 2) == 1
 @test count_nans(tmp) != N
