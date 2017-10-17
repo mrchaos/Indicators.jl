@@ -129,13 +129,13 @@ function runmad(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true, fun::Fun
         fi = collect(1.0:size(x,1))
         @inbounds for i = n:size(x,1)
             center = fun(x[1:i])
-            out[i] = sum(abs(x[1:i]-center)) / fi[i]
+            out[i] = sum(abs.(x[1:i]-center)) / fi[i]
         end
     else
         fn = float(n)
         @inbounds for i = n:size(x,1)
             center = fun(x[i-n+1:i])
-            out[i] = sum(abs(x[i-n+1:i]-center)) / fn
+            out[i] = sum(abs.(x[i-n+1:i]-center)) / fn
         end
     end
     return out
