@@ -168,7 +168,7 @@ Compute the running or rolling standard deviation of an array
 `runsd(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true)::Vector{Float64}`
 """ ->
 function runsd(x::Vector{Float64}; n::Int64=10, cumulative::Bool=true)::Vector{Float64}
-    return sqrt(runvar(x, n=n, cumulative=cumulative))
+    return sqrt.(runvar(x, n=n, cumulative=cumulative))
 end
 
 @doc doc"""
