@@ -31,12 +31,12 @@ end
 function runcov{V,T}(x::TS{V,T}, y::TS{V,T}; args...)
     @assert size(x,2) == 1 && size(y,2) == 1 "Arguments x and y must both be univariate (have only one column)."
     z = [x y]
-    return ts(runcov(z[:,1], z[:,2], n, cumulative), x.index, :RunCov)
+    return ts(runcov(z[:,1], z[:,2]; args...), x.index, :RunCov)
 end
 function runcor{V,T}(x::TS{V,T}, y::TS{V,T}; args...)
     @assert size(x,2) == 1 && size(y,2) == 1 "Arguments x and y must both be univariate (have only one column)."
     z = [x y]
-    ts(runcor(z[:,1], z[:,2], n, cumulative), x.index, :RunCor)
+    ts(runcor(z[:,1], z[:,2]; args...), x.index, :RunCor)
 end
 mode{V,T}(X::TS{V,T}) = mode(X.values)
 runmean{V,T}(X::TS{V,T}; args...) = close_fun(X, runmean, [:RunMean]; args...)

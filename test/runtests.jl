@@ -12,6 +12,9 @@ hl = ohlc[:,2:3]
 
 count_nans(x) = sum(isnan.(x))
 
+#TODO: trendy.jl
+#TODO: utils.jl
+
 # moving regressions
 tmp = mlr_beta(x)
 @test size(tmp, 1) == N
@@ -62,10 +65,6 @@ tmp = mlr_rsq(x, adjusted=false)
 @test size(tmp, 1) == N
 @test size(tmp, 2) == 1
 @test count_nans(tmp) != N
-
-#TODO: temporal.jl
-#TODO: trendy.jl
-#TODO: utils.jl
 
 #TODO: run.jl
 tmp = diffn(x)
@@ -361,4 +360,273 @@ tmp = renko(hlc, use_atr=false)
 @test size(tmp, 1) == N
 @test size(tmp, 2) == 1
 @test count_nans(tmp) != N
+
+# ==== TEMPORAL INTERACTIONS ====
+x = TS(x)
+x.fields = [:Close]
+ohlc = TS(ohlc)
+ohlc.fields = [:Open, :High, :Low, :Close]
+hlc = ohlc[:,2:4]
+
+# moving regressions
+tmp = mlr_beta(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 2
+
+tmp = mlr_slope(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = mlr_intercept(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = mlr(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = mlr_se(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = mlr_ub(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = mlr_lb(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = mlr_bands(tmp)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+
+tmp = mlr_rsq(x, adjusted=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = mlr_rsq(x, adjusted=false)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+# running calculations
+tmp = runmean(x, cumulative=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runmean(x, cumulative=false)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runsum(x, cumulative=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = wilder_sum(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runmad(x, cumulative=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runmad(x, cumulative=false)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runvar(x, cumulative=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runvar(x, cumulative=false)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runsd(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runcov(ohlc[:,1], ohlc[:,4], cumulative=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runcov(ohlc[:,1], ohlc[:,4], cumulative=false)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runcor(ohlc[:,1], ohlc[:,4], cumulative=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runcor(ohlc[:,1], ohlc[:,4], cumulative=false)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runmin(x, cumulative=true, inclusive=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runmin(x, cumulative=true, inclusive=false)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runmin(x, cumulative=false, inclusive=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runmin(x, cumulative=false, inclusive=false)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runmax(x, cumulative=true, inclusive=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runmax(x, cumulative=true, inclusive=false)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runmax(x, cumulative=false, inclusive=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = runmax(x, cumulative=false, inclusive=false)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = mode(round.(x))
+@test size(tmp, 1) == 1
+@test size(tmp, 2) == 1
+@test !isnan(tmp)
+
+# moving average functions
+tmp = sma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = mama(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 2
+
+tmp = ema(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = wma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = hma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = trima(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = mma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = tema(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = dema(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = swma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = kama(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = alma(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = zlema(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+# momentum function
+tmp = aroon(hl)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+
+tmp = donch(hl)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+
+tmp = momentum(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = roc(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = macd(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+
+tmp = rsi(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = adx(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+
+tmp = adx(hlc, wilder=true)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+
+tmp = psar(hl)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = kst(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = wpr(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = cci(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = stoch(hlc, kind=:fast)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 2
+
+tmp = stoch(hlc, kind=:slow)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 2
+
+tmp = smi(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 2
+
+# volatility functions
+tmp = bbands(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+
+tmp = tr(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = atr(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+
+tmp = keltner(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
 
