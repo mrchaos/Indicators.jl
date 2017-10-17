@@ -249,7 +249,7 @@ Commodity channel index
 `cci(hlc::Array{Float64,2}; n::Int64=20, c::Float64=0.015, ma::Function=sma)::Vector{Float64}`
 """ ->
 function cci(hlc::Array{Float64,2}; n::Int64=20, c::Float64=0.015, ma::Function=sma, args...)::Vector{Float64}
-    tp = (hlc[:,1] + hlc[:,2] + hlc[:,3]) / 3.0
+    tp = (hlc[:,1] + hlc[:,2] + hlc[:,3]) ./ 3.0
     dev = runmad(tp, n=n, cumulative=false, fun=mean)
     avg = ma(tp, n=n; args...)
     return (tp - avg) ./ (c * dev)
