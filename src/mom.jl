@@ -64,7 +64,7 @@ function roc(x::Vector{Float64}; n::Int64=1)::Vector{Float64}
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     out = zeros(x)
     @inbounds for i = n:size(x,1)
-        out[i] = x[i]/x[i-n] - 1.0
+        out[i] = x[i]/x[i-n+1] - 1.0
     end
     out[1:n] = NaN
     return out * 100.0
