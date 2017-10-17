@@ -258,7 +258,7 @@ end
 @doc doc"""
 Stochastic oscillator (fast or slow)
 
-`stoch(hlc::Array{Float64,2}; nK::Int64=14, nD::Int64=3, kind::ByteString="fast", ma::Function=sma, args...)::Matrix{Float64}`
+`stoch(hlc::Array{Float64,2}; nK::Int64=14, nD::Int64=3, kind::Symbol=:fast, ma::Function=sma, args...)::Matrix{Float64}`
 """ ->
 function stoch(hlc::Array{Float64,2}; nK::Int64=14, nD::Int64=3,
                kind::Symbol=:fast, ma::Function=sma, args...)::Matrix{Float64}
