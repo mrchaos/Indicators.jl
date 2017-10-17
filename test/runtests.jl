@@ -15,6 +15,27 @@ count_nans(x) = sum(isnan.(x))
 #TODO: trendy.jl
 #TODO: utils.jl
 
+# trendy
+tmp = resistance(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = support(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = minima(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = maxima(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
 # moving regressions
 tmp = mlr_beta(x)
 @test size(tmp, 1) == N

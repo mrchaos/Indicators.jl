@@ -47,7 +47,7 @@ end
 function resistance{Float64}(x::Vector{Float64}; order::Int=1, threshold::Float64=0.0)
     out = zeros(x)
     crit = maxima(x, threshold=threshold, order=order)
-    out[!crit] = NaN
+    out[.!crit] = NaN
     idx = find(crit)
     @inbounds for i=2:length(idx)
         out[idx[i-1]:idx[i]] = interpolate(idx[i-1], idx[i], x[i-1], x[i])
@@ -58,7 +58,7 @@ end
 function support{Float64}(x::Vector{Float64}; order::Int=1, threshold::Float64=0.0)
     out = zeros(x)
     crit = minima(x, threshold=threshold, order=order)
-    out[!crit] = NaN
+    out[.!crit] = NaN
     idx = find(crit)
     @inbounds for i=2:length(idx)
         out[idx[i-1]:idx[i]] = interpolate(idx[i-1], idx[i], x[i-1], x[i])

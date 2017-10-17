@@ -11,7 +11,7 @@ export
     bbands, tr, atr, keltner,
     crossover, crossunder,
     renko,
-    maxima, minima#, support, resistance
+    maxima, minima, support, resistance
 
 include("run.jl")
 include("ma.jl")
