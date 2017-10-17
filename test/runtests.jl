@@ -281,3 +281,24 @@ tmp = smi(hlc)
 @test size(tmp, 1) == N
 @test size(tmp, 2) == 2
 @test count_nans(tmp) != N
+
+# volatility functions
+tmp = bbands(x)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+@test count_nans(tmp) != N
+
+tmp = tr(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = atr(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 1
+@test count_nans(tmp) != N
+
+tmp = keltner(hlc)
+@test size(tmp, 1) == N
+@test size(tmp, 2) == 3
+@test count_nans(tmp) != N

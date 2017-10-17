@@ -24,9 +24,7 @@ True range
 `tr(hlc::Matrix{Float64})::Vector{Float64}`
 """ ->
 function tr(hlc::Matrix{Float64})::Vector{Float64}
-    if size(hlc,2) != 3
-        error("HLC array must have 3 columns.")
-    end
+    @assert size(hlc,2) == 3 "HLC array must have 3 columns."
     n = size(hlc,1)
     out = zeros(n)
     out[1] = NaN
@@ -57,6 +55,7 @@ Column 2: middle band
 Column 3: upper band
 """ ->
 function keltner(hlc::Array{Float64,2}; nema::Int64=20, natr::Int64=10, mult::Int64=2)::Matrix{Float64}
+    @assert size(hlc,2) == 3 "HLC array must have 3 columns."
     out = zeros(size(hlc,1), 3)
     out[:,2] = ema(hlc[:,3], n=nema)
     out[:,1] = out[:,2] - mult*atr(hlc, n=natr)
