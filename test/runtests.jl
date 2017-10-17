@@ -187,7 +187,7 @@ tmp = donch(hl)
 @test size(tmp, 2) == 3
 @test count_nans(tmp) != N
 
-tmp = mom(x)
+tmp = momentum(x)
 @test size(tmp, 1) == N
 @test size(tmp, 2) == 1
 @test count_nans(tmp) != N
