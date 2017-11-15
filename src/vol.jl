@@ -1,14 +1,14 @@
 @doc doc"""
 Bollinger bands (moving average with standard deviation bands)
 
-`bbands(x::Vector{Float64}; n::Int64=10, sigma::Float64=2.0)::Matrix{Float64}`
+`bbands(x::Array{Float64}; n::Int64=10, sigma::Float64=2.0)::Matrix{Float64}`
 
 *Output*
 - Column 1: lower band
 - Column 2: middle band
 - Column 3: upper band
 """ ->
-function bbands(x::Vector{Float64}; n::Int64=10, sigma::Float64=2.0, ma::Function=sma, args...)::Matrix{Float64}
+function bbands(x::Array{Float64}; n::Int64=10, sigma::Float64=2.0, ma::Function=sma, args...)::Matrix{Float64}
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     out = zeros(size(x,1), 3)  # cols := lower bound, ma, upper bound
     out[:,2] = ma(x, n=n, args...)
@@ -21,9 +21,9 @@ end
 @doc doc"""
 True range
 
-`tr(hlc::Matrix{Float64})::Vector{Float64}`
+`tr(hlc::Matrix{Float64})::Array{Float64}`
 """ ->
-function tr(hlc::Matrix{Float64})::Vector{Float64}
+function tr(hlc::Matrix{Float64})::Array{Float64}
     @assert size(hlc,2) == 3 "HLC array must have 3 columns."
     n = size(hlc,1)
     out = zeros(n)
@@ -37,9 +37,9 @@ end
 @doc doc"""
 Average true range (uses exponential moving average)
 
-`atr(hlc::Matrix{Float64}; n::Int64=14)::Vector{Float64}`
+`atr(hlc::Matrix{Float64}; n::Int64=14)::Array{Float64}`
 """ ->
-function atr(hlc::Matrix{Float64}; n::Int64=14, ma::Function=ema)::Vector{Float64}
+function atr(hlc::Matrix{Float64}; n::Int64=14, ma::Function=ema)::Array{Float64}
     @assert n<size(hlc,1) && n>0 "Argument n out of bounds."
     return [NaN; ma(tr(hlc)[2:end], n=n)]
 end

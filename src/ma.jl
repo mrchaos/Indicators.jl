@@ -1,9 +1,9 @@
 @doc doc"""
 Simple moving average (SMA)
 
-`sma(x::Vector{Float64}; n::Int64=10)::Vector{Float64}`
+`sma(x::Array{Float64}; n::Int64=10)::Array{Float64}`
 """ ->
-function sma(x::Vector{Float64}; n::Int64=10)::Vector{Float64}
+function sma(x::Array{Float64}; n::Int64=10)::Array{Float64}
     return runmean(x, n=n, cumulative=false)
 end
 # function sma(X::Matrix{Float64}; n::Int=10)::Matrix{Float64}
@@ -17,18 +17,18 @@ end
 @doc doc"""
 Triangular moving average (TRIMA)
 
-`trima(x::Vector{Float64}; n::Int64=10, ma::Function=sma, args...)::Vector{Float64}`
+`trima(x::Array{Float64}; n::Int64=10, ma::Function=sma, args...)::Array{Float64}`
 """ ->
-function trima(x::Vector{Float64}; n::Int64=10, ma::Function=sma)::Vector{Float64}
+function trima(x::Array{Float64}; n::Int64=10, ma::Function=sma)::Array{Float64}
     return ma(ma(x, n=n), n=n)
 end
 
 @doc doc"""
 Weighted moving average (WMA)
 
-`wma(x::Vector{Float64}; n::Int64=10, wts::Vector{Float64}=collect(1:n)/sum(1:n))::Vector{Float64}`
+`wma(x::Array{Float64}; n::Int64=10, wts::Array{Float64}=collect(1:n)/sum(1:n))::Array{Float64}`
 """ ->
-function wma(x::Vector{Float64}; n::Int64=10, wts::Vector{Float64}=collect(1:n)/sum(1:n))
+function wma(x::Array{Float64}; n::Int64=10, wts::Array{Float64}=collect(1:n)/sum(1:n))
     @assert n<size(x,1) && n>0 "Argument n out of bounds"
     out = fill(NaN, size(x,1))
     @inbounds for i = n:size(x,1)
@@ -37,7 +37,7 @@ function wma(x::Vector{Float64}; n::Int64=10, wts::Vector{Float64}=collect(1:n)/
     return out
 end
 
-function first_valid(x::Vector{Float64})::Int
+function first_valid(x::Array{Float64})::Int
     if !isnan(x[1])
         return 1
     else
@@ -53,9 +53,9 @@ end
 @doc doc"""
 Exponential moving average (EMA)
 
-`ema(x::Vector{Float64}; n::Int64=10, alpha::Float64=2.0/(n+1.0), wilder::Bool=false)::Vector{Float64}`
+`ema(x::Array{Float64}; n::Int64=10, alpha::Float64=2.0/(n+1.0), wilder::Bool=false)::Array{Float64}`
 """ ->
-function ema(x::Vector{Float64}; n::Int64=10, alpha::Float64=2.0/(n+1), wilder::Bool=false)
+function ema(x::Array{Float64}; n::Int64=10, alpha::Float64=2.0/(n+1), wilder::Bool=false)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     if wilder
         alpha = 1.0/n
@@ -73,18 +73,18 @@ end
 @doc doc"""
 Modified moving average (MMA)
 
-`mma(x::Vector{Float64}; n::Int64=10)::Vector{Float64}`
+`mma(x::Array{Float64}; n::Int64=10)::Array{Float64}`
 """ ->
-function mma(x::Vector{Float64}; n::Int64=10)
+function mma(x::Array{Float64}; n::Int64=10)
     return ema(x, n=n, alpha=1.0/n)
 end
 
 @doc doc"""
 Double exponential moving average (DEMA)
 
-`dema(x::Vector{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=false)::Vector{Float64}`
+`dema(x::Array{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=false)::Array{Float64}`
 """ ->
-function dema(x::Vector{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=false)
+function dema(x::Array{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=false)
     return 2.0 * ema(x, n=n, alpha=alpha, wilder=wilder) - 
         ema(ema(x, n=n, alpha=alpha, wilder=wilder),
             n=n, alpha=alpha, wilder=wilder)
@@ -93,9 +93,9 @@ end
 @doc doc"""
 Triple exponential moving average (TEMA)
 
-`tema(x::Vector{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=false)::Vector{Float64}`
+`tema(x::Array{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=false)::Array{Float64}`
 """ ->
-function tema(x::Vector{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=false)
+function tema(x::Array{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=false)
     return 3.0 * ema(x, n=n, alpha=alpha, wilder=wilder) - 
         3.0 * ema(ema(x, n=n, alpha=alpha, wilder=wilder),
                   n=n, alpha=alpha, wilder=wilder) +
@@ -107,9 +107,9 @@ end
 @doc doc"""
 MESA adaptive moving average (MAMA)
 
-`mama(x::Vector{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05)::Matrix{Float64}`
+`mama(x::Array{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05)::Matrix{Float64}`
 """ ->
-function mama(x::Vector{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05)::Matrix{Float64}
+function mama(x::Array{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05)::Matrix{Float64}
     n = size(x,1)
     out = zeros(Float64, n, 2)
     #smooth = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -272,18 +272,18 @@ end
 @doc doc"""
 Hull moving average (HMA)
 
-`hma(x::Vector{Float64}; n::Int64=20)::Vector{Float64}`
+`hma(x::Array{Float64}; n::Int64=20)::Array{Float64}`
 """ ->
-function hma(x::Vector{Float64}; n::Int64=20)
+function hma(x::Array{Float64}; n::Int64=20)
     return wma(2 * wma(x, n=Int64(round(n/2.0))) - wma(x, n=n), n=Int64(trunc(sqrt(n))))
 end
 
 @doc doc"""
 Sine-weighted moving average
 
-`swma{Float64}(x::Vector{Float64}; n::Int64)::Vector{Float64}`
+`swma{Float64}(x::Array{Float64}; n::Int64)::Array{Float64}`
 """ ->
-function swma{Float64}(x::Vector{Float64}; n::Int64=10)
+function swma{Float64}(x::Array{Float64}; n::Int64=10)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     w = sin.(collect(1:n) * 180.0/6.0)  # numerator weights
     d = sum(w)  # denominator = sum(numerator weights)
@@ -298,9 +298,9 @@ end
 @doc doc"""
 Kaufman adaptive moving average (KAMA)
 
-`kama{Float64}(x::Vector{Float64}; n::Int64=10, nfast::Float64=0.6667, nslow::Float64=0.0645)::Vector{Float64}`
+`kama{Float64}(x::Array{Float64}; n::Int64=10, nfast::Float64=0.6667, nslow::Float64=0.0645)::Array{Float64}`
 """ ->
-function kama{Float64}(x::Vector{Float64}; n::Int64=10, nfast::Float64=0.6667, nslow::Float64=0.0645)
+function kama{Float64}(x::Array{Float64}; n::Int64=10, nfast::Float64=0.6667, nslow::Float64=0.0645)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     @assert nfast>0.0 && nfast<1.0 "Argument nfast out of bounds."
     @assert nslow>0.0 && nslow<1.0 "Argument nslow out of bounds."
@@ -323,9 +323,9 @@ end
 @doc doc"""
 Arnaud-Legoux moving average (ALMA)
 
-`alma{Float64}(x::Vector{Float64}; n::Int64=9, offset::Float64=0.85, sigma::Float64=6.0)::Vector{Float64}`
+`alma{Float64}(x::Array{Float64}; n::Int64=9, offset::Float64=0.85, sigma::Float64=6.0)::Array{Float64}`
 """ ->
-function alma{Float64}(x::Vector{Float64}; n::Int64=9, offset::Float64=0.85, sigma::Float64=6.0)
+function alma{Float64}(x::Array{Float64}; n::Int64=9, offset::Float64=0.85, sigma::Float64=6.0)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     @assert sigma>0.0 "Argument sigma must be greater than 0."
     @assert offset>=0.0 && offset<=1 "Argument offset must be in (0,1)."
@@ -344,7 +344,7 @@ function alma{Float64}(x::Vector{Float64}; n::Int64=9, offset::Float64=0.85, sig
     return out
 end
 
-function lagged(x::Vector{Float64}, n::Int=1)::Vector{Float64}
+function lagged(x::Array{Float64}, n::Int=1)::Array{Float64}
     if n > 0
         return [fill(NaN,n); x[1:end-n]]
     elseif n < 0
@@ -357,8 +357,8 @@ end
 @doc """
 Zero-lag exponential moving average (ZLEMA)
 
-`zlema(x::Vector{Float64}; n::Int=10, ema_args...)::Vector{Float64}`
+`zlema(x::Array{Float64}; n::Int=10, ema_args...)::Array{Float64}`
 """ ->
-function zlema(x::Vector{Float64}; n::Int=10, ema_args...)::Vector{Float64}
+function zlema(x::Array{Float64}; n::Int=10, ema_args...)::Array{Float64}
     return ema(x+(x-lagged(x,round(Int, (n-1)/2.0))), n=n; ema_args...)
 end

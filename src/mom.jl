@@ -3,7 +3,7 @@
 @doc doc"""
 Aroon up/down/oscillator
 
-`aroon(hl::Array{Float64,2}; n::Int64=25)::Vector{Float64}`
+`aroon(hl::Array{Float64,2}; n::Int64=25)::Array{Float64}`
 
 *Output*
 
@@ -29,7 +29,7 @@ end
 @doc doc"""
 Donchian channel (if inclusive is set to true, will include current bar in calculations.)
 
-`donch(hl::Array{Float64,2}; n::Int64=10, inclusive::Bool=true)::Vector{Float64}`
+`donch(hl::Array{Float64,2}; n::Int64=10, inclusive::Bool=true)::Array{Float64}`
 
 *Output*
 
@@ -39,18 +39,18 @@ Donchian channel (if inclusive is set to true, will include current bar in calcu
 """ ->
 function donch(hl::Array{Float64,2}; n::Int64=10, inclusive::Bool=true)::Matrix{Float64}
     @assert size(hl,2) == 2 "Argument `hl` must have exactly 2 columns."
-    local lower::Vector{Float64} = runmin(hl[:,2], n=n, cumulative=false, inclusive=inclusive)
-    local upper::Vector{Float64} = runmax(hl[:,1], n=n, cumulative=false, inclusive=inclusive)
-    local middle::Vector{Float64} = (lower .+ upper) ./ 2.0
+    local lower::Array{Float64} = runmin(hl[:,2], n=n, cumulative=false, inclusive=inclusive)
+    local upper::Array{Float64} = runmax(hl[:,1], n=n, cumulative=false, inclusive=inclusive)
+    local middle::Array{Float64} = (lower .+ upper) ./ 2.0
     return [lower middle upper]
 end
 
 @doc doc"""
 Momentum indicator (price now vs price `n` periods back)
 
-`momentum(x::Vector{Float64}; n::Int64=1)::Vector{Float64}`
+`momentum(x::Array{Float64}; n::Int64=1)::Array{Float64}`
 """ ->
-function momentum(x::Vector{Float64}; n::Int64=1)::Vector{Float64}
+function momentum(x::Array{Float64}; n::Int64=1)::Array{Float64}
     @assert n>0 "Argument n must be positive."
     return diffn(x, n=n)
 end
@@ -58,9 +58,9 @@ end
 @doc """
 Rate of change indicator (percent change between i'th observation and (i-n)'th observation)
 
-`roc(x::Vector{Float64}; n::Int64=1)::Vector{Float64}`
+`roc(x::Array{Float64}; n::Int64=1)::Array{Float64}`
 """ ->
-function roc(x::Vector{Float64}; n::Int64=1)::Vector{Float64}
+function roc(x::Array{Float64}; n::Int64=1)::Array{Float64}
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     out = zeros(x)
     @inbounds for i = n:size(x,1)
@@ -73,7 +73,7 @@ end
 @doc doc"""
 Moving average convergence-divergence
 
-`macd(x::Vector{Float64}; nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)::Vector{Float64}`
+`macd(x::Array{Float64}; nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)::Array{Float64}`
 
 *Output*
 
@@ -81,7 +81,7 @@ Moving average convergence-divergence
 - Column 2: MACD Signal Line
 - Column 3: MACD Histogram
 """ ->
-function macd(x::Vector{Float64}; nfast::Int64=12, nslow::Int64=26, nsig::Int64=9,
+function macd(x::Array{Float64}; nfast::Int64=12, nslow::Int64=26, nsig::Int64=9,
               fastMA::Function=ema, slowMA::Function=ema, signalMA::Function=sma)::Matrix{Float64}
     out = zeros(Float64, (length(x),3))
     out[:,1] = fastMA(x, n=nfast) - slowMA(x, n=nslow)
@@ -93,9 +93,9 @@ end
 @doc doc"""
 Relative strength index
 
-`rsi(x::Vector{Float64}; n::Int64=14, ma::Function=ema, args...)::Vector{Float64}`
+`rsi(x::Array{Float64}; n::Int64=14, ma::Function=ema, args...)::Array{Float64}`
 """ ->
-function rsi(x::Vector{Float64}; n::Int64=14, ma::Function=ema, args...)::Vector{Float64}
+function rsi(x::Array{Float64}; n::Int64=14, ma::Function=ema, args...)::Array{Float64}
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     N = size(x,1)
     ups = zeros(N)
@@ -116,7 +116,7 @@ end
 @doc doc"""
 Average directional index
 
-`adx(hlc::Array{Float64}; n::Int64=14, wilder=true)::Vector{Float64}`
+`adx(hlc::Array{Float64}; n::Int64=14, wilder=true)::Array{Float64}`
 
 *Output*
 
@@ -152,7 +152,7 @@ end
 @doc doc"""
 Parabolic stop and reverse (SAR)
 
-`psar(hl::Array{Float64}; af_min::Float64=0.02, af_max::Float64=0.2, af_inc::Float64=af_min)::Vector{Float64}`
+`psar(hl::Array{Float64}; af_min::Float64=0.02, af_max::Float64=0.2, af_inc::Float64=af_min)::Array{Float64}`
 
 *Arguments*
 - `hl`: 2D array of high and low prices in first and second columns respectively
@@ -160,7 +160,7 @@ Parabolic stop and reverse (SAR)
 - `af_max`: maximum acceleration factor (accel factor capped at this value)
 - `af_inc`: increment to the acceleration factor (speed of increase in accel factor)
 """ ->
-function psar(hl::Array{Float64}; af_min::Float64=0.02, af_max::Float64=0.2, af_inc::Float64=af_min)::Vector{Float64}
+function psar(hl::Array{Float64}; af_min::Float64=0.02, af_max::Float64=0.2, af_inc::Float64=af_min)::Array{Float64}
     @assert af_min<1.0 && af_min>0.0 "Argument af_min must be in [0,1]."
     @assert af_max<1.0 && af_max>0.0 "Argument af_max must be in [0,1]."
     @assert af_inc<1.0 && af_inc>0.0 "Argument af_inc must be in [0,1]."
@@ -212,14 +212,14 @@ end
 KST (Know Sure Thing) -- smoothed and summed rates of change
 
 ```
-kst(x::Vector{Float64};
-    nroc::Vector{Int64}=[10,15,20,30], navg::Vector{Int64}=[10,10,10,15],
-    wgts::Vector{Int64}=collect(1:length(nroc)), ma::Function=sma)::Vector{Float64}
+kst(x::Array{Float64};
+    nroc::Array{Int64}=[10,15,20,30], navg::Array{Int64}=[10,10,10,15],
+    wgts::Array{Int64}=collect(1:length(nroc)), ma::Function=sma)::Array{Float64}
 
 ```
 """ ->
-function kst(x::Vector{Float64}; nroc::Vector{Int64}=[10,15,20,30], navg::Vector{Int64}=[10,10,10,15],
-             wgts::Vector{Int64}=collect(1:length(nroc)), ma::Function=sma)::Vector{Float64}
+function kst(x::Array{Float64}; nroc::Array{Int64}=[10,15,20,30], navg::Array{Int64}=[10,10,10,15],
+             wgts::Array{Int64}=collect(1:length(nroc)), ma::Function=sma)::Array{Float64}
     @assert length(nroc) == length(navg)
     @assert all(nroc.>0) && all(nroc.<size(x,1))
     @assert all(navg.>0) && all(navg.<size(x,1))
@@ -235,9 +235,9 @@ end
 @doc doc"""
 Williams %R
 
-`wpr(hlc::Array{Float64,2}, n::Int64=14)::Vector{Float64}`
+`wpr(hlc::Array{Float64,2}, n::Int64=14)::Array{Float64}`
 """ ->
-function wpr(hlc::Array{Float64,2}; n::Int64=14)::Vector{Float64}
+function wpr(hlc::Array{Float64,2}; n::Int64=14)::Array{Float64}
     hihi = runmax(hlc[:,1], n=n, cumulative=false)
     lolo = runmin(hlc[:,2], n=n, cumulative=false)
     return -100 * (hihi - hlc[:,3]) ./ (hihi - lolo)
@@ -246,9 +246,9 @@ end
 @doc doc"""
 Commodity channel index
 
-`cci(hlc::Array{Float64,2}; n::Int64=20, c::Float64=0.015, ma::Function=sma)::Vector{Float64}`
+`cci(hlc::Array{Float64,2}; n::Int64=20, c::Float64=0.015, ma::Function=sma)::Array{Float64}`
 """ ->
-function cci(hlc::Array{Float64,2}; n::Int64=20, c::Float64=0.015, ma::Function=sma, args...)::Vector{Float64}
+function cci(hlc::Array{Float64,2}; n::Int64=20, c::Float64=0.015, ma::Function=sma, args...)::Array{Float64}
     tp = (hlc[:,1] + hlc[:,2] + hlc[:,3]) ./ 3.0
     dev = runmad(tp, n=n, cumulative=false, fun=mean)
     avg = ma(tp, n=n; args...)
