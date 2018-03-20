@@ -292,23 +292,22 @@ end
 @doc doc"""
 Compute the running/rolling quantile of an array.
 
-`runquantile(x::Vector{Float64}; p::Vector{Float64}=[0.05,0.95], n::Int=10, cumulative::Bool=true)::Matrix{Float64}`
+`runquantile(x::Vector{Float64}; p::Float64=0.05, n::Int=10, cumulative::Bool=true)::Vector{Float64}`
 """
-function runquantile(x::Vector{Float64}; p::Vector{Float64}=[0.05,0.95], n::Int=10, cumulative::Bool=true)::Matrix{Float64}
+function runquantile(x::Vector{Float64}; p::Float64=0.05, n::Int=10, cumulative::Bool=true)::Vector{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
-    k = length(p)
     N = length(x)
-    out = zeros(Float64, (length(x), k))
+    out = zeros(Float64, length(x))
     if cumulative
-        @inbounds for j in 1:k, i in 2:N
-            out[i,j] = quantile(x[1:i], p[j])
+        @inbounds for i in 2:N
+            out[i] = quantile(x[1:i], p)
         end
-        out[1,:] = NaN
+        out[1] = NaN
     else
-        @inbounds for j in 1:k, i in n:N
-            out[i,j] = quantile(x[i-n+1:i], p[j])
+        @inbounds for i in n:N
+            out[i] = quantile(x[i-n+1:i], p)
         end
-        out[1:n-1,:] = NaN
+        out[1:n-1] = NaN
     end
     return out
 end
