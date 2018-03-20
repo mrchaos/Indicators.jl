@@ -56,6 +56,7 @@ Indicators is a [Julia](https://julialang.org) package offering efficient implem
 - Rolling/running maximum
 - Rolling/running minimum
 - Rolling/running MAD (mean absolute deviation)
+- Rolling/running quantiles
 
 
 ## Todo
