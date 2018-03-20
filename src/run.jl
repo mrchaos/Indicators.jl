@@ -62,7 +62,7 @@ Compute a running or rolling arithmetic mean of an array.
 `runmean(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}`
 """ ->
 function runmean(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
-    @assert n<size(x,1) && n>0 "Argument n is out of bounds."
+    @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(x)
     out[1:n-1] = NaN
     if cumulative
@@ -85,7 +85,7 @@ Compute a running or rolling summation of an array.
 `runsum(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}`
 """ ->
 function runsum(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
-    @assert n<size(x,1) && n>0 "Argument n is out of bounds."
+    @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     if cumulative
         out = cumsum(x)
         out[1:n-1] = NaN
@@ -121,7 +121,7 @@ Compute the running or rolling mean absolute deviation of an array
 `runmad(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, fun::Function=median)::Array{Float64}`
 """ ->
 function runmad(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, fun::Function=median)::Array{Float64}
-    @assert n<size(x,1) && n>0 "Argument n is out of bounds."
+    @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(x)
     out[1:n-1] = NaN
     center = 0.0
@@ -147,7 +147,7 @@ Compute the running or rolling variance of an array
 `runvar(x::Array{Float64}; n::Int64=10, cumulative=true)::Array{Float64}`
 """ ->
 function runvar(x::Array{Float64}; n::Int64=10, cumulative=true)::Array{Float64}
-    @assert n<size(x,1) && n>0 "Argument n is out of bounds."
+    @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(x)
     out[1:n-1] = NaN
     if cumulative
@@ -178,7 +178,7 @@ Compute the running or rolling covariance of two arrays
 """ ->
 function runcov(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
-    @assert n<size(x,1) && n>0 "Argument n is out of bounds."
+    @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(x)
     out[1:n-1] = NaN
     if cumulative
@@ -200,7 +200,7 @@ Compute the running or rolling correlation of two arrays
 """ ->
 function runcor(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
-    @assert n<size(x,1) && n>0 "Argument n is out of bounds."
+    @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(x)
     out[1:n-1] = NaN
     if cumulative
@@ -221,7 +221,7 @@ Compute the running or rolling maximum of an array.
 `runmax(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}`
 """ ->
 function runmax(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}
-    @assert n<size(x,1) && n>0 "Argument n is out of bounds."
+    @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(x)
     if inclusive
         if cumulative
@@ -258,7 +258,7 @@ Compute the running or rolling minimum of an array.
 `runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}`
 """ ->
 function runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}
-    @assert n<size(x,1) && n>0 "Argument n is out of bounds."
+    @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(x)
     if inclusive
         if cumulative
