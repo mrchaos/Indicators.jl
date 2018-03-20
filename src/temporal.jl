@@ -46,6 +46,7 @@ runvar{V,T}(X::TS{V,T}; args...) = close_fun(X, runvar, [:RunVar]; args...)
 runmax{V,T}(X::TS{V,T}; args...) = close_fun(X, runmax, [:RunMax]; args...)
 runmin{V,T}(X::TS{V,T}; args...) = close_fun(X, runmin, [:RunMin]; args...)
 runsd{V,T}(X::TS{V,T}; args...) = close_fun(X, runsd, [:RunSD]; args...)
+runquantile{V,T}(X::TS{V,T}; args...) = close_fun(X, runquantile, [:RunQuantile]; args...)
 wilder_sum{V,T}(X::TS{V,T}; args...) = close_fun(X, wilder_sum, [:WilderSum]; args...)
 
 ##### ma.jl ######

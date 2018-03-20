@@ -439,10 +439,10 @@ end
     @test size(tmp, 1) == N
     @test size(tmp, 2) == 1
     tmp = runquantile(x, cumulative=true)
-    @test !isnan(tmp[2,:]) && isnan(tmp[1,:])
-    @test tmp[10,1] = quantile(x[1:10], 0.05)
+    @test !isnan(tmp.values[2,1]) && isnan(tmp.values[1,1])
+    @test tmp.values[10,1] == quantile(x.values[1:10,1], 0.05)
     tmp = runquantile(x, cumulative=false)
-    @test tmp[10,1] = quantile(x[1:10], 0.05)
+    @test tmp.values[10,1] == quantile(x.values[1:10,1], 0.05)
     # moving average functions
     tmp = sma(x)
     @test size(tmp, 1) == N
