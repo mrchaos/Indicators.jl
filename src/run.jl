@@ -288,3 +288,27 @@ function runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive
         return out
     end
 end
+
+@doc doc"""
+Compute the running/rolling quantile of an array.
+
+`runquantile(x::Vector{Float64}; p::Vector{Float64}=[0.05,0.95], n::Int=10, cumulative::Bool=true)::Matrix{Float64}`
+"""
+function runquantile(x::Vector{Float64}; p::Vector{Float64}=[0.05,0.95], n::Int=10, cumulative::Bool=true)::Matrix{Float64}
+    @assert n<size(x,1) && n>1 "Argument n is out of bounds."
+    k = length(p)
+    N = length(x)
+    out = zeros(Float64, (length(x), k))
+    if cumulative
+        @inbounds for j in 1:k, i in 2:N
+            out[i,j] = quantile(x[1:i], p[j])
+        end
+        out[1,:] = NaN
+    else
+        @inbounds for j in 1:k, i in n:N
+            out[i,j] = quantile(x[i-n+1:i], p[j])
+        end
+        out[1:n-1,:] = NaN
+    end
+    return out
+end
