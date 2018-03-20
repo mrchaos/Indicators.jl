@@ -178,10 +178,10 @@ end
     @test size(tmp, 2) == 1
     @test !isnan(tmp)
     tmp = runquantile(x, cumulative=true)
-    @test isnan(tmp[2,:]) && isnan(tmp[1,:])
-    @test tmp[10,1] = quantile(x[1:10], 0.05)
+    @test !isnan(tmp[2]) && isnan(tmp[1])
+    @test tmp[10] == quantile(x[1:10], 0.05)
     tmp = runquantile(x, cumulative=false)
-    @test tmp[10,1] = quantile(x[1:10], 0.05)
+    @test tmp[10] == quantile(x[1:10], 0.05)
 end
 
 # moving average functions
