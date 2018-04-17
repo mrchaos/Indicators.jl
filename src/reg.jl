@@ -5,14 +5,17 @@ Moving linear regression intercept (column 1) and slope (column 2)
 """ ->
 function mlr_beta{Float64}(y::Array{Float64}; n::Int64=10, x::Array{Float64}=collect(1.0:n))::Matrix{Float64}
     @assert n<length(y) && n>0 "Argument n out of bounds."
-    @assert size(x,1) == n
+    @assert size(y,2) == 1
+    @assert size(x,1) == n || size(x,1) == size(y,1)
+    const_x = size(x,1) == n
     out = zeros(Float64, (length(y),2))
     out[1:n-1,:] = NaN
     xbar = mean(x)
     ybar = runmean(y, n=n, cumulative=false)
     @inbounds for i = n:length(y)
         yi = y[i-n+1:i]
-        out[i,2] = cov(x,yi) / var(x)
+        xi = const_x ? x : x[i-n+1:i]
+        out[i,2] = cov(xi,yi) / var(xi)
         out[i,1] = ybar[i] - out[i,2]*xbar
     end
     return out
@@ -25,12 +28,15 @@ Moving linear regression slope
 """ ->
 function mlr_slope{Float64}(y::Array{Float64}; n::Int64=10, x::Array{Float64}=collect(1.0:n))::Array{Float64}
     @assert n<length(y) && n>0 "Argument n out of bounds."
-    @assert size(x,1) == n
+    @assert size(y,2) == 1
+    @assert size(x,1) == n || size(x,1) == size(y,1)
+    const_x = size(x,1) == n
     out = zeros(y)
     out[1:n-1] = NaN
     @inbounds for i = n:length(y)
         yi = y[i-n+1:i]
-        out[i] = cov(x,yi) / var(x)
+        xi = const_x ? x : x[i-n+1:i]
+        out[i] = cov(xi,yi) / var(xi)
     end
     return out
 end
@@ -42,14 +48,17 @@ Moving linear regression y-intercept
 """ ->
 function mlr_intercept{Float64}(y::Array{Float64}; n::Int64=10, x::Array{Float64}=collect(1.0:n))::Array{Float64}
     @assert n<length(y) && n>0 "Argument n out of bounds."
-    @assert size(x,1) == n
+    @assert size(y,2) == 1
+    @assert size(x,1) == n || size(x,1) == size(y,1)
+    const_x = size(x,1) == n
     out = zeros(y)
     out[1:n-1] = NaN
     xbar = mean(x)
     ybar = runmean(y, n=n, cumulative=false)
     @inbounds for i = n:length(y)
         yi = y[i-n+1:i]
-        out[i] = ybar[i] - xbar*(cov(x,yi)/var(x))
+        xi = const_x ? x : x[i-n+1:i]
+        out[i] = ybar[i] - xbar*(cov(xi,yi)/var(xi))
     end
     return out
 end
