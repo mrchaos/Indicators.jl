@@ -3,7 +3,7 @@ VERSION >= v"0.4.0" && __precompile__(true)
 module Indicators
 
 export
-    runmean, runsum, runvar, runsd, runcov, runcor, runmax, runmin, runmad, runquantile,
+    runmean, runsum, runvar, runsd, runcov, runcor, runmax, runmin, runmad, runquantile, runacf,
     wilder_sum, mode, diffn, #lag,
     sma, trima, wma, ema, mma, kama, mama, hma, swma, dema, tema, alma, zlema,
     mlr_beta, mlr_slope, mlr_intercept, mlr, mlr_se, mlr_ub, mlr_lb, mlr_bands, mlr_rsq,
