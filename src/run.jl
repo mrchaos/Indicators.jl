@@ -1,3 +1,5 @@
+import Temporal.acf  # used for running autocorrelation function
+
 @doc doc"""
 Lagged differencing
 
@@ -96,7 +98,7 @@ function runsum(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Fl
             out[i] = sum(x[i-n+1:i])
         end
     end
-	return out
+    return out
 end
 
 @doc doc"""
@@ -216,7 +218,7 @@ function runcor(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::B
 end
 
 @doc doc"""
-Compute the running or rolling maximum of an array.
+Compute the running or rolling maximum of an array
 
 `runmax(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}`
 """ ->
@@ -253,7 +255,7 @@ function runmax(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive
 end
 
 @doc doc"""
-Compute the running or rolling minimum of an array.
+Compute the running or rolling minimum of an array
 
 `runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}`
 """ ->
@@ -290,10 +292,10 @@ function runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive
 end
 
 @doc doc"""
-Compute the running/rolling quantile of an array.
+Compute the running/rolling quantile of an array
 
 `runquantile(x::Vector{Float64}; p::Float64=0.05, n::Int=10, cumulative::Bool=true)::Vector{Float64}`
-"""
+""" ->
 function runquantile(x::Array{Float64}; p::Float64=0.05, n::Int=10, cumulative::Bool=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(Float64, (size(x,1), size(x,2)))
@@ -307,6 +309,43 @@ function runquantile(x::Array{Float64}; p::Float64=0.05, n::Int=10, cumulative::
             out[i,j] = quantile(x[i-n+1:i,j], p)
         end
         out[1:n-1,:] = NaN
+    end
+    return out
+end
+
+
+@doc doc"""
+Compute the running/rolling autocorrelation of a vector.
+
+```
+function runacf(x::Array{Float64};
+                n::Int = 10,
+                maxlag::Int = n-3,
+                lags::AbstractArray{Int,1} = 0:maxlag,
+                cumulative::Bool = true)::Matrix{Float64}
+```
+
+""" ->
+function runacf(x::Array{Float64};
+                n::Int = 10,
+                maxlag::Int = n-3,
+                lags::AbstractArray{Int,1} = 0:maxlag,
+                cumulative::Bool = true)::Matrix{Float64}
+    @assert size(x, 2) == 1 "Autocorrelation input array must be one-dimensional"
+    N = size(x, 1)
+    @assert n < N && n > 0
+    if length(lags) == 1 && lags[1] == 0
+        return ones((N, 1))
+    end
+    out = zeros((N, length(lags))) * NaN
+    if cumulative
+        @inbounds for i in n:N
+            out[i,:] = acf(x[1:i], lags=lags)
+        end
+    else
+        @inbounds for i in n:N
+            out[i,:] = acf(x[i-n+1:i], lags=lags)
+        end
     end
     return out
 end

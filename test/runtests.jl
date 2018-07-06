@@ -4,7 +4,9 @@ using Base.Test
 
 const N = 1_000
 const X0 = 50.0
+const seed = 1
 
+srand(seed)
 x = cumsum(randn(N)) + X0
 ohlc = cumsum(randn(N,4)) + X0
 hlc = ohlc[:,2:4]
@@ -12,8 +14,14 @@ hl = ohlc[:,2:3]
 
 count_nans(x) = sum(isnan.(x))
 
-#TODO: trendy.jl
-#TODO: utils.jl
+@testset "Utilities" begin
+    y = x + randn(N)
+    cxo = crossover(x, y)
+    cxu = crossunder(x, y)
+    @test any(cxo)
+    @test any(cxu)
+    @test !any(cxo .* cxu)  # ensure crossovers and crossunders never coincide
+end
 
 # trendy
 @testset "Trendlines" begin
@@ -79,7 +87,6 @@ end
     @test count_nans(tmp) != N
 end
 
-#TODO: run.jl
 @testset "Running Calculations" begin
     tmp = diffn(x)
     @test size(tmp, 1) == N
@@ -182,6 +189,11 @@ end
     @test tmp[10] == quantile(x[1:10], 0.05)
     tmp = runquantile(x, cumulative=false)
     @test tmp[10] == quantile(x[1:10], 0.05)
+    n = 20
+    tmp = runacf(x, n=n, maxlag=15, cumulative=true)
+    @test all(tmp[n:end,1] .== 1.0)
+    tmp = runacf(x, n=n, maxlag=15, cumulative=false)
+    @test all(tmp[n:end,1] .== 1.0)
 end
 
 # moving average functions
@@ -443,6 +455,11 @@ end
     @test tmp.values[10,1] == quantile(x.values[1:10,1], 0.05)
     tmp = runquantile(x, cumulative=false)
     @test tmp.values[10,1] == quantile(x.values[1:10,1], 0.05)
+    n = 20
+    tmp = runacf(x, n=n, maxlag=15, cumulative=true)
+    @test all(tmp.values[n:end,1] .== 1.0)
+    tmp = runacf(x, n=n, maxlag=15, cumulative=false)
+    @test all(tmp.values[n:end,1] .== 1.0)
     # moving average functions
     tmp = sma(x)
     @test size(tmp, 1) == N
