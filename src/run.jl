@@ -316,20 +316,36 @@ end
 
 @doc doc"""
 Compute the running/rolling autocorrelation of a vector.
+
+```
+function runacf(x::Array{Float64};
+                n::Int = 10,
+                maxlag::Int = n-3,
+                lags::AbstractArray{Int,1} = 0:maxlag,
+                cumulative::Bool = true)::Matrix{Float64}
+```
+
 """ ->
-function runacf(x::Array{Float64}; lookback::Int=10, maxlag::Int=7, lags::AbstractArray{Int,1}=0:maxlag)::Matrix{Float64}
+function runacf(x::Array{Float64};
+                n::Int = 10,
+                maxlag::Int = n-3,
+                lags::AbstractArray{Int,1} = 0:maxlag,
+                cumulative::Bool = true)::Matrix{Float64}
     @assert size(x, 2) == 1 "Autocorrelation input array must be one-dimensional"
     N = size(x, 1)
+    @assert n < N && n > 0
     if length(lags) == 1 && lags[1] == 0
         return ones((N, 1))
     end
-    #  @assert all(lags .>= 0) "All autocorrelation lags must be positive integers"
-    #  @assert all(lags .< N+3) "All autocorrelation lags must be less than the number of observations in the input vector"
-    #  @assert all(lags .< lookback+2)
-    @assert lookback < N && lookback > 0
     out = zeros((N, length(lags))) * NaN
-    @inbounds for i in lookback:N
-        out[i,:] = acf(x[i-lookback+1:i], lags=lags)
+    if cumulative
+        @inbounds for i in n:N
+            out[i,:] = acf(x[1:i], lags=lags)
+        end
+    else
+        @inbounds for i in n:N
+            out[i,:] = acf(x[i-n+1:i], lags=lags)
+        end
     end
     return out
 end
