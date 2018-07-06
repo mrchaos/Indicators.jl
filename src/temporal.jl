@@ -1,13 +1,9 @@
 # Methods for porting Indicators.jl functions to TS objects from Temporal.jl package
-function close_fun(X::TS, f::Function, flds::Vector{Symbol}=[]; args...)
+function close_fun(X::TS, f::Function, flds::Vector{Symbol}; args...)
     if size(X,2) == 1
         return ts(f(X.values; args...), X.index, flds)
     elseif size(X,2) > 1 && has_close(X)
-        if length(flds) == 0
-            return ts(f(cl(X).values; args...), X.index)
-        else
-            return ts(f(cl(X).values; args...), X.index, flds)
-        end
+        return ts(f(cl(X).values; args...), X.index, flds)
     else
         error("Must be univariate or contain Close/Settle/Last.")
     end
