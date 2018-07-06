@@ -1,9 +1,13 @@
 # Methods for porting Indicators.jl functions to TS objects from Temporal.jl package
-function close_fun(X::TS, f::Function, flds::Vector{Symbol}; args...)
+function close_fun(X::TS, f::Function, flds::Vector{Symbol}=[]; args...)
     if size(X,2) == 1
         return ts(f(X.values; args...), X.index, flds)
     elseif size(X,2) > 1 && has_close(X)
-        return ts(f(cl(X).values; args...), X.index, flds)
+        if length(flds) == 0
+            return ts(f(cl(X).values; args...), X.index)
+        else
+            return ts(f(cl(X).values; args...), X.index, flds)
+        end
     else
         error("Must be univariate or contain Close/Settle/Last.")
     end
@@ -48,6 +52,8 @@ runmin{V,T}(X::TS{V,T}; args...) = close_fun(X, runmin, [:RunMin]; args...)
 runsd{V,T}(X::TS{V,T}; args...) = close_fun(X, runsd, [:RunSD]; args...)
 runquantile{V,T}(X::TS{V,T}; args...) = close_fun(X, runquantile, [:RunQuantile]; args...)
 wilder_sum{V,T}(X::TS{V,T}; args...) = close_fun(X, wilder_sum, [:WilderSum]; args...)
+runacf{V,T}(X::TS{V,T}; n::Int=10, maxlag::Int=n-3, lags::AbstractArray{Int,1}=0:maxlag, cumulative::Bool=true) =
+    close_fun(X, runacf, [Symbol(i) for i in lags]; n=n, maxlag=maxlag, lags=lags, cumulative=cumulative)
 
 ##### ma.jl ######
 sma{V,T}(X::TS{V,T}; args...) = close_fun(X, sma, [:SMA]; args...)

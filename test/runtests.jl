@@ -448,10 +448,11 @@ end
     @test tmp.values[10,1] == quantile(x.values[1:10,1], 0.05)
     tmp = runquantile(x, cumulative=false)
     @test tmp.values[10,1] == quantile(x.values[1:10,1], 0.05)
-    tmp = runacf(x, n=20, maxlag=15, cumulative=true)
-    @test all(tmp[10:end,1] .== 1.0)
-    tmp = runacf(x, n=20, maxlag=15, cumulative=false)
-    @test all(tmp[10:end,1] .== 1.0)
+    n = 20
+    tmp = runacf(x, n=n, maxlag=15, cumulative=true)
+    @test all(tmp.values[n:end,1] .== 1.0)
+    tmp = runacf(x, n=n, maxlag=15, cumulative=false)
+    @test all(tmp.values[n:end,1] .== 1.0)
     # moving average functions
     tmp = sma(x)
     @test size(tmp, 1) == N
