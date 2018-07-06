@@ -182,6 +182,11 @@ end
     @test tmp[10] == quantile(x[1:10], 0.05)
     tmp = runquantile(x, cumulative=false)
     @test tmp[10] == quantile(x[1:10], 0.05)
+    n = 20
+    tmp = runacf(x, n=n, maxlag=15, cumulative=true)
+    @test all(tmp[n:end,1] .== 1.0)
+    tmp = runacf(x, n=n, maxlag=15, cumulative=false)
+    @test all(tmp[n:end,1] .== 1.0)
 end
 
 # moving average functions
