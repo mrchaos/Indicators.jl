@@ -1,6 +1,6 @@
 # Functions supporting trendline identification (support/resistance, zigzag, elliot waves, etc.)
 
-function maxima{Float64}(x::Array{Float64}; threshold::Float64=0.0, order::Int=1)
+function maxima(x::Array{Float64}; threshold::Float64=0.0, order::Int=1)
     @assert threshold >= 0.0 "Threshold must be positive."
     @assert order > 0 "Order must be a positive integer."
     n = size(x,1)
@@ -18,7 +18,7 @@ function maxima{Float64}(x::Array{Float64}; threshold::Float64=0.0, order::Int=1
     return crit
 end
 
-function minima{Float64}(x::Array{Float64}; threshold::Float64=0.0, order::Int=1)
+function minima(x::Array{Float64}; threshold::Float64=0.0, order::Int=1)
     @assert threshold <= 0.0 "Threshold must be negative."
     @assert order > 0 "Order must be a positive integer."
     n = size(x,1)
@@ -44,7 +44,7 @@ function interpolate(x1::Int, x2::Int, y1::Float64, y2::Float64)
 	return y
 end
 
-function resistance{Float64}(x::Array{Float64}; order::Int=1, threshold::Float64=0.0)
+function resistance(x::Array{Float64}; order::Int=1, threshold::Float64=0.0)
     out = zeros(x)
     crit = maxima(x, threshold=threshold, order=order)
     out[.!crit] = NaN
@@ -55,7 +55,7 @@ function resistance{Float64}(x::Array{Float64}; order::Int=1, threshold::Float64
     return out
 end
 
-function support{Float64}(x::Array{Float64}; order::Int=1, threshold::Float64=0.0)
+function support(x::Array{Float64}; order::Int=1, threshold::Float64=0.0)
     out = zeros(x)
     crit = minima(x, threshold=threshold, order=order)
     out[.!crit] = NaN

@@ -169,8 +169,8 @@ function mama(x::Array{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05
     jQ = 0.0
     dphase = 0.0
     alpha = 0.0
-    const a = 0.0962
-    const b = 0.5769
+    a = 0.0962
+    b = 0.5769
     @inbounds for i = 13:n
         # Smooth and detrend price movement ====================================
         smooth_7 = (4*x[i] + 3*x[i-1] + 2*x[i-2] + x[i-3]) * 0.1
@@ -280,10 +280,8 @@ end
 
 @doc """
 Sine-weighted moving average
-
-`swma{Float64}(x::Array{Float64}; n::Int64)::Array{Float64}`
 """ ->
-function swma{Float64}(x::Array{Float64}; n::Int64=10)
+function swma(x::Array{Float64}; n::Int64=10)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     w = sin.(collect(1:n) * 180.0/6.0)  # numerator weights
     d = sum(w)  # denominator = sum(numerator weights)
@@ -297,10 +295,8 @@ end
 
 @doc """
 Kaufman adaptive moving average (KAMA)
-
-`kama{Float64}(x::Array{Float64}; n::Int64=10, nfast::Float64=0.6667, nslow::Float64=0.0645)::Array{Float64}`
 """ ->
-function kama{Float64}(x::Array{Float64}; n::Int64=10, nfast::Float64=0.6667, nslow::Float64=0.0645)
+function kama(x::Array{Float64}; n::Int64=10, nfast::Float64=0.6667, nslow::Float64=0.0645)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     @assert nfast>0.0 && nfast<1.0 "Argument nfast out of bounds."
     @assert nslow>0.0 && nslow<1.0 "Argument nslow out of bounds."
@@ -325,7 +321,7 @@ Arnaud-Legoux moving average (ALMA)
 
 `alma{Float64}(x::Array{Float64}; n::Int64=9, offset::Float64=0.85, sigma::Float64=6.0)::Array{Float64}`
 """ ->
-function alma{Float64}(x::Array{Float64}; n::Int64=9, offset::Float64=0.85, sigma::Float64=6.0)
+function alma(x::Array{Float64}; n::Int64=9, offset::Float64=0.85, sigma::Float64=6.0)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     @assert sigma>0.0 "Argument sigma must be greater than 0."
     @assert offset>=0.0 && offset<=1 "Argument offset must be in (0,1)."
