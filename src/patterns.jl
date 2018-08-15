@@ -1,4 +1,4 @@
-@doc doc"""
+@doc """
 Renko chart patterns
 
 # Methods

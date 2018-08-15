@@ -1,6 +1,6 @@
 # Miscellaneous utilities
 
-@doc doc"""
+@doc """
 crossover{Float64}(x::Array{Float64}, y::Array{Float64})
 
 Find where `x` crosses over `y` (returns boolean vector where crossover occurs)
@@ -14,7 +14,7 @@ function crossover{Float64}(x::Array{Float64}, y::Array{Float64})
     return out
 end
 
-@doc doc"""
+@doc """
 crossunder{Float64}(x::Array{Float64}, y::Array{Float64})
 
 Find where `x` crosses under `y` (returns boolean vector where crossunder occurs)

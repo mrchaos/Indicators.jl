@@ -1,4 +1,4 @@
-@doc doc"""
+@doc """
 Bollinger bands (moving average with standard deviation bands)
 
 `bbands(x::Array{Float64}; n::Int64=10, sigma::Float64=2.0)::Matrix{Float64}`
@@ -18,7 +18,7 @@ function bbands(x::Array{Float64}; n::Int64=10, sigma::Float64=2.0, ma::Function
     return out
 end
 
-@doc doc"""
+@doc """
 True range
 
 `tr(hlc::Matrix{Float64})::Array{Float64}`
@@ -34,7 +34,7 @@ function tr(hlc::Matrix{Float64})::Array{Float64}
     return out[:,1]
 end
 
-@doc doc"""
+@doc """
 Average true range (uses exponential moving average)
 
 `atr(hlc::Matrix{Float64}; n::Int64=14)::Array{Float64}`
@@ -44,7 +44,7 @@ function atr(hlc::Matrix{Float64}; n::Int64=14, ma::Function=ema)::Array{Float64
     return [NaN; ma(tr(hlc)[2:end], n=n)]
 end
 
-@doc doc"""
+@doc """
 Keltner bands
 
 `keltner(hlc::Matrix{Float64}; nema::Int64=20, natr::Int64=10, mult::Int64=2)::Matrix{Float64}`

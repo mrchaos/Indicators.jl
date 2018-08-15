@@ -1,4 +1,4 @@
-@doc doc"""
+@doc """
 Moving linear regression intercept (column 1) and slope (column 2)
 
 `mlr_beta{Float64}(y::Array{Float64}; n::Int64=10)::Array{Float64}`
@@ -21,7 +21,7 @@ function mlr_beta{Float64}(y::Array{Float64}; n::Int64=10, x::Array{Float64}=col
     return out
 end
 
-@doc doc"""
+@doc """
 Moving linear regression slope
 
 `mlr_slope{Float64}(y::Array{Float64}; n::Int64=10)::Array{Float64}`
@@ -41,7 +41,7 @@ function mlr_slope{Float64}(y::Array{Float64}; n::Int64=10, x::Array{Float64}=co
     return out
 end
 
-@doc doc"""
+@doc """
 Moving linear regression y-intercept
 
 `mlr_intercept{Float64}(y::Array{Float64}; n::Int64=10)::Array{Float64}`
@@ -63,7 +63,7 @@ function mlr_intercept{Float64}(y::Array{Float64}; n::Int64=10, x::Array{Float64
     return out
 end
 
-@doc doc"""
+@doc """
 Moving linear regression predictions
 
 `mlr{Float64}(y::Array{Float64}; n::Int64=10)::Array{Float64}`
@@ -73,7 +73,7 @@ function mlr{Float64}(y::Array{Float64}; n::Int64=10)::Array{Float64}
     return b[:,1] + b[:,2]*float(n)
 end
 
-@doc doc"""
+@doc """
 Moving linear regression standard errors
 
 `mlr_se{Float64}(y::Array{Float64}; n::Int64=10)::Array{Float64}`
@@ -91,7 +91,7 @@ function mlr_se{Float64}(y::Array{Float64}; n::Int64=10)::Array{Float64}
     return out
 end
 
-@doc doc"""
+@doc """
 Moving linear regression upper bound
 
 `mlr_ub{Float64}(y::Array{Float64}; n::Int64=10, se::Float64=2.0)::Array{Float64}`
@@ -100,7 +100,7 @@ function mlr_ub{Float64}(y::Array{Float64}; n::Int64=10, se::Float64=2.0)::Array
     return y + se*mlr_se(y, n=n)
 end
 
-@doc doc"""
+@doc """
 Moving linear regression lower bound
 
 `mlr_lb{Float64}(y::Array{Float64}; n::Int64=10, se::Float64=2.0)::Array{Float64}`
@@ -109,7 +109,7 @@ function mlr_lb{Float64}(y::Array{Float64}; n::Int64=10, se::Float64=2.0)::Array
     return y - se*mlr_se(y, n=n)
 end
 
-@doc doc"""
+@doc """
 Moving linear regression bands
 
 `mlr_bands{Float64}(y::Array{Float64}; n::Int64=10, se::Float64=2.0)::Matrix{Float64}`
@@ -132,7 +132,7 @@ function mlr_bands{Float64}(y::Array{Float64}; n::Int64=10, se::Float64=2.0)::Ma
     return out
 end
 
-@doc doc"""
+@doc """
 Moving linear regression R-squared or adjusted R-squared
 
 `mlr_rsq{Float64}(y::Array{Float64}; n::Int64=10, adjusted::Bool=false)::Array{Float64}`

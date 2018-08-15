@@ -1,4 +1,4 @@
-@doc doc"""
+@doc """
 Simple moving average (SMA)
 
 `sma(x::Array{Float64}; n::Int64=10)::Array{Float64}`
@@ -14,7 +14,7 @@ end
 #     return out
 # end
 
-@doc doc"""
+@doc """
 Triangular moving average (TRIMA)
 
 `trima(x::Array{Float64}; n::Int64=10, ma::Function=sma, args...)::Array{Float64}`
@@ -23,7 +23,7 @@ function trima(x::Array{Float64}; n::Int64=10, ma::Function=sma)::Array{Float64}
     return ma(ma(x, n=n), n=n)
 end
 
-@doc doc"""
+@doc """
 Weighted moving average (WMA)
 
 `wma(x::Array{Float64}; n::Int64=10, wts::Array{Float64}=collect(1:n)/sum(1:n))::Array{Float64}`
@@ -50,7 +50,7 @@ function first_valid(x::Array{Float64})::Int
     return 0
 end
 
-@doc doc"""
+@doc """
 Exponential moving average (EMA)
 
 `ema(x::Array{Float64}; n::Int64=10, alpha::Float64=2.0/(n+1.0), wilder::Bool=false)::Array{Float64}`
@@ -70,7 +70,7 @@ function ema(x::Array{Float64}; n::Int64=10, alpha::Float64=2.0/(n+1), wilder::B
     return out
 end
 
-@doc doc"""
+@doc """
 Modified moving average (MMA)
 
 `mma(x::Array{Float64}; n::Int64=10)::Array{Float64}`
@@ -79,7 +79,7 @@ function mma(x::Array{Float64}; n::Int64=10)
     return ema(x, n=n, alpha=1.0/n)
 end
 
-@doc doc"""
+@doc """
 Double exponential moving average (DEMA)
 
 `dema(x::Array{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=false)::Array{Float64}`
@@ -90,7 +90,7 @@ function dema(x::Array{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=fals
             n=n, alpha=alpha, wilder=wilder)
 end
 
-@doc doc"""
+@doc """
 Triple exponential moving average (TEMA)
 
 `tema(x::Array{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=false)::Array{Float64}`
@@ -104,7 +104,7 @@ function tema(x::Array{Float64}; n::Int64=10, alpha=2.0/(n+1), wilder::Bool=fals
             n=n, alpha=alpha, wilder=wilder)
 end
 
-@doc doc"""
+@doc """
 MESA adaptive moving average (MAMA)
 
 `mama(x::Array{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05)::Matrix{Float64}`
@@ -269,7 +269,7 @@ function mama(x::Array{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05
 end
 
 
-@doc doc"""
+@doc """
 Hull moving average (HMA)
 
 `hma(x::Array{Float64}; n::Int64=20)::Array{Float64}`
@@ -278,7 +278,7 @@ function hma(x::Array{Float64}; n::Int64=20)
     return wma(2 * wma(x, n=Int64(round(n/2.0))) - wma(x, n=n), n=Int64(trunc(sqrt(n))))
 end
 
-@doc doc"""
+@doc """
 Sine-weighted moving average
 
 `swma{Float64}(x::Array{Float64}; n::Int64)::Array{Float64}`
@@ -295,7 +295,7 @@ function swma{Float64}(x::Array{Float64}; n::Int64=10)
     return out
 end
 
-@doc doc"""
+@doc """
 Kaufman adaptive moving average (KAMA)
 
 `kama{Float64}(x::Array{Float64}; n::Int64=10, nfast::Float64=0.6667, nslow::Float64=0.0645)::Array{Float64}`
@@ -320,7 +320,7 @@ function kama{Float64}(x::Array{Float64}; n::Int64=10, nfast::Float64=0.6667, ns
     return out
 end
 
-@doc doc"""
+@doc """
 Arnaud-Legoux moving average (ALMA)
 
 `alma{Float64}(x::Array{Float64}; n::Int64=9, offset::Float64=0.85, sigma::Float64=6.0)::Array{Float64}`

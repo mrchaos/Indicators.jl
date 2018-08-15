@@ -1,6 +1,6 @@
 # Momentum-oriented technical indicator functions
 
-@doc doc"""
+@doc """
 Aroon up/down/oscillator
 
 `aroon(hl::Array{Float64,2}; n::Int64=25)::Array{Float64}`
@@ -26,7 +26,7 @@ function aroon(hl::Array{Float64,2}; n::Int64=25)::Matrix{Float64}
     return out
 end
 
-@doc doc"""
+@doc """
 Donchian channel (if inclusive is set to true, will include current bar in calculations.)
 
 `donch(hl::Array{Float64,2}; n::Int64=10, inclusive::Bool=true)::Array{Float64}`
@@ -45,7 +45,7 @@ function donch(hl::Array{Float64,2}; n::Int64=10, inclusive::Bool=true)::Matrix{
     return [lower middle upper]
 end
 
-@doc doc"""
+@doc """
 Momentum indicator (price now vs price `n` periods back)
 
 `momentum(x::Array{Float64}; n::Int64=1)::Array{Float64}`
@@ -70,7 +70,7 @@ function roc(x::Array{Float64}; n::Int64=1)::Array{Float64}
     return out * 100.0
 end
 
-@doc doc"""
+@doc """
 Moving average convergence-divergence
 
 `macd(x::Array{Float64}; nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)::Array{Float64}`
@@ -90,7 +90,7 @@ function macd(x::Array{Float64}; nfast::Int64=12, nslow::Int64=26, nsig::Int64=9
     return out
 end
 
-@doc doc"""
+@doc """
 Relative strength index
 
 `rsi(x::Array{Float64}; n::Int64=14, ma::Function=ema, args...)::Array{Float64}`
@@ -113,7 +113,7 @@ function rsi(x::Array{Float64}; n::Int64=14, ma::Function=ema, args...)::Array{F
     return 100.0 - 100.0 ./ (1.0 + rs)
 end
 
-@doc doc"""
+@doc """
 Average directional index
 
 `adx(hlc::Array{Float64}; n::Int64=14, wilder=true)::Array{Float64}`
@@ -149,7 +149,7 @@ function adx(hlc::Array{Float64}; n::Int64=14, ma::Function=ema, args...)::Matri
     return [dip dim adx]
 end
 
-@doc doc"""
+@doc """
 Parabolic stop and reverse (SAR)
 
 `psar(hl::Array{Float64}; af_min::Float64=0.02, af_max::Float64=0.2, af_inc::Float64=af_min)::Array{Float64}`
@@ -208,7 +208,7 @@ function psar(hl::Array{Float64}; af_min::Float64=0.02, af_max::Float64=0.2, af_
     return sar
 end
 
-@doc doc"""
+@doc """
 KST (Know Sure Thing) -- smoothed and summed rates of change
 
 ```
@@ -232,7 +232,7 @@ function kst(x::Array{Float64}; nroc::Array{Int64}=[10,15,20,30], navg::Array{In
     return out
 end
 
-@doc doc"""
+@doc """
 Williams %R
 
 `wpr(hlc::Array{Float64,2}, n::Int64=14)::Array{Float64}`
@@ -243,7 +243,7 @@ function wpr(hlc::Array{Float64,2}; n::Int64=14)::Array{Float64}
     return -100 * (hihi - hlc[:,3]) ./ (hihi - lolo)
 end
 
-@doc doc"""
+@doc """
 Commodity channel index
 
 `cci(hlc::Array{Float64,2}; n::Int64=20, c::Float64=0.015, ma::Function=sma)::Array{Float64}`
@@ -255,7 +255,7 @@ function cci(hlc::Array{Float64,2}; n::Int64=20, c::Float64=0.015, ma::Function=
     return (tp - avg) ./ (c * dev)
 end
 
-@doc doc"""
+@doc """
 Stochastic oscillator (fast or slow)
 
 `stoch(hlc::Array{Float64,2}; nK::Int64=14, nD::Int64=3, kind::Symbol=:fast, ma::Function=sma, args...)::Matrix{Float64}`
@@ -277,7 +277,7 @@ function stoch(hlc::Array{Float64,2}; nK::Int64=14, nD::Int64=3,
     return out
 end
 
-@doc doc"""
+@doc """
 SMI (stochastic momentum oscillator)
 
 ```
