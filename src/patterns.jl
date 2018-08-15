@@ -23,7 +23,7 @@ function renko(x::Array{Float64}; box_size::Float64=10.0)::Array{Int}
     @inbounds for i in 2:size(x,1)
         if abs(x[i]-ref_pt) >= box_size
             ref_pt = x[i]
-            bar_id[i:end] += 1
+            bar_id[i:end] .+= 1
         end
     end
     return bar_id
@@ -39,7 +39,7 @@ function renko(hlc::Matrix{Float64}; box_size::Float64=10.0, use_atr::Bool=false
         @inbounds for i in 2:size(x,1)
             if abs(x[i]-ref_pt) >= box_sizes[i]
                 ref_pt = x[i]
-                bar_id[i:end] += 1
+                bar_id[i:end] .+= 1
             end
         end
         return bar_id

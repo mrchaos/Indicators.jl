@@ -6,13 +6,6 @@ Simple moving average (SMA)
 function sma(x::Array{Float64}; n::Int64=10)::Array{Float64}
     return runmean(x, n=n, cumulative=false)
 end
-# function sma(X::Matrix{Float64}; n::Int=10)::Matrix{Float64}
-#     out = zeros(X)
-#     @inbounds for j in 1:size(X,2)
-#         out[:,j] = sma(X[:,j], n=n)
-#     end
-#     return out
-# end
 
 @doc """
 Triangular moving average (TRIMA)
@@ -60,9 +53,9 @@ function ema(x::Array{Float64}; n::Int64=10, alpha::Float64=2.0/(n+1), wilder::B
     if wilder
         alpha = 1.0/n
     end
-    out = zeros(x)
+    out = zeros(size(x))
     i = first_valid(x)
-    out[1:n+i-2] = NaN
+    out[1:n+i-2] .= NaN
     out[n+i-1] = mean(x[i:n+i-1])
     @inbounds for i = n+i:size(x,1)
         out[i] = alpha * (x[i] - out[i-1]) + out[i-1]
@@ -264,7 +257,7 @@ function mama(x::Array{Float64}; fastlimit::Float64=0.5, slowlimit::Float64=0.05
         # phase
         phase_1 = phase_2
     end
-    out[1:32,:] = NaN
+    out[1:32,:] .= NaN
     return out
 end
 
@@ -285,8 +278,8 @@ function swma(x::Array{Float64}; n::Int64=10)
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     w = sin.(collect(1:n) * 180.0/6.0)  # numerator weights
     d = sum(w)  # denominator = sum(numerator weights)
-    out = zeros(x)
-    out[1:n-1] = NaN
+    out = zeros(size(x))
+    out[1:n-1] .= NaN
     @inbounds for i = n:size(x,1)
         out[i] = sum(w .* x[i-n+1:i]) / d
     end
@@ -303,12 +296,12 @@ function kama(x::Array{Float64}; n::Int64=10, nfast::Float64=0.6667, nslow::Floa
     dir = diffn(x, n=n)  # price direction := net change in price over past n periods
     vol = runsum(abs.(diffn(x,n=1)), n=n, cumulative=false)  # volatility/noise
     er = abs.(dir) ./ vol  # efficiency ratio
-    ssc = er * (nfast-nslow) + nslow  # scaled smoothing constant
+    ssc = er * (nfast-nslow) .+ nslow  # scaled smoothing constant
     sc = ssc .^ 2  # smoothing constant
     # initiliaze result variable
-    out = zeros(x)
-    i = first(find(.!isnan.(x)))
-    out[1:n+i-2] = NaN
+    out = zeros(size(x))
+    i = ndims(x) > 1 ? findfirst(.!isnan.(x)).I[1] : findfirst(.!isnan.(x))
+    out[1:n+i-2] .= NaN
     out[n+i-1] = mean(x[i:n+i-1])
     @inbounds for i = n+1:size(x,1)
         out[i] = out[i-1] + sc[i]*(x[i]-out[i-1])
@@ -325,11 +318,11 @@ function alma(x::Array{Float64}; n::Int64=9, offset::Float64=0.85, sigma::Float6
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     @assert sigma>0.0 "Argument sigma must be greater than 0."
     @assert offset>=0.0 && offset<=1 "Argument offset must be in (0,1)."
-    out = zeros(x)
-    out[1:n-1] = NaN
+    out = zeros(size(x))
+    out[1:n-1] .= NaN
     m = floor(offset*(float(n)-1.0))
     s = float(n) / sigma
-    w = exp.(-(((0.0:-1.0:-float(n)+1.0)-m).^2.0) / (2.0*s*s))
+    w = exp.(-(((0.0:-1.0:-float(n)+1.0) .- m) .^ 2.0) / (2.0*s*s))
     wsum = sum(w)
     if wsum != 0.0
         w = w ./ wsum

@@ -1,5 +1,7 @@
 import Temporal.acf  # used for running autocorrelation function
 
+using Statistics
+
 @doc """
 Lagged differencing
 
@@ -7,8 +9,8 @@ Lagged differencing
 """ ->
 function diffn(x::Array{Float64}; n::Int64=1)::Array{Float64}
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
-    dx = zeros(x)
-    dx[1:n] = NaN
+    dx = zeros(size(x))
+    dx[1:n] .= NaN
     @inbounds for i=n+1:size(x,1)
         dx[i] = x[i] - x[i-n]
     end
@@ -22,7 +24,7 @@ Lagged differencing
 """ ->
 function diffn(X::Array{Float64,2}; n::Int64=1)::Matrix{Float64}
     @assert n<size(X,1) && n>0 "Argument n out of bounds."
-    dx = zeros(X)
+    dx = zeros(size(X))
     @inbounds for j = 1:size(X,2)
         dx[:,j] = diffn(X[:,j], n=n)
     end
@@ -65,8 +67,8 @@ Compute a running or rolling arithmetic mean of an array.
 """ ->
 function runmean(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
-    out = zeros(x)
-    out[1:n-1] = NaN
+    out = zeros(size(x))
+    out[1:n-1] .= NaN
     if cumulative
         fi = 1.0:size(x,1)
         @inbounds for i = n:size(x,1)
@@ -89,11 +91,11 @@ Compute a running or rolling summation of an array.
 function runsum(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     if cumulative
-        out = cumsum(x)
-        out[1:n-1] = NaN
+        out = cumsum(x, dims=1)
+        out[1:n-1] .= NaN
     else
-        out = zeros(x)
-        out[1:n-1] = NaN
+        out = zeros(size(x))
+        out[1:n-1] .= NaN
         @inbounds for i = n:size(x,1)
             out[i] = sum(x[i-n+1:i])
         end
@@ -109,7 +111,7 @@ Welles Wilder summation of an array
 function wilder_sum(x::Array{Float64}; n::Int64=10)::Array{Float64}
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     nf = float(n)  # type stability -- all arithmetic done on floats
-    out = zeros(x)
+    out = zeros(size(x))
     out[1] = x[1]
     @inbounds for i = 2:size(x,1)
         out[i] = x[i] + out[i-1]*(nf-1.0)/nf
@@ -124,20 +126,20 @@ Compute the running or rolling mean absolute deviation of an array
 """ ->
 function runmad(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, fun::Function=median)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
-    out = zeros(x)
-    out[1:n-1] = NaN
+    out = zeros(size(x))
+    out[1:n-1] .= NaN
     center = 0.0
     if cumulative
         fi = collect(1.0:size(x,1))
         @inbounds for i = n:size(x,1)
             center = fun(x[1:i])
-            out[i] = sum(abs.(x[1:i]-center)) / fi[i]
+            out[i] = sum(abs.(x[1:i].-center)) / fi[i]
         end
     else
         fn = float(n)
         @inbounds for i = n:size(x,1)
             center = fun(x[i-n+1:i])
-            out[i] = sum(abs.(x[i-n+1:i]-center)) / fn
+            out[i] = sum(abs.(x[i-n+1:i].-center)) / fn
         end
     end
     return out
@@ -150,8 +152,8 @@ Compute the running or rolling variance of an array
 """ ->
 function runvar(x::Array{Float64}; n::Int64=10, cumulative=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
-    out = zeros(x)
-    out[1:n-1] = NaN
+    out = zeros(size(x))
+    out[1:n-1] .= NaN
     if cumulative
         @inbounds for i = n:size(x,1)
             out[i] = var(x[1:i])
@@ -181,8 +183,8 @@ Compute the running or rolling covariance of two arrays
 function runcov(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
-    out = zeros(x)
-    out[1:n-1] = NaN
+    out = zeros(size(x))
+    out[1:n-1] .= NaN
     if cumulative
         @inbounds for i = n:length(x)
             out[i] = cov(x[1:i], y[1:i])
@@ -203,8 +205,8 @@ Compute the running or rolling correlation of two arrays
 function runcor(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
-    out = zeros(x)
-    out[1:n-1] = NaN
+    out = zeros(size(x))
+    out[1:n-1] .= NaN
     if cumulative
         @inbounds for i = n:length(x)
             out[i] = cor(x[1:i], y[1:i])
@@ -224,7 +226,7 @@ Compute the running or rolling maximum of an array
 """ ->
 function runmax(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
-    out = zeros(x)
+    out = zeros(size(x))
     if inclusive
         if cumulative
             out[n] = maximum(x[1:n])
@@ -236,7 +238,7 @@ function runmax(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive
                 out[i] = maximum(x[i-n+1:i])
             end
         end
-        out[1:n-1] = NaN
+        out[1:n-1] .= NaN
         return out
     else
         if cumulative
@@ -249,7 +251,7 @@ function runmax(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive
                 out[i+1] = maximum(x[i-n+1:i])
             end
         end
-        out[1:n] = NaN
+        out[1:n] .= NaN
         return out
     end
 end
@@ -261,7 +263,7 @@ Compute the running or rolling minimum of an array
 """ ->
 function runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
-    out = zeros(x)
+    out = zeros(size(x))
     if inclusive
         if cumulative
             out[n] = minimum(x[1:n])
@@ -273,7 +275,7 @@ function runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive
                 out[i] = minimum(x[i-n+1:i])
             end
         end
-        out[1:n-1] = NaN
+        out[1:n-1] .= NaN
         return out
     else
         if cumulative
@@ -286,7 +288,7 @@ function runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive
                 out[i+1] = minimum(x[i-n+1:i])
             end
         end
-        out[1:n] = NaN
+        out[1:n] .= NaN
         return out
     end
 end
@@ -303,12 +305,12 @@ function runquantile(x::Array{Float64}; p::Float64=0.05, n::Int=10, cumulative::
         @inbounds for j in 1:size(x,2), i in 2:size(x,1)
             out[i,j] = quantile(x[1:i,j], p)
         end
-        out[1,:] = NaN
+        out[1,:] .= NaN
     else
         @inbounds for j in 1:size(x,2), i in n:size(x,1)
             out[i,j] = quantile(x[i-n+1:i,j], p)
         end
-        out[1:n-1,:] = NaN
+        out[1:n-1,:] .= NaN
     end
     return out
 end

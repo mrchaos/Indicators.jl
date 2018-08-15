@@ -22,7 +22,7 @@ function aroon(hl::Array{Float64,2}; n::Int64=25)::Matrix{Float64}
         out[i,2] = 100.0 * (n - findmin(hl[i-n+1:i,2])[2]) / 25.0
     end
     out[:,3] = out[:,1]-out[:,2]  # aroon oscillator
-    out[1:n-1,:] = NaN
+    out[1:n-1,:] .= NaN
     return out
 end
 
@@ -62,11 +62,11 @@ Rate of change indicator (percent change between i'th observation and (i-n)'th o
 """ ->
 function roc(x::Array{Float64}; n::Int64=1)::Array{Float64}
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
-    out = zeros(x)
+    out = zeros(size(x))
     @inbounds for i = n:size(x,1)
         out[i] = x[i]/x[i-n+1] - 1.0
     end
-    out[1:n] = NaN
+    out[1:n] .= NaN
     return out * 100.0
 end
 
@@ -101,7 +101,7 @@ function rsi(x::Array{Float64}; n::Int64=14, ma::Function=ema, args...)::Array{F
     ups = zeros(N)
     dns = zeros(N)
     zro = 0.0
-    dx = [NaN; diff(x)]
+    dx = [NaN; ndims(x) > 1 ? diff(x, dims=1) : diff(x)]
     @inbounds for i=2:N
         if dx[i] > zro
             ups[i] = dx[i]
@@ -110,7 +110,7 @@ function rsi(x::Array{Float64}; n::Int64=14, ma::Function=ema, args...)::Array{F
         end
     end
     rs = [NaN; ma(ups[2:end], n=n; args...) ./ ma(dns[2:end], n=n; args...)]
-    return 100.0 - 100.0 ./ (1.0 + rs)
+    return 100.0 .- 100.0 ./ (1.0 .+ rs)
 end
 
 @doc """
@@ -225,7 +225,7 @@ function kst(x::Array{Float64}; nroc::Array{Int64}=[10,15,20,30], navg::Array{In
     @assert all(navg.>0) && all(navg.<size(x,1))
     N = length(x)
     k = length(nroc)
-    out = zeros(x)
+    out = zeros(size(x))
     @inbounds for j = 1:k
         out += ma(roc(x, n=nroc[j]), n=navg[j]) * wgts[j]
     end

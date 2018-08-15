@@ -1,14 +1,16 @@
 using Indicators
 using Temporal
-using Base.Test
+using Test
+using Random
+using Statistics
 
 const N = 1_000
 const X0 = 50.0
 const seed = 1
 
-srand(seed)
-x = cumsum(randn(N)) + X0
-ohlc = cumsum(randn(N,4)) + X0
+Random.seed!(seed)
+x = cumsum(randn(N), dims=1) .+ X0
+ohlc = cumsum(randn(N,4), dims=1) .+ X0
 hlc = ohlc[:,2:4]
 hl = ohlc[:,2:3]
 
@@ -350,9 +352,9 @@ end
 
 # ==== TEMPORAL INTERACTIONS ====
 @testset "Temporal" begin
-    x = TS(x)
+    x = TS(cumsum(randn(N), dims=1) .+ X0)
     x.fields = [:Close]
-    ohlc = TS(ohlc)
+    ohlc = TS(cumsum(randn(N,4), dims=1))
     ohlc.fields = [:Open, :High, :Low, :Close]
     hlc = ohlc[:,2:4]
     # moving regressions
