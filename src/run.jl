@@ -2,11 +2,11 @@ import Temporal.acf  # used for running autocorrelation function
 
 using Statistics
 
-@doc """
-Lagged differencing
+"""
+    diffn(x::Array{Float64}; n::Int64=1)::Array{Float64}
 
-`diffn(x::Array{Float64}; n::Int64=1)::Array{Float64}`
-""" ->
+Lagged differencing
+"""
 function diffn(x::Array{Float64}; n::Int64=1)::Array{Float64}
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     dx = zeros(size(x))
@@ -17,11 +17,11 @@ function diffn(x::Array{Float64}; n::Int64=1)::Array{Float64}
     return dx
 end
 
-@doc """
-Lagged differencing
+"""
+    diffn(X::Array{Float64,2}; n::Int64=1)::Array{Float64}
 
-`diffn(X::Array{Float64,2}; n::Int64=1)::Array{Float64}`
-""" ->
+Lagged differencing
+"""
 function diffn(X::Array{Float64,2}; n::Int64=1)::Matrix{Float64}
     @assert n<size(X,1) && n>0 "Argument n out of bounds."
     dx = zeros(size(X))
@@ -31,11 +31,11 @@ function diffn(X::Array{Float64,2}; n::Int64=1)::Matrix{Float64}
     return dx
 end
 
-@doc """
+"""
 (Adapted from StatsBase: https://raw.githubusercontent.com/JuliaStats/StatsBase.jl/master/src/scalarstats.jl)
 
 `Compute the mode of an arbitrary array::Array{Float64}`
-""" ->
+"""
 function mode(a::AbstractArray{Float64})
     isempty(a) && error("mode: input array cannot be empty.")
     cnts = Dict{Float64,Int64}()
@@ -60,11 +60,11 @@ function mode(a::AbstractArray{Float64})
     return mv
 end
 
-@doc """
-Compute a running or rolling arithmetic mean of an array.
+"""
+    runmean(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
 
-`runmean(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}`
-""" ->
+Compute a running or rolling arithmetic mean of an array.
+"""
 function runmean(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
@@ -83,11 +83,11 @@ function runmean(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{F
 end
 
 
-@doc """
-Compute a running or rolling summation of an array.
+"""
+    runsum(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
 
-`runsum(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}`
-""" ->
+Compute a running or rolling summation of an array.
+"""
 function runsum(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     if cumulative
@@ -103,11 +103,11 @@ function runsum(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Fl
     return out
 end
 
-@doc """
-Welles Wilder summation of an array
+"""
+    wilder_sum(x::Array{Float64}; n::Int64=10)::Array{Float64}
 
-`wilder_sum(x::Array{Float64}; n::Int64=10)::Array{Float64}`
-""" ->
+Welles Wilder summation of an array
+"""
 function wilder_sum(x::Array{Float64}; n::Int64=10)::Array{Float64}
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     nf = float(n)  # type stability -- all arithmetic done on floats
@@ -119,11 +119,11 @@ function wilder_sum(x::Array{Float64}; n::Int64=10)::Array{Float64}
     return out
 end
 
-@doc """
-Compute the running or rolling mean absolute deviation of an array
+"""
+    runmad(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, fun::Function=median)::Array{Float64}
 
-`runmad(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, fun::Function=median)::Array{Float64}`
-""" ->
+Compute the running or rolling mean absolute deviation of an array
+"""
 function runmad(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, fun::Function=median)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
@@ -145,11 +145,11 @@ function runmad(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, fun::Func
     return out
 end
 
-@doc """
-Compute the running or rolling variance of an array
+"""
+    runvar(x::Array{Float64}; n::Int64=10, cumulative=true)::Array{Float64}
 
-`runvar(x::Array{Float64}; n::Int64=10, cumulative=true)::Array{Float64}`
-""" ->
+Compute the running or rolling variance of an array
+"""
 function runvar(x::Array{Float64}; n::Int64=10, cumulative=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
@@ -166,20 +166,20 @@ function runvar(x::Array{Float64}; n::Int64=10, cumulative=true)::Array{Float64}
     return out
 end
 
-@doc """
-Compute the running or rolling standard deviation of an array
+"""
+    runsd(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
 
-`runsd(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}`
-""" ->
+Compute the running or rolling standard deviation of an array
+"""
 function runsd(x::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
     return sqrt.(runvar(x, n=n, cumulative=cumulative))
 end
 
-@doc """
-Compute the running or rolling covariance of two arrays
+"""
+    runcov(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
 
-`runcov(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}`
-""" ->
+Compute the running or rolling covariance of two arrays
+"""
 function runcov(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
@@ -197,11 +197,11 @@ function runcov(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::B
     return out
 end
 
-@doc """
-Compute the running or rolling correlation of two arrays
+"""
+    runcor(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
 
-`runcor(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}`
-""" ->
+Compute the running or rolling correlation of two arrays
+"""
 function runcor(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::Bool=true)::Array{Float64}
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
@@ -219,11 +219,11 @@ function runcor(x::Array{Float64}, y::Array{Float64}; n::Int64=10, cumulative::B
     return out
 end
 
-@doc """
-Compute the running or rolling maximum of an array
+"""
+    runmax(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}
 
-`runmax(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}`
-""" ->
+Compute the running or rolling maximum of an array
+"""
 function runmax(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
@@ -256,11 +256,11 @@ function runmax(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive
     end
 end
 
-@doc """
-Compute the running or rolling minimum of an array
+"""
+    runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}
 
-`runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}`
-""" ->
+Compute the running or rolling minimum of an array
+"""
 function runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
@@ -293,11 +293,11 @@ function runmin(x::Array{Float64}; n::Int64=10, cumulative::Bool=true, inclusive
     end
 end
 
-@doc """
-Compute the running/rolling quantile of an array
+"""
+    runquantile(x::Vector{Float64}; p::Float64=0.05, n::Int=10, cumulative::Bool=true)::Vector{Float64}
 
-`runquantile(x::Vector{Float64}; p::Float64=0.05, n::Int=10, cumulative::Bool=true)::Vector{Float64}`
-""" ->
+Compute the running/rolling quantile of an array
+"""
 function runquantile(x::Array{Float64}; p::Float64=0.05, n::Int=10, cumulative::Bool=true)::Array{Float64}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(Float64, (size(x,1), size(x,2)))
@@ -316,9 +316,7 @@ function runquantile(x::Array{Float64}; p::Float64=0.05, n::Int=10, cumulative::
 end
 
 
-@doc """
-Compute the running/rolling autocorrelation of a vector.
-
+"""
 ```
 function runacf(x::Array{Float64};
                 n::Int = 10,
@@ -327,7 +325,8 @@ function runacf(x::Array{Float64};
                 cumulative::Bool = true)::Matrix{Float64}
 ```
 
-""" ->
+Compute the running/rolling autocorrelation of a vector.
+"""
 function runacf(x::Array{Float64};
                 n::Int = 10,
                 maxlag::Int = n-3,

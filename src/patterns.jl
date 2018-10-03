@@ -1,4 +1,4 @@
-@doc """
+"""
 Renko chart patterns
 
 # Methods
@@ -10,9 +10,9 @@ Renko chart patterns
 
 `Array{Int}` object of size Nx1 (where N is the number rows in `x`) where each element gives the Renko bar number of the corresponding row in `x`.
 
-""" ->
-# Renko chart bar identification with traditional methodology (constant box size)
+"""
 function renko(x::Array{Float64}; box_size::Float64=10.0)::Array{Int}
+    # Renko chart bar identification with traditional methodology (constant box size)
     @assert box_size != 0
     "Argument `box_size` must be nonzero."
     if box_size < 0.0
@@ -29,8 +29,8 @@ function renko(x::Array{Float64}; box_size::Float64=10.0)::Array{Int}
     return bar_id
 end
 
-# Renko chart bar identification with option to use ATR or traditional method (constant box size)
 function renko(hlc::Matrix{Float64}; box_size::Float64=10.0, use_atr::Bool=false, n::Int=14)::Array{Int}
+    # Renko chart bar identification with option to use ATR or traditional method (constant box size)
     if use_atr
         bar_id = ones(Int, size(hlc,1))
         box_sizes = atr(hlc, n=n)
