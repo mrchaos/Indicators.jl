@@ -1,8 +1,8 @@
 using Statistics
 
-@doc """
+"""
 Moving linear regression intercept (column 1) and slope (column 2)
-""" ->
+"""
 function mlr_beta(y::Array{Float64}; n::Int64=10, x::Array{Float64}=collect(1.0:n))::Matrix{Float64}
     @assert n<length(y) && n>0 "Argument n out of bounds."
     @assert size(y,2) == 1
@@ -21,9 +21,9 @@ function mlr_beta(y::Array{Float64}; n::Int64=10, x::Array{Float64}=collect(1.0:
     return out
 end
 
-@doc """
+"""
 Moving linear regression slope
-""" ->
+"""
 function mlr_slope(y::Array{Float64}; n::Int64=10, x::Array{Float64}=collect(1.0:n))::Array{Float64}
     @assert n<length(y) && n>0 "Argument n out of bounds."
     @assert size(y,2) == 1
@@ -39,9 +39,9 @@ function mlr_slope(y::Array{Float64}; n::Int64=10, x::Array{Float64}=collect(1.0
     return out
 end
 
-@doc """
+"""
 Moving linear regression y-intercept
-""" ->
+"""
 function mlr_intercept(y::Array{Float64}; n::Int64=10, x::Array{Float64}=collect(1.0:n))::Array{Float64}
     @assert n<length(y) && n>0 "Argument n out of bounds."
     @assert size(y,2) == 1
@@ -59,17 +59,17 @@ function mlr_intercept(y::Array{Float64}; n::Int64=10, x::Array{Float64}=collect
     return out
 end
 
-@doc """
+"""
 Moving linear regression predictions
-""" ->
+"""
 function mlr(y::Array{Float64}; n::Int64=10)::Array{Float64}
     b = mlr_beta(y, n=n)
     return b[:,1] + b[:,2]*float(n)
 end
 
-@doc """
+"""
 Moving linear regression standard errors
-""" ->
+"""
 function mlr_se(y::Array{Float64}; n::Int64=10)::Array{Float64}
     yhat = mlr(y, n=n)
     r = zeros(Float64, n)
@@ -83,21 +83,21 @@ function mlr_se(y::Array{Float64}; n::Int64=10)::Array{Float64}
     return out
 end
 
-@doc """
+"""
 Moving linear regression upper bound
-""" ->
+"""
 function mlr_ub(y::Array{Float64}; n::Int64=10, se::Float64=2.0)::Array{Float64}
     return y + se*mlr_se(y, n=n)
 end
 
-@doc """
+"""
 Moving linear regression lower bound
-""" ->
+"""
 function mlr_lb(y::Array{Float64}; n::Int64=10, se::Float64=2.0)::Array{Float64}
     return y - se*mlr_se(y, n=n)
 end
 
-@doc """
+"""
 Moving linear regression bands
 
 
@@ -108,7 +108,7 @@ Column 1: Lower bound
 Column 2: Regression estimate
 
 Column 3: Upper bound
-""" ->
+"""
 function mlr_bands(y::Array{Float64}; n::Int64=10, se::Float64=2.0)::Matrix{Float64}
     out = zeros(Float64, (length(y),3))
     out[1:n-1,:] .= NaN
@@ -118,9 +118,9 @@ function mlr_bands(y::Array{Float64}; n::Int64=10, se::Float64=2.0)::Matrix{Floa
     return out
 end
 
-@doc """
+"""
 Moving linear regression R-squared or adjusted R-squared
-""" ->
+"""
 function mlr_rsq(y::Array{Float64}; n::Int64=10, adjusted::Bool=false)::Array{Float64}
     yhat = mlr(y, n=n)
     rsq = runcor(y, yhat, n=n, cumulative=false) .^ 2

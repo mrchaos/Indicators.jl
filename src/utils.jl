@@ -1,8 +1,8 @@
 # Miscellaneous utilities
 
-@doc """
+"""
 Find where `x` crosses over `y` (returns boolean vector where crossover occurs)
-""" ->
+"""
 function crossover(x::Array{Float64}, y::Array{Float64})
     @assert size(x,1) == size(y,1)
     out = falses(size(x))
@@ -12,9 +12,9 @@ function crossover(x::Array{Float64}, y::Array{Float64})
     return out
 end
 
-@doc """
+"""
 Find where `x` crosses under `y` (returns boolean vector where crossunder occurs)
-""" ->
+"""
 function crossunder(x::Array{Float64}, y::Array{Float64})
     @assert size(x,1) == size(y,1)
     out = falses(size(x))
