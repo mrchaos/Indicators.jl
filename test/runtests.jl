@@ -47,8 +47,18 @@ end
 
 # analytical
 @testset "Analytical" begin
-    h = hurst(x)
+    # helpers
+    a, b = Indicators.divide(x)
+    @test [a; b] == x
+    x = randn(101)
+    a, b = Indicators.divide(x)
+    @test [a; b] == x
+    # workhorses
+    h = hurst(x, n=100)
     @test size(h) == size(x)
+    rs = rsrange(x)
+    @test size(rs) == size(x)
+    x = randn(100)
 end
 
 # moving regressions
@@ -567,4 +577,11 @@ end
     tmp = keltner(hlc)
     @test size(tmp, 1) == N
     @test size(tmp, 2) == 3
+    # chaos indicators
+    tmp = hurst(cl(x))
+    @test size(tmp,1) == size(x,1)
+    @test size(tmp,2) == 1
+    tmp = rsrange(cl(x))
+    @test size(tmp,1) == size(x,1)
+    @test size(tmp,2) == 1
 end
