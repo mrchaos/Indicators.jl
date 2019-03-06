@@ -350,3 +350,13 @@ function runacf(x::Array{Float64};
     end
     return out
 end
+
+function runfun(x::Array{Float64}, f::Function; n::Int = 10, args...)
+    N = size(x,1)
+    out = zeros(N) .* NaN
+    for i in n:N
+        result::Float64 = f(x[i-n+1:i]; args...)
+        out[i] = result
+    end
+    return out
+end
