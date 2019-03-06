@@ -2,6 +2,12 @@
 *.jl.*.cov
 *.jl.mem
 *.swp
-*.DS_Store
+
+*.svg
+*.pdf
+*.png
 
 README.md
+
+*.DS_Store
+
