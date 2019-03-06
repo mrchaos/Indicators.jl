@@ -10,7 +10,8 @@ module Indicators
         bbands, tr, atr, keltner,
         crossover, crossunder,
         renko,
-        maxima, minima, support, resistance
+        maxima, minima, support, resistance,
+        rsrange, hurst
 
     include("run.jl")
     include("ma.jl")
@@ -20,6 +21,7 @@ module Indicators
     include("trendy.jl")
     include("utils.jl")
     include("patterns.jl")
+    include("chaos.jl")
 
     using Temporal
     include("temporal.jl")

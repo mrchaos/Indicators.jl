@@ -351,12 +351,26 @@ function runacf(x::Array{Float64};
     return out
 end
 
-function runfun(x::Array{Float64}, f::Function; n::Int = 10, args...)
+"""
+```
+runfun(x::Array{Float64}, f::Function; n::Int = 10, args...)
+```
+
+Apply a general function `f` that returns a scalar over an array
+"""
+function runfun(x::Array{Float64}, f::Function; n::Int = 10, cumulative::Bool=false, args...)
     N = size(x,1)
     out = zeros(N) .* NaN
-    for i in n:N
-        result::Float64 = f(x[i-n+1:i]; args...)
-        out[i] = result
+    if cumulative
+        for i in n:N
+            result::Float64 = f(x[1:i]; args...)
+            out[i] = result
+        end
+    else
+        for i in n:N
+            result::Float64 = f(x[i-n+1:i]; args...)
+            out[i] = result
+        end
     end
     return out
 end

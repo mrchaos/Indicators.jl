@@ -45,6 +45,12 @@ end
     @test count_nans(tmp) != N
 end
 
+# analytical
+@testset "Analytical" begin
+    h = hurst(x)
+    @test size(h) == size(x)
+end
+
 # moving regressions
 @testset "Regressions" begin
     tmp = mlr_beta(x)
