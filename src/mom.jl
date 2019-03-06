@@ -62,11 +62,10 @@ Rate of change indicator (percent change between i'th observation and (i-n)'th o
 """
 function roc(x::Array{Float64}; n::Int64=1)::Array{Float64}
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
-    out = zeros(size(x))
-    @inbounds for i = n:size(x,1)
-        out[i] = x[i]/x[i-n+1] - 1.0
+    out = zeros(size(x)) .* NaN
+    @inbounds for i = (n+1):size(x,1)
+        out[i] = x[i]/x[i-n] - 1.0
     end
-    out[1:n] .= NaN
     return out * 100.0
 end
 
