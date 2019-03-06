@@ -1,4 +1,8 @@
-[![Build Status](https://travis-ci.org/dysonance/Indicators.jl.svg?branch=master)](https://travis-ci.org/dysonance/Indicators.jl) [![Coverage Status](https://coveralls.io/repos/dysonance/Indicators.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/dysonance/Indicators.jl?branch=master) [![codecov.io](http://codecov.io/github/dysonance/Indicators.jl/coverage.svg?branch=master)](http://codecov.io/github/dysonance/Indicators.jl?branch=master)
+[![Build Status](https://travis-ci.org/dysonance/Indicators.jl.svg?branch=master)](https://travis-ci.org/dysonance/Indicators.jl)
+[![Coverage Status](https://coveralls.io/repos/dysonance/Indicators.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/dysonance/Indicators.jl?branch=master)
+[![codecov.io](http://codecov.io/github/dysonance/Indicators.jl/coverage.svg?branch=master)](http://codecov.io/github/dysonance/Indicators.jl?branch=master)
+
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://dysonance.github.io/Indicators.jl/latest)
 
 # Indicators
 
