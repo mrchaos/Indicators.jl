@@ -48,8 +48,8 @@ runmin(X::TS{V,T}; args...) where {V,T} = close_fun(X, runmin, [:RunMin]; args..
 runsd(X::TS{V,T}; args...) where {V,T} = close_fun(X, runsd, [:RunSD]; args...)
 runquantile(X::TS{V,T}; args...) where {V,T} = close_fun(X, runquantile, [:RunQuantile]; args...)
 wilder_sum(X::TS{V,T}; args...) where {V,T} = close_fun(X, wilder_sum, [:WilderSum]; args...)
-runacf(X::TS{V,T}; n::Int=10, maxlag::Int=n-3, lags::AbstractArray{Int,1}=0:maxlag, cumulative::Bool=true) where {V,T} =
-    close_fun(X, runacf, [Symbol(i) for i in lags]; n=n, maxlag=maxlag, lags=lags, cumulative=cumulative)
+runacf(X::TS{V,T}; n::Int=10, maxlag::Int=n-3, lags::AbstractArray{Int,1}=0:maxlag, cumulative::Bool=true) where {V,T} = close_fun(X, runacf, [Symbol(i) for i in lags]; n=n, maxlag=maxlag, lags=lags, cumulative=cumulative)
+runfun(X::TS{V,T}, f::Function; n::Int=10, cumulative::Bool=true, args...) = TS(runfun(X, f, n=n, cumulative=cumulative, args...), X.index, [:Function])
 
 ##### ma.jl ######
 sma(X::TS{V,T}; args...) where {V,T} = close_fun(X, sma, [:SMA]; args...)
@@ -107,3 +107,7 @@ resistance(X::TS{V,T}; args...) where {V,T} = close_fun(X, resistance, [:Resista
 #### utils.jl ####
 crossover(x::TS, y::TS) = ts(crossover(x.values, y.values), x.index, [:CrossOver])
 crossunder(x::TS, y::TS) = ts(crossunder(x.values, y.values), x.index, [:CrossUnder])
+
+#### chaos.jl ####
+hurst(x::TS; args...) = close_fun(x, hurst, [:Hurst]; args...)
+rsrange(x::TS; args...) = close_fun(x, rsrange, [:RS]; args...)
