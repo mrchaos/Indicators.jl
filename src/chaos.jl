@@ -76,12 +76,12 @@ end
 
 """
 ```
-hurst(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=true)
+hurst(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=false)
 ```
 
 Compute the Hurst exponent of a time series
 """
-function hurst(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=true)
+function hurst(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=false)
     @assert size(x,1) >= n
     return runfun(x, estimate_hurst; n=n, cumulative=cumulative, intercept=intercept)
 end
