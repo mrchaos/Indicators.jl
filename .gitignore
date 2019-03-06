@@ -2,5 +2,6 @@
 *.jl.*.cov
 *.jl.mem
 *.swp
+*.DS_Store
 
 README.md
