@@ -46,7 +46,8 @@ end
 end
 
 # analytical
-@testset "Analytical" begin
+@testset "Chaos" begin
+    x = randn(252)
     # helpers
     a, b = Indicators.divide(x)
     @test [a; b] == x
