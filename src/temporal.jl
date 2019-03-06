@@ -49,7 +49,7 @@ runsd(X::TS{V,T}; args...) where {V,T} = close_fun(X, runsd, [:RunSD]; args...)
 runquantile(X::TS{V,T}; args...) where {V,T} = close_fun(X, runquantile, [:RunQuantile]; args...)
 wilder_sum(X::TS{V,T}; args...) where {V,T} = close_fun(X, wilder_sum, [:WilderSum]; args...)
 runacf(X::TS{V,T}; n::Int=10, maxlag::Int=n-3, lags::AbstractArray{Int,1}=0:maxlag, cumulative::Bool=true) where {V,T} = close_fun(X, runacf, [Symbol(i) for i in lags]; n=n, maxlag=maxlag, lags=lags, cumulative=cumulative)
-runfun(X::TS{V,T}, f::Function; n::Int=10, cumulative::Bool=true, args...) = TS(runfun(X, f, n=n, cumulative=cumulative, args...), X.index, [:Function])
+runfun(X::TS, f::Function; n::Int=10, cumulative::Bool=true, args...) = TS(runfun(X, f, n=n, cumulative=cumulative, args...), X.index, [:Function])
 
 ##### ma.jl ######
 sma(X::TS{V,T}; args...) where {V,T} = close_fun(X, sma, [:SMA]; args...)

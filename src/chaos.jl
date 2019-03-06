@@ -26,10 +26,10 @@ end
 function genrsdata(x::Vector{T})::Matrix{Float64} where {T<:Real}
     depth = npieces(x)
     if depth == 0
-        return [size(x,1) rsrange(x)]
+        return [size(x,1) estimate_rsrange(x)]
     end
     rsdata = zeros(0,2)
-    rsdata = [rsdata; [size(x,1) rsrange(x)]]
+    rsdata = [rsdata; [size(x,1) estimate_rsrange(x)]]
     a, b = divide(x)
     rsdata = [rsdata; genrsdata(a)]
     rsdata = [rsdata; genrsdata(b)]
@@ -62,11 +62,25 @@ function estimate_hurst(x; intercept::Bool=false)::Float64
     return beta
 end
 
+"""
+```
+rsrange(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=true)
+```
+
+Compute the rescaled range of a time series
+"""
 function rsrange(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=true)
     @assert size(x,1) >= n
-    return runfun(x, estimate_rsrange; n=n, cumulative=cumulative, intercept=intercept)
+    return runfun(x, estimate_rsrange; n=n, cumulative=cumulative)
 end
 
+"""
+```
+hurst(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=true)
+```
+
+Compute the Hurst exponent of a time series
+"""
 function hurst(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=true)
     @assert size(x,1) >= n
     return runfun(x, estimate_hurst; n=n, cumulative=cumulative, intercept=intercept)
