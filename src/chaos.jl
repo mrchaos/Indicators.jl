@@ -51,7 +51,7 @@ end
 
 function estimate_hurst(x; intercept::Bool=false)::Float64
     RS = genrsdata(x)
-    sort!(RS, dims=1)
+    RS = RS[sortperm(RS[:,1]),:]
     xx = log2.(RS[:,1])
     yy = log2.(RS[:,2])
     if intercept
