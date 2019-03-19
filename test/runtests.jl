@@ -579,10 +579,10 @@ end
     @test size(tmp, 1) == N
     @test size(tmp, 2) == 3
     # chaos indicators
-    tmp = hurst(cl(x))
+    tmp = hurst(cl(ohlc))
     @test size(tmp,1) == size(x,1)
     @test size(tmp,2) == 1
-    tmp = rsrange(cl(x))
+    tmp = rsrange(cl(ohlc))
     @test size(tmp,1) == size(x,1)
     @test size(tmp,2) == 1
 end
