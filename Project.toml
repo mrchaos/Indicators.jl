@@ -1,7 +1,7 @@
 name = "Indicators"
 uuid = "70c4c096-89a6-5ec6-8236-da8aa3bd86fd"
 authors = ["Jacob Amos <jamos125@gmail.com>"]
-version = "0.5.0"
+version = "0.6.0"
 
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
