@@ -118,9 +118,9 @@ uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [[Temporal]]
 deps = ["Dates", "HTTP", "JSON", "Printf", "Random", "RecipesBase", "Statistics", "Test"]
-git-tree-sha1 = "e46b146e40093cce858f6d730ba08877cee6d9a3"
+git-tree-sha1 = "ab2b14f510cd2a068974c9dc654ad8e743582dc1"
 uuid = "a110ec8f-48c8-5d59-8f7e-f91bc4cc0c3d"
-version = "0.6.0"
+version = "0.6.1"
 
 [[Test]]
 deps = ["Distributed", "InteractiveUtils", "Logging", "Random"]
