@@ -1,8 +1,8 @@
 # #TODO: finish
-# function hilbert_transform(x::Array{Float64}; n::Int=10)
+# function hilbert_transform(x::Array{T}; n::Int=10)
 # end
 
-function estimate_rsrange(x::Vector{T})::Float64 where T<:Real
+function estimate_rsrange(x::Array{T})::T where T<:Real
     n = size(x,1)
     @assert n>2 "need more than two elements, have $x"
     m = sum(x)/n
@@ -13,7 +13,7 @@ function estimate_rsrange(x::Vector{T})::Float64 where T<:Real
     return r/s
 end
 
-function npieces(x::Vector{T}, minsize::Int=8)::Int where {T<:Real}
+function npieces(x::Array{T}, minsize::Int=8)::Int where {T<:Real}
     i = 0
     n = size(x,1)
     while n > minsize
@@ -23,7 +23,7 @@ function npieces(x::Vector{T}, minsize::Int=8)::Int where {T<:Real}
     return i
 end
 
-function genrsdata(x::Vector{T})::Matrix{Float64} where {T<:Real}
+function genrsdata(x::Array{T})::Matrix{T} where {T<:Real}
     depth = npieces(x)
     if depth == 0
         return [size(x,1) estimate_rsrange(x)]
@@ -49,7 +49,7 @@ function divide(x::A)::Tuple{A, A} where {A<:AbstractArray}
     return a, b
 end
 
-function estimate_hurst(x; intercept::Bool=false)::Float64
+function estimate_hurst(x::Array{T}; intercept::Bool=false)::T where {T<:Real}
     RS = genrsdata(x)
     RS = RS[sortperm(RS[:,1]),:]
     xx = log2.(RS[:,1])
@@ -64,24 +64,24 @@ end
 
 """
 ```
-rsrange(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=true)
+rsrange(x::Array{T}; n::Int=100, cumulative::Bool=false, intercept::Bool=true)
 ```
 
 Compute the rescaled range of a time series
 """
-function rsrange(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=true)
+function rsrange(x::Array{T}; n::Int=100, cumulative::Bool=false, intercept::Bool=true) where {T<:Real}
     @assert size(x,1) >= n
     return runfun(x, estimate_rsrange; n=n, cumulative=cumulative)
 end
 
 """
 ```
-hurst(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=false)
+hurst(x::Array{T}; n::Int=100, cumulative::Bool=false, intercept::Bool=false)
 ```
 
 Compute the Hurst exponent of a time series
 """
-function hurst(x::Array{Float64}; n::Int=100, cumulative::Bool=false, intercept::Bool=false)
+function hurst(x::Array{T}; n::Int=100, cumulative::Bool=false, intercept::Bool=false) where {T<:Real}
     @assert size(x,1) >= n
     return runfun(x, estimate_hurst; n=n, cumulative=cumulative, intercept=intercept)
 end
