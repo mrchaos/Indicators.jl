@@ -81,8 +81,11 @@ function runmean(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} wher
             out[i] = sum(x[1:i])/fi[i]
         end
     else
-        @inbounds for i = n:size(x,1)
-            out[i] = mean(x[i-n+1:i])
+        s = sum(x[1:n])
+        out[n] = s / n
+        @inbounds for i = n+1:size(x,1)
+            s += x[i] - x[i-n]
+            out[i] = s / n
         end
     end
     return out
