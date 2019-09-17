@@ -104,8 +104,11 @@ function runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where
     else
         out = zeros(size(x))
         out[1:n-1] .= NaN
-        @inbounds for i = n:size(x,1)
-            out[i] = sum(x[i-n+1:i])
+        s = sum(x[1:n])
+        out[n] = s
+        @inbounds for i = n+1:size(x,1)
+            s += x[i] - x[i-n]
+            out[i] = s
         end
     end
     return out
