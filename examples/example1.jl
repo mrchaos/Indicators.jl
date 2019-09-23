@@ -4,7 +4,7 @@ using Dates
 using Random
 
 # Generate some toy sample data
-srand(1)
+Random.seed!(1)
 n = 250
 op = 100.0 + cumsum(randn(n))
 hi = op + rand(n)
