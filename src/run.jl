@@ -103,9 +103,7 @@ function runmean(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} wher
                 s -= x[i-n]
                 n_current -= 1
             end
-            out[i] = (n_current == n) # n_current > 0
-                ? s / n_current
-                : NaN
+            out[i] = (n_current == n) ? s / n_current : NaN
         end
     end
     return out
@@ -147,9 +145,7 @@ function runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where
                 s -= x[i-n]
                 n_current -= 1
             end
-            out[i] = (n_current == n) # n_current > 0
-                ? s
-                : NaN
+            out[i] = (n_current == n) ? s : NaN
         end
     end
     return out
