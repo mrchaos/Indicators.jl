@@ -87,25 +87,25 @@ function runmean(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} wher
         # end
         n_current = 0
         s::T = 0
-        for i = 1:n
-            if !isnan(x[i])
+        @inbounds for i = 1:n
+            if isfinite(x[i])
                 s += x[i]
                 n_current += 1
             end
         end
         out[n] = n_current == n ? s / n : NaN
         @inbounds for i = n+1:size(x,1)
-            if !isnan(x[i])
+            if isfinite(x[i])
                 s += x[i]
                 n_current += 1
             end
-            if !isnan(x[i-n])
+            if isfinite(x[i-n])
                 s -= x[i-n]
                 n_current -= 1
             end
-            if n_current == n # n_current > 0
-                out[i] = s / n_current
-            end
+            out[i] = (n_current == n) # n_current > 0
+                ? s / n_current
+                : NaN
         end
     end
     return out
@@ -131,25 +131,25 @@ function runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where
         # end
         n_current = 0
         s::T = 0
-        for i = 1:n
-            if !isnan(x[i])
+        @inbounds for i = 1:n
+            if isfinite(x[i])
                 s += x[i]
                 n_current += 1
             end
         end
         out[n] = n_current == n ? s : NaN
         @inbounds for i = n+1:size(x,1)
-            if !isnan(x[i])
+            if isfinite(x[i])
                 s += x[i]
                 n_current += 1
             end
-            if !isnan(x[i-n])
+            if isfinite(x[i-n])
                 s -= x[i-n]
                 n_current -= 1
             end
-            if n_current == n # n_current > 0
-                out[i] = s
-            end
+            out[i] = (n_current == n) # n_current > 0
+                ? s
+                : NaN
         end
     end
     return out
