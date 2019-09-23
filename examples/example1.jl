@@ -1,6 +1,7 @@
 using Indicators
 using PyPlot
-using Base.Dates
+using Dates
+using Random
 
 # Generate some toy sample data
 srand(1)

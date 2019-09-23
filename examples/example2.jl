@@ -1,7 +1,7 @@
 # workspace()
 using Indicators
 using PyPlot
-using Base.Dates
+using Dates
 using Temporal
 
 aapl = yahoo("AAPL")
