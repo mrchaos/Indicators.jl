@@ -81,17 +81,35 @@ function runmean(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} wher
             out[i] = sum(x[1:i])/fi[i]
         end
     else
-        s = sum(x[1:n])
-        out[n] = s / n
+        # original shorter but slower version of the code below
+        # @inbounds for i = n:size(x,1)
+        #     out[i] = mean(x[i-n+1:i])
+        # end
+        n_current = 0
+        s::T = 0
+        for i = 1:n
+            if !isnan(x[i])
+                s += x[i]
+                n_current += 1
+            end
+        end
+        out[n] = n_current == n ? s / n : NaN
         @inbounds for i = n+1:size(x,1)
-            s += x[i] - x[i-n]
-            out[i] = s / n
+            if !isnan(x[i])
+                s += x[i]
+                n_current += 1
+            end
+            if !isnan(x[i-n])
+                s -= x[i-n]
+                n_current -= 1
+            end
+            if n_current == n # n_current > 0
+                out[i] = s / n_current
+            end
         end
     end
     return out
 end
-
-
 """
 ```
 runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
@@ -107,16 +125,35 @@ function runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where
     else
         out = zeros(size(x))
         out[1:n-1] .= NaN
-        s = sum(x[1:n])
-        out[n] = s
+        # original shorter but slower version of the code below
+        # @inbounds for i = n:size(x,1)
+        #     out[i] = sum(x[i-n+1:i])
+        # end
+        n_current = 0
+        s::T = 0
+        for i = 1:n
+            if !isnan(x[i])
+                s += x[i]
+                n_current += 1
+            end
+        end
+        out[n] = n_current == n ? s : NaN
         @inbounds for i = n+1:size(x,1)
-            s += x[i] - x[i-n]
-            out[i] = s
+            if !isnan(x[i])
+                s += x[i]
+                n_current += 1
+            end
+            if !isnan(x[i-n])
+                s -= x[i-n]
+                n_current -= 1
+            end
+            if n_current == n # n_current > 0
+                out[i] = s
+            end
         end
     end
     return out
 end
-
 """
 ```
 wilder_sum(x::Array{T}; n::Int64=10)::Array{T}
