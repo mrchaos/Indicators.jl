@@ -81,14 +81,33 @@ function runmean(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} wher
             out[i] = sum(x[1:i])/fi[i]
         end
     else
-        @inbounds for i = n:size(x,1)
-            out[i] = mean(x[i-n+1:i])
+        # original shorter but slower version of the code below
+        # @inbounds for i = n:size(x,1)
+        #     out[i] = mean(x[i-n+1:i])
+        # end
+        n_current = 0
+        s::T = 0
+        @inbounds for i = 1:n
+            if isfinite(x[i])
+                s += x[i]
+                n_current += 1
+            end
+        end
+        out[n] = n_current == n ? s / n : NaN
+        @inbounds for i = n+1:size(x,1)
+            if isfinite(x[i])
+                s += x[i]
+                n_current += 1
+            end
+            if isfinite(x[i-n])
+                s -= x[i-n]
+                n_current -= 1
+            end
+            out[i] = (n_current == n) ? s / n_current : NaN
         end
     end
     return out
 end
-
-
 """
 ```
 runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
@@ -104,13 +123,33 @@ function runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where
     else
         out = zeros(size(x))
         out[1:n-1] .= NaN
-        @inbounds for i = n:size(x,1)
-            out[i] = sum(x[i-n+1:i])
+        # original shorter but slower version of the code below
+        # @inbounds for i = n:size(x,1)
+        #     out[i] = sum(x[i-n+1:i])
+        # end
+        n_current = 0
+        s::T = 0
+        @inbounds for i = 1:n
+            if isfinite(x[i])
+                s += x[i]
+                n_current += 1
+            end
+        end
+        out[n] = n_current == n ? s : NaN
+        @inbounds for i = n+1:size(x,1)
+            if isfinite(x[i])
+                s += x[i]
+                n_current += 1
+            end
+            if isfinite(x[i-n])
+                s -= x[i-n]
+                n_current -= 1
+            end
+            out[i] = (n_current == n) ? s : NaN
         end
     end
     return out
 end
-
 """
 ```
 wilder_sum(x::Array{T}; n::Int64=10)::Array{T}
