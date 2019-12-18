@@ -4,12 +4,12 @@ using Statistics
 
 """
 ```
-diffn(x::Array{T}; n::Int64=1)::Array{T}
+diffn(x::Array{T}; n::Int=1)::Array{T}
 ```
 
 Lagged differencing
 """
-function diffn(x::Array{T}; n::Int64=1)::Array{T} where {T<:Real}
+function diffn(x::Vector{T}; n::Int=1)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     dx = zeros(size(x))
     dx[1:n] .= NaN
@@ -19,30 +19,16 @@ function diffn(x::Array{T}; n::Int64=1)::Array{T} where {T<:Real}
     return dx
 end
 
-"""
-```
-diffn(X::Array{T,2}; n::Int64=1)::Array{T}
-```
-
-Lagged differencing
-"""
-function diffn(X::Array{T,2}; n::Int64=1)::Matrix{T} where {T<:Real}
-    @assert n<size(X,1) && n>0 "Argument n out of bounds."
-    dx = zeros(size(X))
-    @inbounds for j = 1:size(X,2)
-        dx[:,j] = diffn(X[:,j], n=n)
-    end
-    return dx
-end
+diffn(X::Matrix; n::Int=1)::Matrix = hcat([diffn(X[:,j], n=n) for j in 1:size(X,2)]...)
 
 """
 (Adapted from StatsBase: https://raw.githubusercontent.com/JuliaStats/StatsBase.jl/master/src/scalarstats.jl)
 
 Compute the mode of an arbitrary array::Array{T}
 """
-function mode(a::AbstractArray{T}) where {T<:Real}
+function mode(a::AbstractArray{T}) where {T<:AbstractFloat}
     isempty(a) && error("mode: input array cannot be empty.")
-    cnts = Dict{T,Int64}()
+    cnts = Dict{T,Int}()
     # first element
     mc = 1
     mv = a[1]
@@ -66,12 +52,12 @@ end
 
 """
 ```
-runmean(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
+runmean(x::Array{T}; n::Int=10, cumulative::Bool=true)::Array{T}
 ```
 
 Compute a running or rolling arithmetic mean of an array.
 """
-function runmean(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runmean(x::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
     out[1:n-1] .= NaN
@@ -108,14 +94,15 @@ function runmean(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} wher
     end
     return out
 end
+
 """
 ```
-runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
+runsum(x::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T}
 ```
 
 Compute a running or rolling summation of an array.
 """
-function runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runsum(x::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     if cumulative
         out = cumsum(x, dims=1)
@@ -150,14 +137,15 @@ function runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where
     end
     return out
 end
+
 """
 ```
-wilder_sum(x::Array{T}; n::Int64=10)::Array{T}
+wilder_sum(x::Vector{T}; n::Int=10)::Vector{T}
 ```
 
 Welles Wilder summation of an array
 """
-function wilder_sum(x::Array{T}; n::Int64=10)::Array{T} where {T<:Real}
+function wilder_sum(x::Vector{T}; n::Int=10)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     nf = float(n)  # type stability -- all arithmetic done on floats
     out = zeros(size(x))
@@ -170,12 +158,12 @@ end
 
 """
 ```
-runmad(x::Array{T}; n::Int64=10, cumulative::Bool=true, fun::Function=median)::Array{T}
+runmad(x::Vector{T}; n::Int=10, cumulative::Bool=true, fun::Function=median)::Vector{T}
 ```
 
 Compute the running or rolling mean absolute deviation of an array
 """
-function runmad(x::Array{T}; n::Int64=10, cumulative::Bool=true, fun::Function=median)::Array{T} where {T<:Real}
+function runmad(x::Vector{T}; n::Int=10, cumulative::Bool=true, fun::Function=median)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
     out[1:n-1] .= NaN
@@ -198,12 +186,12 @@ end
 
 """
 ```
-runvar(x::Array{T}; n::Int64=10, cumulative=true)::Array{T}
+runvar(x::Vector{T}; n::Int=10, cumulative=true)::Vector{T}
 ```
 
 Compute the running or rolling variance of an array
 """
-function runvar(x::Array{T}; n::Int64=10, cumulative=true)::Array{T} where {T<:Real}
+function runvar(x::Vector{T}; n::Int=10, cumulative=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
     out[1:n-1] .= NaN
@@ -221,23 +209,23 @@ end
 
 """
 ```
-runsd(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
+runsd(x::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T}
 ```
 
 Compute the running or rolling standard deviation of an array
 """
-function runsd(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runsd(x::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:AbstractFloat}
     return sqrt.(runvar(x, n=n, cumulative=cumulative))
 end
 
 """
 ```
-runcov(x::Array{T}, y::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
+runcov(x::Vector{T}, y::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T}
 ```
 
 Compute the running or rolling covariance of two arrays
 """
-function runcov(x::Array{T}, y::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runcov(x::Vector{T}, y::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
@@ -256,12 +244,12 @@ end
 
 """
 ```
-runcor(x::Array{T}, y::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
+runcor(x::Vector{T}, y::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T}
 ```
 
 Compute the running or rolling correlation of two arrays
 """
-function runcor(x::Array{T}, y::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runcor(x::Vector{T}, y::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:Float64}
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
@@ -280,12 +268,12 @@ end
 
 """
 ```
-runmax(x::Array{T}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{T}
+runmax(x::Vector{T}; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Vector{T}
 ```
 
 Compute the running or rolling maximum of an array
 """
-function runmax(x::Array{T}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{T} where {T<:Real}
+function runmax(x::Vector{T}; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
     if inclusive
@@ -319,12 +307,12 @@ end
 
 """
 ```
-runmin(x::Array{T}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{T}
+runmin(x::Vector{T}; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Vector{T}
 ```
 
 Compute the running or rolling minimum of an array
 """
-function runmin(x::Array{T}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{T} where {T<:Real}
+function runmin(x::Vector{T}; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
     if inclusive
@@ -363,7 +351,7 @@ runquantile(x::Vector{T}; p::T=0.05, n::Int=10, cumulative::Bool=true)::Vector{T
 
 Compute the running/rolling quantile of an array
 """
-function runquantile(x::Array{T}; p::T=0.05, n::Int=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runquantile(x::Vector{T}; p::T=0.05, n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(T, (size(x,1), size(x,2)))
     if cumulative
@@ -380,23 +368,22 @@ function runquantile(x::Array{T}; p::T=0.05, n::Int=10, cumulative::Bool=true)::
     return out
 end
 
-
 """
 ```
-function runacf(x::Array{T};
+function runacf(x::Vector{T};
                 n::Int = 10,
                 maxlag::Int = n-3,
-                lags::AbstractArray{Int,1} = 0:maxlag,
-                cumulative::Bool = true)::Matrix{T} where {T<:Real}
+                lags::AbstractVector{Int,1} = 0:maxlag,
+                cumulative::Bool = true)::Matrix{T} where {T<:AbstractFloat}
 ```
 
 Compute the running/rolling autocorrelation of a vector.
 """
-function runacf(x::Array{T};
+function runacf(x::Vector{T};
                 n::Int = 10,
                 maxlag::Int = n-3,
-                lags::AbstractArray{Int,1} = 0:maxlag,
-                cumulative::Bool = true)::Matrix{T} where {T<:Real}
+                lags::AbstractVector{Int} = 0:maxlag,
+                cumulative::Bool = true)::Matrix{T} where {T<:AbstractFloat}
     @assert size(x, 2) == 1 "Autocorrelation input array must be one-dimensional"
     N = size(x, 1)
     @assert n < N && n > 0
@@ -418,12 +405,12 @@ end
 
 """
 ```
-runfun(x::Array{T}, f::Function; n::Int = 10, args...)
+runfun(x::Vector{T}, f::Function; n::Int = 10, args...)
 ```
 
 Apply a general function `f` that returns a scalar over an array
 """
-function runfun(x::Array{T}, f::Function; n::Int = 10, cumulative::Bool=false, args...)::Array{T} where {T<:Real}
+function runfun(x::Vector{T}, f::Function; n::Int = 10, cumulative::Bool=false, args...)::Vector{T} where {T<:AbstractFloat}
     N = size(x,1)
     out = zeros(T, N) .* NaN
     if cumulative
