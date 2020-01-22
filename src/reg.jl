@@ -159,7 +159,7 @@ Moving linear regression R-squared or adjusted R-squared
 """
 function mlr_rsq(y::Array{T}; n::Int64=10, adjusted::Bool=false)::Array{T} where {T<:Real}
     yhat = mlr(y, n=n)
-    rsq = runcor(y, yhat, n=n, cumulative=false) .^ 2
+    rsq = runcor(y, yhat, n=n, cumulative=false) .^ 2.0
     if adjusted
         return rsq .- (1.0.-rsq)*(1.0/(float(n).-2.0))
     else

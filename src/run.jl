@@ -4,80 +4,19 @@ using Statistics
 
 """
 ```
-diffn(x::Array{T}; n::Int64=1)::Array{T}
-```
-
-Lagged differencing
-"""
-function diffn(x::Array{T}; n::Int64=1)::Array{T} where {T<:Real}
-    @assert n<size(x,1) && n>0 "Argument n out of bounds."
-    dx = zeros(size(x))
-    dx[1:n] .= NaN
-    @inbounds for i=n+1:size(x,1)
-        dx[i] = x[i] - x[i-n]
-    end
-    return dx
-end
-
-"""
-```
-diffn(X::Array{T,2}; n::Int64=1)::Array{T}
-```
-
-Lagged differencing
-"""
-function diffn(X::Array{T,2}; n::Int64=1)::Matrix{T} where {T<:Real}
-    @assert n<size(X,1) && n>0 "Argument n out of bounds."
-    dx = zeros(size(X))
-    @inbounds for j = 1:size(X,2)
-        dx[:,j] = diffn(X[:,j], n=n)
-    end
-    return dx
-end
-
-"""
-(Adapted from StatsBase: https://raw.githubusercontent.com/JuliaStats/StatsBase.jl/master/src/scalarstats.jl)
-
-Compute the mode of an arbitrary array::Array{T}
-"""
-function mode(a::AbstractArray{T}) where {T<:Real}
-    isempty(a) && error("mode: input array cannot be empty.")
-    cnts = Dict{T,Int64}()
-    # first element
-    mc = 1
-    mv = a[1]
-    cnts[mv] = 1
-    # find the mode along with table construction
-    @inbounds for i = 2 : length(a)
-        x = a[i]
-        if haskey(cnts, x)
-            c = (cnts[x] += 1)
-            if c > mc
-                mc = c
-                mv = x
-            end
-        else
-            cnts[x] = 1
-            # in this case: c = 1, and thus c > mc won't happen
-        end
-    end
-    return mv
-end
-
-"""
-```
-runmean(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
+runmean(x::Array{T}; n::Int=10, cumulative::Bool=true)::Array{T}
+runmean(X::Matrix; n::Int=10, cumulative::Bool=true)::Matrix
 ```
 
 Compute a running or rolling arithmetic mean of an array.
 """
-function runmean(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runmean(x::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
-    out = zeros(size(x))
+    out = zeros(size(x,1))
     out[1:n-1] .= NaN
     if cumulative
         fi = 1.0:size(x,1)
-        @inbounds for i = n:size(x,1)
+        @inbounds for i in n:size(x,1)
             out[i] = sum(x[1:i])/fi[i]
         end
     else
@@ -108,14 +47,17 @@ function runmean(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} wher
     end
     return out
 end
+runmean(X::Matrix; n::Int=10, cumulative::Bool=true)::Matrix = hcat((runmean(X[:,j], n=n, cumulative=cumulative) for j in 1:size(X,2))...)
+
 """
 ```
-runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
+runsum(x::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T}
+runsum(X::Matrix; n::Int=10, cumulative::Bool=true)::Matrix
 ```
 
 Compute a running or rolling summation of an array.
 """
-function runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runsum(x::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     if cumulative
         out = cumsum(x, dims=1)
@@ -150,32 +92,17 @@ function runsum(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where
     end
     return out
 end
-"""
-```
-wilder_sum(x::Array{T}; n::Int64=10)::Array{T}
-```
-
-Welles Wilder summation of an array
-"""
-function wilder_sum(x::Array{T}; n::Int64=10)::Array{T} where {T<:Real}
-    @assert n<size(x,1) && n>0 "Argument n is out of bounds."
-    nf = float(n)  # type stability -- all arithmetic done on floats
-    out = zeros(size(x))
-    out[1] = x[1]
-    @inbounds for i = 2:size(x,1)
-        out[i] = x[i] + out[i-1]*(nf-1.0)/nf
-    end
-    return out
-end
+runsum(X::Matrix; n::Int=10, cumulative::Bool=true)::Matrix = hcat((runsum(X[:,j], n=n, cumulative=cumulative) for j in 1:size(X,2))...)
 
 """
 ```
-runmad(x::Array{T}; n::Int64=10, cumulative::Bool=true, fun::Function=median)::Array{T}
+runmad(x::Vector{T}; n::Int=10, cumulative::Bool=true, fun::Function=median)::Vector{T}
+runmad(X::Matrix; n::Int=10, cumulative::Bool=true)::Matrix
 ```
 
 Compute the running or rolling mean absolute deviation of an array
 """
-function runmad(x::Array{T}; n::Int64=10, cumulative::Bool=true, fun::Function=median)::Array{T} where {T<:Real}
+function runmad(x::Vector{T}; n::Int=10, cumulative::Bool=true, fun::Function=median)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
     out[1:n-1] .= NaN
@@ -195,15 +122,17 @@ function runmad(x::Array{T}; n::Int64=10, cumulative::Bool=true, fun::Function=m
     end
     return out
 end
+runmad(X::Matrix; n::Int=10, cumulative::Bool=true)::Matrix = hcat((runmad(X[:,j], n=n, cumulative=cumulative) for j in 1:size(X,2))...)
 
 """
 ```
-runvar(x::Array{T}; n::Int64=10, cumulative=true)::Array{T}
+runvar(x::Vector{T}; n::Int=10, cumulative=true)::Vector{T}
+runvar(X::Matrix; n::Int=10, cumulative::Bool=true)::Matrix
 ```
 
 Compute the running or rolling variance of an array
 """
-function runvar(x::Array{T}; n::Int64=10, cumulative=true)::Array{T} where {T<:Real}
+function runvar(x::Vector{T}; n::Int=10, cumulative=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
     out[1:n-1] .= NaN
@@ -218,26 +147,30 @@ function runvar(x::Array{T}; n::Int64=10, cumulative=true)::Array{T} where {T<:R
     end
     return out
 end
+runvar(X::Matrix; n::Int=10, cumulative::Bool=true)::Matrix = hcat((runvar(X[:,j], n=n, cumulative=cumulative) for j in 1:size(X,2))...)
 
 """
 ```
-runsd(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
+runsd(x::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T}
+runsd(X::Matrix; n::Int=10, cumulative::Bool=true)::Matrix
 ```
 
 Compute the running or rolling standard deviation of an array
 """
-function runsd(x::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runsd(x::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:AbstractFloat}
     return sqrt.(runvar(x, n=n, cumulative=cumulative))
 end
+runsd(X::Matrix; n::Int=10, cumulative::Bool=true)::Matrix = sqrt.(hcat((runvar(X[:,j], n=n, cumulative=cumulative) for j in 1:size(X,2))...))
 
 """
 ```
-runcov(x::Array{T}, y::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
+runcov(x::Vector{T}, y::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T}
+runcov(X::Matrix, Y::Matrix; n::Int=10, cumulative::Bool=true)::Matrix
 ```
 
 Compute the running or rolling covariance of two arrays
 """
-function runcov(x::Array{T}, y::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runcov(x::Vector{T}, y::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
@@ -253,15 +186,18 @@ function runcov(x::Array{T}, y::Array{T}; n::Int64=10, cumulative::Bool=true)::A
     end
     return out
 end
+runcov(X::Matrix, Y::Matrix; n::Int=10, cumulative::Bool=true)::Matrix = hcat((runcov(X[:,j], Y[:,j], n=n, cumulative=cumulative) for j in 1:size(X,2))...)
 
 """
 ```
-runcor(x::Array{T}, y::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T}
+runcor(x::Vector{T}, y::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T}
+runcor(X::Matrix, y::Vector; n::Int=10, cumulative::Bool=true)::Matrix
+runcor(X::Matrix, Y::Matrix; n::Int=10, cumulative::Bool=true)::Matrix
 ```
 
 Compute the running or rolling correlation of two arrays
 """
-function runcor(x::Array{T}, y::Array{T}; n::Int64=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runcor(x::Vector{T}, y::Vector{T}; n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:Float64}
     @assert length(x) == length(y) "Dimension mismatch: length of `x` not equal to length of `y`."
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
@@ -277,15 +213,18 @@ function runcor(x::Array{T}, y::Array{T}; n::Int64=10, cumulative::Bool=true)::A
     end
     return out
 end
+runcor(X::Matrix, Y::Matrix; n::Int=10, cumulative::Bool=true)::Matrix = hcat((runcor(X[:,j], Y[:,j], n=n, cumulative=cumulative) for j in 1:size(X,2))...)
+runcor(X::Matrix, y::Vector; n::Int=10, cumulative::Bool=true)::Matrix = hcat((runcor(X[:,j], y, n=n, cumulative=cumulative) for j in 1:size(X,2))...)
 
 """
 ```
-runmax(x::Array{T}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{T}
+runmax(x::Vector{T}; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Vector{T}
+runmax(X::Matrix; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Matrix
 ```
 
 Compute the running or rolling maximum of an array
 """
-function runmax(x::Array{T}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{T} where {T<:Real}
+function runmax(x::Vector{T}; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
     if inclusive
@@ -316,15 +255,17 @@ function runmax(x::Array{T}; n::Int64=10, cumulative::Bool=true, inclusive::Bool
         return out
     end
 end
+runmax(X::Matrix; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Matrix = hcat((runmax(X[:,j], n=n, cumulative=cumulative, inclusive=inclusive) for j in 1:size(X,2))...)
 
 """
 ```
-runmin(x::Array{T}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{T}
+runmin(x::Vector{T}; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Vector{T}
+runmin(X::Matrix; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Matrix
 ```
 
 Compute the running or rolling minimum of an array
 """
-function runmin(x::Array{T}; n::Int64=10, cumulative::Bool=true, inclusive::Bool=true)::Array{T} where {T<:Real}
+function runmin(x::Vector{T}; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
     out = zeros(size(x))
     if inclusive
@@ -355,48 +296,51 @@ function runmin(x::Array{T}; n::Int64=10, cumulative::Bool=true, inclusive::Bool
         return out
     end
 end
+runmin(X::Matrix; n::Int=10, cumulative::Bool=true, inclusive::Bool=true)::Matrix = hcat((runmin(X[:,j], n=n, cumulative=cumulative, inclusive=inclusive) for j in 1:size(X,2))...)
 
 """
 ```
 runquantile(x::Vector{T}; p::T=0.05, n::Int=10, cumulative::Bool=true)::Vector{T}
+runquantile(X::Matrix; n::Int=10, cumulative::Bool=true, p::Real=0.05)::Matrix
 ```
 
 Compute the running/rolling quantile of an array
 """
-function runquantile(x::Array{T}; p::T=0.05, n::Int=10, cumulative::Bool=true)::Array{T} where {T<:Real}
+function runquantile(x::Vector{T}; p::T=0.05, n::Int=10, cumulative::Bool=true)::Vector{T} where {T<:AbstractFloat}
     @assert n<size(x,1) && n>1 "Argument n is out of bounds."
-    out = zeros(T, (size(x,1), size(x,2)))
+    out = zeros(T, size(x,1))
     if cumulative
-        @inbounds for j in 1:size(x,2), i in 2:size(x,1)
-            out[i,j] = quantile(x[1:i,j], p)
+        @inbounds for i in 2:size(x,1)
+            out[i] = quantile(x[1:i], p)
         end
-        out[1,:] .= NaN
+        out[1] = NaN
     else
-        @inbounds for j in 1:size(x,2), i in n:size(x,1)
-            out[i,j] = quantile(x[i-n+1:i,j], p)
+        @inbounds for i in n:size(x,1)
+            out[i] = quantile(x[i-n+1:i], p)
         end
-        out[1:n-1,:] .= NaN
+        out[1:n-1] .= NaN
     end
     return out
 end
-
+runquantile(X::Matrix; n::Int=10, cumulative::Bool=true, p::Real=0.05)::Matrix = hcat((runquantile(X[:,j], n=n, cumulative=cumulative, p=p) for j in 1:size(X,2))...)
 
 """
 ```
-function runacf(x::Array{T};
+function runacf(x::Vector{T};
                 n::Int = 10,
                 maxlag::Int = n-3,
-                lags::AbstractArray{Int,1} = 0:maxlag,
-                cumulative::Bool = true)::Matrix{T} where {T<:Real}
+                lags::AbstractVector{Int,1} = 0:maxlag,
+                cumulative::Bool = true)::Matrix{T} where {T<:AbstractFloat}
+runacf(X::Matrix; n::Int=10, cumulative::Bool=true, maxlag::Int=n-3, lags::AbstractVector{Int}=0:maxlag)::Matrix
 ```
 
 Compute the running/rolling autocorrelation of a vector.
 """
-function runacf(x::Array{T};
+function runacf(x::Vector{T};
                 n::Int = 10,
                 maxlag::Int = n-3,
-                lags::AbstractArray{Int,1} = 0:maxlag,
-                cumulative::Bool = true)::Matrix{T} where {T<:Real}
+                lags::AbstractVector{Int} = 0:maxlag,
+                cumulative::Bool = true)::Matrix{T} where {T<:AbstractFloat}
     @assert size(x, 2) == 1 "Autocorrelation input array must be one-dimensional"
     N = size(x, 1)
     @assert n < N && n > 0
@@ -415,15 +359,17 @@ function runacf(x::Array{T};
     end
     return out
 end
+runacf(X::Matrix; n::Int=10, cumulative::Bool=true, maxlag::Int=n-3, lags::AbstractVector{Int}=0:maxlag)::Matrix = hcat((runacf(X[:,j], n=n, cumulative=cumulative, maxlag=maxlag, lags=lags) for j in 1:size(X,2))...)
 
 """
 ```
-runfun(x::Array{T}, f::Function; n::Int = 10, args...)
+runfun(x::Vector{T}, f::Function; n::Int = 10, cumulative::Bool=false, args...)::Vector{T} where {T<:AbstractFloat}
+runfun(X::Matrix{T}, f::Function; n::Int=10, cumulative::Bool=false, args...)::Matrix{T} where {T<:AbstractFloat}
 ```
 
 Apply a general function `f` that returns a scalar over an array
 """
-function runfun(x::Array{T}, f::Function; n::Int = 10, cumulative::Bool=false, args...)::Array{T} where {T<:Real}
+function runfun(x::Vector{T}, f::Function; n::Int = 10, cumulative::Bool=false, args...)::Vector{T} where {T<:AbstractFloat}
     N = size(x,1)
     out = zeros(T, N) .* NaN
     if cumulative
@@ -438,4 +384,8 @@ function runfun(x::Array{T}, f::Function; n::Int = 10, cumulative::Bool=false, a
         end
     end
     return out
+end
+
+function runfun(X::Matrix{T}, f::Function; n::Int=10, cumulative::Bool=false, args...)::Matrix{T} where {T<:AbstractFloat}
+    return hcat((runfun(X[:,j], f, n=n, cumulative=cumulative; args...) for j in 1:size(X,2))...)
 end
