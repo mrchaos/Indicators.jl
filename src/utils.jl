@@ -39,7 +39,7 @@ wilder_sum(x::Vector{T}; n::Int=10)::Vector{T}
 
 Welles Wilder summation of an array
 """
-function wilder_sum(x::Vector{T}; n::Int=10)::Vector{T} where {T<:AbstractFloat}
+function wilder_sum(x::Vector{T}; n::Int=10)::Vector{T} where {T<:Real}
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     nf = float(n)  # type stability -- all arithmetic done on floats
     out = zeros(size(x))
@@ -56,7 +56,7 @@ wilder_sum(X::Matrix; n::Int=10)::Matrix = hcat((wilder_sum(X[:,j], n=n) for j i
 
 Compute the mode of an arbitrary array::Array{T}
 """
-function mode(a::AbstractArray{T}) where {T<:AbstractFloat}
+function mode(a::AbstractArray{T}) where {T<:Real}
     isempty(a) && error("mode: input array cannot be empty.")
     cnts = Dict{T,Int}()
     # first element
@@ -82,13 +82,13 @@ end
 
 """
 ```
-diffn(x::Vector{T}; n::Int=1)::Vector{T} where {T<:AbstractFloat}
+diffn(x::Vector{T}; n::Int=1)::Vector{T} where {T<:Real}
 diffn(X::Matrix; n::Int=1)::Matrix = hcat([diffn(X[:,j], n=n) for j in 1:size(X,2)]...)
 ```
 
 Lagged differencing
 """
-function diffn(x::Vector{T}; n::Int=1)::Vector{T} where {T<:AbstractFloat}
+function diffn(x::Vector{T}; n::Int=1)::Vector{T} where {T<:Real}
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     dx = zeros(size(x))
     dx[1:n] .= NaN

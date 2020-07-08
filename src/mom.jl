@@ -2,7 +2,7 @@
 
 """
 ```
-aroon(hl::Matrix{T}; n::Int64=25)::Array{T}
+aroon(hl::Matrix{T}; n::Int64=25)::Array{Float64}
 ```
 
 Aroon up/down/oscillator
@@ -13,7 +13,7 @@ Aroon up/down/oscillator
 - Column 2: Aroon Down
 - Column 3: Aroon Oscillator
 """
-function aroon(hl::Matrix{T}; n::Int64=25)::Matrix{T} where {T<:Real}
+function aroon(hl::Matrix{T}; n::Int64=25)::Matrix{Float64} where {T<:Real}
     @assert size(hl,2) == 2 "Argument `hl` must have exactly 2 columns."
     @assert n < size(hl,1) "Argument `n` must be less than the number of rows in argument `hl`."
     out = zeros(T, (size(hl,1),3))
@@ -30,7 +30,7 @@ end
 
 """
 ```
-donch(hl::Matrix{T}; n::Int64=10, inclusive::Bool=true)::Array{T}
+donch(hl::Matrix{T}; n::Int64=10, inclusive::Bool=true)::Array{Float64}
 ```
 
 Donchian channel (if inclusive is set to true, will include current bar in calculations.)
@@ -41,7 +41,7 @@ Donchian channel (if inclusive is set to true, will include current bar in calcu
 - Column 2: Average of highest high and lowest low of last `n` periods
 - Column 3: Highest high of last `n` periods
 """
-function donch(hl::Matrix{T}; n::Int64=10, inclusive::Bool=true)::Matrix{T} where {T<:Real}
+function donch(hl::Matrix{T}; n::Int64=10, inclusive::Bool=true)::Matrix{Float64} where {T<:Real}
     @assert size(hl,2) == 2 "Argument `hl` must have exactly 2 columns."
     local lower::Array{T} = runmin(hl[:,2], n=n, cumulative=false, inclusive=inclusive)
     local upper::Array{T} = runmax(hl[:,1], n=n, cumulative=false, inclusive=inclusive)
@@ -51,24 +51,24 @@ end
 
 """
 ```
-momentum(x::Array{T}; n::Int64=1)::Array{T}
+momentum(x::Array{T}; n::Int64=1)::Array{Float64}
 ```
 
 Momentum indicator (price now vs price `n` periods back)
 """
-function momentum(x::Array{T}; n::Int64=1)::Array{T} where {T<:Real}
+function momentum(x::Array{T}; n::Int64=1)::Array{Float64} where {T<:Real}
     @assert n>0 "Argument n must be positive."
     return diffn(x, n=n)
 end
 
 """
 ```
-roc(x::Array{T}; n::Int64=1)::Array{T}
+roc(x::Array{T}; n::Int64=1)::Array{Float64}
 ```
 
 Rate of change indicator (percent change between i'th observation and (i-n)'th observation)
 """
-function roc(x::Array{T}; n::Int64=1)::Array{T} where {T<:Real}
+function roc(x::Array{T}; n::Int64=1)::Array{Float64} where {T<:Real}
     @assert n<size(x,1) && n>0 "Argument n out of bounds."
     out = zeros(size(x)) .* NaN
     @inbounds for i = (n+1):size(x,1)
@@ -79,7 +79,7 @@ end
 
 """
 ```
-macd(x::Array{T}; nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)::Array{T}
+macd(x::Array{T}; nfast::Int64=12, nslow::Int64=26, nsig::Int64=9)::Array{Float64}
 ```
 
 Moving average convergence-divergence
@@ -91,7 +91,7 @@ Moving average convergence-divergence
 - Column 3: MACD Histogram
 """
 function macd(x::Array{T}; nfast::Int64=12, nslow::Int64=26, nsig::Int64=9,
-    fastMA::Function=ema, slowMA::Function=ema, signalMA::Function=sma)::Matrix{T} where {T<:Real}
+    fastMA::Function=ema, slowMA::Function=ema, signalMA::Function=sma)::Matrix{Float64} where {T<:Real}
     out = zeros(T, (length(x),3))
     out[:,1] = fastMA(x, n=nfast) - slowMA(x, n=nslow)
     out[:,2] = signalMA(out[:,1], n=nsig)
@@ -101,12 +101,12 @@ end
 
 """
 ```
-rsi(x::Array{T}; n::Int64=14, ma::Function=ema, args...)::Array{T}
+rsi(x::Array{T}; n::Int64=14, ma::Function=ema, args...)::Array{Float64}
 ```
 
 Relative strength index
 """
-function rsi(x::Array{T}; n::Int64=14, ma::Function=ema, args...)::Array{T} where {T<:Real}
+function rsi(x::Array{T}; n::Int64=14, ma::Function=ema, args...)::Array{Float64} where {T<:Real}
     @assert n<size(x,1) && n>0 "Argument n is out of bounds."
     N = size(x,1)
     ups = zeros(N)
@@ -126,7 +126,7 @@ end
 
 """
 ```
-adx(hlc::Array{T}; n::Int64=14, wilder=true)::Array{T}
+adx(hlc::Array{T}; n::Int64=14, wilder=true)::Array{Float64}
 ```
 
 Average directional index
@@ -137,7 +137,7 @@ Average directional index
 - Column 2: DI-
 - Column 3: ADX
 """
-function adx(hlc::Array{T}; n::Int64=14, ma::Function=ema, args...)::Matrix{T} where {T<:Real}
+function adx(hlc::Array{T}; n::Int64=14, ma::Function=ema, args...)::Matrix{Float64} where {T<:Real}
     @assert n<size(hlc,1) && n>0 "Argument n is out of bounds."
     if size(hlc,2) != 3
         error("HLC array must have three columns")
@@ -164,7 +164,7 @@ end
 
 """
 ```
-psar(hl::Array{T}; af_min::T=0.02, af_max::T=0.2, af_inc::T=af_min)::Array{T}
+psar(hl::Array{T}; af_min::T=0.02, af_max::T=0.2, af_inc::T=af_min)::Array{Float64}
 ```
 
 Parabolic stop and reverse (SAR)
@@ -175,7 +175,7 @@ Parabolic stop and reverse (SAR)
 - `af_max`: maximum acceleration factor (accel factor capped at this value)
 - `af_inc`: increment to the acceleration factor (speed of increase in accel factor)
 """
-function psar(hl::Array{T}; af_min::T=0.02, af_max::T=0.2, af_inc::T=af_min)::Array{T} where {T<:Real}
+function psar(hl::Array{T}; af_min::T=0.02, af_max::T=0.2, af_inc::T=af_min)::Array{Float64} where {T<:Real}
     @assert af_min<1.0 && af_min>0.0 "Argument af_min must be in [0,1]."
     @assert af_max<1.0 && af_max>0.0 "Argument af_max must be in [0,1]."
     @assert af_inc<1.0 && af_inc>0.0 "Argument af_inc must be in [0,1]."
@@ -227,14 +227,14 @@ end
 ```
 kst(x::Array{T};
     nroc::Array{Int64}=[10,15,20,30], navg::Array{Int64}=[10,10,10,15],
-    wgts::Array{Int64}=collect(1:length(nroc)), ma::Function=sma)::Array{T}
+    wgts::Array{Int64}=collect(1:length(nroc)), ma::Function=sma)::Array{Float64}
 
 ```
 
 KST (Know Sure Thing) -- smoothed and summed rates of change
 """
 function kst(x::Array{T}; nroc::Array{Int64}=[10,15,20,30], navg::Array{Int64}=[10,10,10,15],
-    wgts::Array{Int64}=collect(1:length(nroc)), ma::Function=sma)::Array{T} where {T<:Real}
+    wgts::Array{Int64}=collect(1:length(nroc)), ma::Function=sma)::Array{Float64} where {T<:Real}
     @assert length(nroc) == length(navg)
     @assert all(nroc.>0) && all(nroc.<size(x,1))
     @assert all(navg.>0) && all(navg.<size(x,1))
@@ -249,12 +249,12 @@ end
 
 """
 ```
-wpr(hlc::Matrix{T}, n::Int64=14)::Array{T}
+wpr(hlc::Matrix{T}, n::Int64=14)::Array{Float64}
 ```
 
 Williams %R
 """
-function wpr(hlc::Matrix{T}; n::Int64=14)::Array{T} where {T<:Real}
+function wpr(hlc::Matrix{T}; n::Int64=14)::Array{Float64} where {T<:Real}
     hihi = runmax(hlc[:,1], n=n, cumulative=false)
     lolo = runmin(hlc[:,2], n=n, cumulative=false)
     return -100 * (hihi - hlc[:,3]) ./ (hihi - lolo)
@@ -262,12 +262,12 @@ end
 
 """
 ```
-cci(hlc::Matrix{T}; n::Int64=20, c::T=0.015, ma::Function=sma)::Array{T}
+cci(hlc::Matrix{T}; n::Int64=20, c::T=0.015, ma::Function=sma)::Array{Float64}
 ```
 
 Commodity channel index
 """
-function cci(hlc::Matrix{T}; n::Int64=20, c::T=0.015, ma::Function=sma, args...)::Array{T} where {T<:Real}
+function cci(hlc::Matrix{T}; n::Int64=20, c::T=0.015, ma::Function=sma, args...)::Array{Float64} where {T<:Real}
     tp = (hlc[:,1] + hlc[:,2] + hlc[:,3]) ./ 3.0
     dev = runmad(tp, n=n, cumulative=false, fun=mean)
     avg = ma(tp, n=n; args...)
@@ -276,13 +276,13 @@ end
 
 """
 ```
-stoch(hlc::Matrix{T}; nK::Int64=14, nD::Int64=3, kind::Symbol=:fast, ma::Function=sma, args...)::Matrix{T}
+stoch(hlc::Matrix{T}; nK::Int64=14, nD::Int64=3, kind::Symbol=:fast, ma::Function=sma, args...)::Matrix{Float64}
 ```
 
 Stochastic oscillator (fast or slow)
 """
 function stoch(hlc::Matrix{T}; nK::Int64=14, nD::Int64=3,
-    kind::Symbol=:fast, ma::Function=sma, args...)::Matrix{T} where {T<:Real}
+    kind::Symbol=:fast, ma::Function=sma, args...)::Matrix{Float64} where {T<:Real}
     @assert kind == :fast || kind == :slow "Argument `kind` must be either :fast or :slow"
     @assert nK<size(hlc,1) && nK>0 "Argument `nK` out of bounds."
     @assert nD<size(hlc,1) && nD>0 "Argument `nD` out of bounds."
@@ -301,13 +301,13 @@ end
 """
 ```
 smi(hlc::Matrix{T}; n::Int64=13, nFast::Int64=2, nSlow::Int64=25, nSig::Int64=9,
-    maFast::Function=ema, maSlow::Function=ema, maSig::Function=sma)::Matrix{T}
+    maFast::Function=ema, maSlow::Function=ema, maSig::Function=sma)::Matrix{Float64}
 ```
 
 SMI (stochastic momentum oscillator)
 """
 function smi(hlc::Matrix{T}; n::Int64=13, nFast::Int64=2, nSlow::Int64=25, nSig::Int64=9,
-    maFast::Function=ema, maSlow::Function=ema, maSig::Function=sma)::Matrix{T} where {T<:Real}
+    maFast::Function=ema, maSlow::Function=ema, maSig::Function=sma)::Matrix{Float64} where {T<:Real}
     hihi = runmax(hlc[:,1], n=n, cumulative=false)
     lolo = runmin(hlc[:,2], n=n, cumulative=false)
     hldif = hihi-lolo
