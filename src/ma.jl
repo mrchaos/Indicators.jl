@@ -374,3 +374,24 @@ Zero-lag exponential moving average (ZLEMA)
 function zlema(x::Array{T}; n::Int=10, ema_args...)::Array{Float64} where {T<:Real}
     return ema(x+(x-lagged(x,round(Int, (n-1)/2.0))), n=n; ema_args...)
 end
+
+"""
+```
+vwma(cv::Matrix{T})::Array{T}
+```
+
+Volume weighted moving average (VWMA)
+"""
+function vwma(cv::Matrix{T}, n::Int64=10)::Array{Float64} where {T<:Real}
+    @assert n<size(x,1) && n>0 "Argument n out of bounds."
+    out = zeros(size(cv))[1]
+    close_price = cv[:,1]
+    volume = cv[:,2]
+    out[1:n-1] .= NaN
+    @inbounds for i = n:size(close_price,1)
+        weight = volume[i-n+1:i]   # get volumes as numerator
+        d = sum(weight)  # denominator = sum(numerator weights)
+        out[i] = sum(weight .* close_price[i-n+1:i]) / d
+    end
+    return out
+end
