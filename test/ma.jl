@@ -58,6 +58,7 @@
     end
     @testset "Temporal" begin
         x = TS(cumsum(randn(N)))
+        X = TS(cumsum(randn(N, 2), dims=1))
         # moving average functions
         tmp = sma(x)
         @test size(tmp, 1) == N
@@ -98,5 +99,8 @@
         tmp = zlema(x)
         @test size(tmp, 1) == N
         @test size(tmp, 2) == 1
+        tmp = vwma(x)
+        @test size(tmp, 1) == N
+        @test size(tmp, 2) == 1        
     end
 end
