@@ -99,7 +99,7 @@
         tmp = zlema(x)
         @test size(tmp, 1) == N
         @test size(tmp, 2) == 1
-        tmp = vwma(x)
+        tmp = vwma(X)
         @test size(tmp, 1) == N
         @test size(tmp, 2) == 1        
     end
