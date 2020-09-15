@@ -1,29 +1,38 @@
 # Methods for porting Indicators.jl functions to TS objects from Temporal.jl package
 function close_fun(X::TS, f::Function, flds::Vector{Symbol}; args...)
     if size(X,2) == 1
-        return ts(f(X.values; args...), X.index, flds)
+        return TS(f(X.values; args...), X.index, flds)
     elseif size(X,2) > 1 && has_close(X)
-        return ts(f(cl(X).values; args...), X.index, flds)
+        return TS(f(cl(X).values; args...), X.index, flds)
     else
         error("Must be univariate or contain Close/Settle/Last.")
     end
 end
 function hlc_fun(X::TS, f::Function, flds::Vector{Symbol}; args...)
     if size(X,2) == 3
-        return ts(f(X.values; args...), X.index, flds)
+        return TS(f(X.values; args...), X.index, flds)
     elseif size(X,2) > 3 && has_high(X) && has_low(X) && has_close(X)
-        return ts(f(hlc(X).values; args...), X.index, flds)
+        return TS(f(hlc(X).values; args...), X.index, flds)
     else
         error("Argument must have 3 columns or have High, Low, and Close/Settle/Last fields.")
     end
 end
 function hl_fun(X::TS, f::Function, flds::Vector{Symbol}; args...)
     if size(X,2) == 2
-        return ts(f(X.values; args...), X.index, flds)
+        return TS(f(X.values; args...), X.index, flds)
     elseif size(X,2) > 2 && has_high(X) && has_low(X)
-        return ts(f(hl(X).values; args...), X.index, flds)
+        return TS(f(hl(X).values; args...), X.index, flds)
     else
         error("Argument must have 2 columns or have High and Low fields.")
+    end
+end
+function cv_fun(X::TS, f::Function, flds::Vector{Symbol}; args...)
+    if size(X,2) == 2
+        return TS(f(X.values; args...), X.index, flds)
+    elseif size(X,2) > 2 && has_close(X) && has_volume(X)
+        return TS(f([cl(X) vo(X)].values; args...), X.index, flds)
+    else
+        error("Argument must have 2 columns or have Close and Volume fields.")
     end
 end
 
@@ -65,6 +74,7 @@ dema(X::TS{V,T}; args...) where {V,T} = close_fun(X, dema, [:DEMA]; args...)
 tema(X::TS{V,T}; args...) where {V,T} = close_fun(X, tema, [:TEMA]; args...)
 zlema(X::TS{V,T}; args...) where {V,T} = close_fun(X, zlema, [:ZLEMA]; args...)
 mama(X::TS{V,T}; args...) where {V,T} = close_fun(X, mama, [:MAMA,:FAMA]; args...)
+vwma(X::TS{V,T}; args...) where {V,T} = cv_fun(X, vwma, [:VWMA]; args...)
 
 ##### reg.jl ######
 mlr_beta(X::TS{V,T}; args...) where {V,T} = close_fun(X, mlr_beta, [:Intercept,:Slope]; args...)

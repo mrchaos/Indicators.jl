@@ -382,13 +382,14 @@ vwma(cv::Matrix{T})::Array{T}
 
 Volume weighted moving average (VWMA)
 """
-function vwma(cv::Matrix{T}, n::Int64=10)::Array{Float64} where {T<:Real}
-    @assert n<size(x,1) && n>0 "Argument n out of bounds."
-    out = zeros(size(cv))[1]
+function vwma(cv::Matrix{T}; n::Int64=10)::Array{Float64} where {T<:Real}
+    @assert n<size(cv,1) && n>0 "Argument n out of bounds."
+    N = size(cv, 1)
+    out = zeros(N)
     close_price = cv[:,1]
     volume = cv[:,2]
     out[1:n-1] .= NaN
-    @inbounds for i = n:size(close_price,1)
+    @inbounds for i = n:N
         weight = volume[i-n+1:i]   # get volumes as numerator
         d = sum(weight)  # denominator = sum(numerator weights)
         out[i] = sum(weight .* close_price[i-n+1:i]) / d
