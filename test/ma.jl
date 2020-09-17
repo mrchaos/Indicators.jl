@@ -101,6 +101,9 @@
         @test size(tmp, 2) == 1
         tmp = vwma(X)
         @test size(tmp, 1) == N
+        @test size(tmp, 2) == 1  
+        tmp = vwap(X)
+        @test size(tmp, 1) == N
         @test size(tmp, 2) == 1        
     end
 end

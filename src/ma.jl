@@ -395,3 +395,20 @@ function vwma(cv::Matrix{T}, n::Int64=10)::Array{Float64} where {T<:Real}
     end
     return out
 end
+
+
+"""
+```
+vwap(cv::Matrix{T})::Array{T}
+```
+
+volume weighted average price (VWAP)
+"""
+function vwap(cv::Matrix{T})::Array{Float64} where {T<:Real}
+    out = zeros(size(cv))[1]
+    close_price = cv[:,1]
+    volume = cv[:,2]
+    out = cumsum(close_price .* volume) ./ cumsum(volume)
+    end
+    return out
+end
