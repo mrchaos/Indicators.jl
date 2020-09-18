@@ -421,7 +421,7 @@ hamming moving average (HAMA)
 """
 function hama(x::Array{T}; n::Int=10)::Array{Float64} where {T<:Real}
     nums = 1:n
-    hamming_weights = 0.54 - 0.46.*cos(2pi*nums/n)
+    hamming_weights = 0.54 - 0.46.*cos.(2pi*nums/n)
     out = wma(x,n, hamming_weights)
     return out
 end
