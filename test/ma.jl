@@ -3,6 +3,7 @@
     Random.seed!(SEED)
     @testset "Array" begin
         x = cumsum(randn(N))
+        X = cumsum(randn(N, 2), dims=1)
         tmp = sma(x)
         @test size(tmp, 1) == N
         @test size(tmp, 2) == 1
@@ -55,6 +56,9 @@
         @test size(tmp, 1) == N
         @test size(tmp, 2) == 1
         @test sum(isnan.(tmp)) != N
+        tmp = vwma(X)
+        @test size(tmp, 1) == N
+        @test size(tmp, 2) == 1        
     end
     @testset "Temporal" begin
         x = TS(cumsum(randn(N)))

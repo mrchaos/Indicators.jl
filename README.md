@@ -23,6 +23,7 @@ Indicators is a [Julia](https://julialang.org) package offering efficient implem
 - TEMA (triple exponential moving average)
 - ZLEMA (zero-lag exponential moving average)
 - MMA (modified moving average)
+- VWMA (volume-weighted moving average)
 - MLR (moving linear regression)
     - Prediction
     - Slope
@@ -63,7 +64,18 @@ Indicators is a [Julia](https://julialang.org) package offering efficient implem
 - Rolling/running quantiles
 
 
-## Todo
+## Wish List
+### To-Do
+- Hamming moving average
+- VWAP (volume-weighted average price)
+- EVWMA (elastic, volume-weighted moving average)
+- VMA (variable-length moving average)
+- Chaikin Money Flow
+- Ultimate Oscillator
+- OBV (on-balance volume)
+- Too many more to name...always happy to hear suggestions though!
+
+### Done
 - ~~Moving Linear Regression~~
 - ~~KAMA (Kaufman adaptive moving average)~~
 - ~~DEMA (double exponential moving average)~~
@@ -83,15 +95,7 @@ Indicators is a [Julia](https://julialang.org) package offering efficient implem
   - ~~Stochastic Momentum Index~~
 - ~~MMA (modified moving average)~~
 - ~~ZLEMA (zero lag exponential moving average)~~
-- Hamming moving average
-- VWMA (volume-weighted moving average)
-- VWAP (volume-weighted average price)
-- EVWMA (elastic, volume-weighted moving average)
-- VMA (variable-length moving average)
-- Chaikin Money Flow
-- Ultimate Oscillator
-- OBV (on-balance volume)
-- Too many more to name...always happy to hear suggestions though!
+- ~~VWMA (volume-weighted moving average)~~
 
 # Examples
 #### Randomly generated data:
@@ -102,5 +106,4 @@ Indicators is a [Julia](https://julialang.org) package offering efficient implem
 
 #### Corn futures daily data
 ![alt text](https://raw.githubusercontent.com/dysonance/Indicators.jl/master/examples/example3.png "Example 3")
-
 
