@@ -396,3 +396,32 @@ function vwma(cv::Matrix{T}; n::Int64=10)::Array{Float64} where {T<:Real}
     end
     return out
 end
+
+"""
+```
+vwap(cv::Matrix{T})::Array{T}
+```
+
+Volume-weighted average price (VWAP)
+"""
+function vwap(cv::Matrix{T})::Array{Float64} where {T<:Real}
+    out = zeros(size(cv))[1]
+    close_price = cv[:,1]
+    volume = cv[:,2]
+    out = cumsum(close_price .* volume) ./ cumsum(volume)
+    return out
+end
+
+"""
+```
+hama(x::Array{T})::Array{T}
+```
+
+Hamming moving average (HAMA)
+"""
+function hama(x::Array{T}; n::Int=10)::Array{Float64} where {T<:Real}
+    hamming_weights = 0.54 .- 0.46 .* cos.(2*pi*(1:n)/n)
+    out = wma(x, n=n, wts=hamming_weights)
+    return out
+end
+
