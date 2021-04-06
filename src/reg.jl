@@ -111,7 +111,7 @@ mlr_ub(y::Array{T}; n::Int64=10, se::T=2.0)::Array{Float64} where {T<:Real}
 Moving linear regression upper bound
 """
 function mlr_ub(y::Array{T}; n::Int64=10, se::T=2.0)::Array{Float64} where {T<:Real}
-    return y + se*mlr_se(y, n=n)
+    return mlr(y, n=n) + se*mlr_se(y, n=n)
 end
 
 """
@@ -122,7 +122,7 @@ mlr_lb(y::Array{T}; n::Int64=10, se::T=2.0)::Array{Float64} where {T<:Real}
 Moving linear regression lower bound
 """
 function mlr_lb(y::Array{T}; n::Int64=10, se::T=2.0)::Array{Float64} where {T<:Real}
-    return y - se*mlr_se(y, n=n)
+    return mlr(y, n=n) - se*mlr_se(y, n=n)
 end
 
 """
