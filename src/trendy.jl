@@ -19,7 +19,7 @@ function maxima(x::Array{T}; threshold::T=0.0, order::Int=1) where {T<:Real}
     end
     while order > 1
         idx = findall(crit)
-        crit[idx[!maxima(x[crit], threshold=threshold)]] .= false
+        crit[idx[.!maxima(x[crit], threshold=threshold)]] .= false
         order -= 1
     end
     return crit
@@ -44,7 +44,7 @@ function minima(x::Array{T}; threshold::T=0.0, order::Int=1) where {T<:Real}
     end
     while order > 1
         idx = findall(crit)
-        crit[idx[!minima(x[crit], threshold=threshold)]] .= false
+        crit[idx[.!minima(x[crit], threshold=threshold)]] .= false
         order -= 1
     end
     return crit
@@ -71,7 +71,7 @@ function resistance(x::Array{T}; order::Int=1, threshold::T=0.0) where {T<:Real}
     out[.!crit] .= NaN
     idx = findall(crit)
     @inbounds for i=2:length(idx)
-        out[idx[i-1]:idx[i]] .= interpolate(idx[i-1], idx[i], x[i-1], x[i])
+        out[idx[i-1]:idx[i]] .= interpolate(idx[i-1], idx[i], x[idx[i-1]], x[idx[i]])
     end
     return out
 end
@@ -89,7 +89,7 @@ function support(x::Array{T}; order::Int=1, threshold::T=0.0) where {T<:Real}
     out[.!crit] .= NaN
     idx = findall(crit)
     @inbounds for i=2:length(idx)
-        out[idx[i-1]:idx[i]] .= interpolate(idx[i-1], idx[i], x[i-1], x[i])
+        out[idx[i-1]:idx[i]] .= interpolate(idx[i-1], idx[i], x[idx[i-1]], x[idx[i]])
     end
     return out
 end
