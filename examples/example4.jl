@@ -1,8 +1,3 @@
-# Regression Indicators
-
-## Example
-
-```@example
 using Temporal, Indicators, GLMakie
 
 N = 252
@@ -28,14 +23,3 @@ lines!(fig[2,1], 1:N, rsq.values[:], label="R-Squared", linewidth=2, color="#FF8
 band!(1:N, zeros(N), rsq.values[:], color="#FF800040")
 hlines!(current_axis(), [0.0, 1.0], linestyle=:dash, linewidth=1)
 axislegend(bgcolor="#00000040", framecolor="#00000040", position=:cb, orientation=:horizontal)
-save("reg_example.png", fig) # hide
-nothing # hide
-```
-![](reg_example.png)
-
-## Reference
-
-```@autodocs
-Modules = [Indicators]
-Pages = ["reg.jl"]
-```

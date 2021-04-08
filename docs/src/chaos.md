@@ -23,6 +23,6 @@ savefig("chaos_example.svg")  # hide
 ## Reference
 
 ```@autodocs
-modules = [Indicators]
-pages = ["chaos.jl"]
+Modules = [Indicators]
+Pages = ["chaos.jl"]
 ```

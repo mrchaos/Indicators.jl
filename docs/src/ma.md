@@ -22,5 +22,5 @@ savefig("ma_example.svg")  # hide
 
 ```@autodocs
 Modules = [Indicators]
-Pages = ["ma.jl"]
+Pages = ["ma.jl", "run.jl"]
 ```

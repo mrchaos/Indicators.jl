@@ -107,3 +107,6 @@ Indicators is a [Julia](https://julialang.org) package offering efficient implem
 #### Corn futures daily data
 ![alt text](https://raw.githubusercontent.com/dysonance/Indicators.jl/master/examples/example3.png "Example 3")
 
+#### Gold Futures Moving Regression
+[alt text](https://raw.githubusercontent.com/dysonance/Indicators.jl/master/examples/example4.png "Example 4")
+

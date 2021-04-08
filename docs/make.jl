@@ -1,4 +1,4 @@
-using Documenter, Indicators, Plots
+using Documenter, Indicators, Plots, GLMakie
 
 makedocs(
     modules = [Indicators],
@@ -10,6 +10,7 @@ makedocs(
                               "Volatility Indicators" => "vol.md"],
            "Exotic" => ["Regressions"=>"reg.md",
                         "Trendlines" => "trendy.md",
+                        "Chaos" => "chaos.md",
                         "Patterns" => "patterns.md"]],
     format = Documenter.HTML(),
     doctest=false,
