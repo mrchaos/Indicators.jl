@@ -13,7 +13,7 @@ function estimate_rsrange(x::Array{T})::T where T<:Real
     return r/s
 end
 
-function npieces(x::Array{T}, minsize::Int=8)::Int where {T<:Real}
+function npieces(x::Array{T}; minsize::Int=8)::Int where {T<:Real}
     i = 0
     n = size(x,1)
     while n > minsize
