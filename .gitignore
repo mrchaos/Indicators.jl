@@ -6,5 +6,5 @@
 *.svg
 *.pdf
 *.png
-tmp*
 Manifest.toml
+tmp*
