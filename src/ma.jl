@@ -354,7 +354,7 @@ function alma(x::Array{T}; n::Int64=9, offset::T=0.85, sigma::T=6.0)::Array{Floa
     return out
 end
 
-function lagged(x::Array{T}, n::Int=1)::Array{Float64} where {T<:Real}
+function lagged(x::Array{T}; n::Int=1)::Array{Float64} where {T<:Real}
     if n > 0
         return [fill(NaN,n); x[1:end-n]]
     elseif n < 0
@@ -372,7 +372,7 @@ zlema(x::Array{T}; n::Int=10, ema_args...)::Array{Float64}
 Zero-lag exponential moving average (ZLEMA)
 """
 function zlema(x::Array{T}; n::Int=10, ema_args...)::Array{Float64} where {T<:Real}
-    return ema(x+(x-lagged(x,round(Int, (n-1)/2.0))), n=n; ema_args...)
+    return ema(x+(x-lagged(x;n=round(Int, (n-1)/2.0))), n=n; ema_args...)
 end
 
 """
